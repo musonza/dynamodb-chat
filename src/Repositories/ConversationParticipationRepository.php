@@ -14,10 +14,8 @@ class ConversationParticipationRepository extends BaseRepository
         $this->conversation = $conversation;
     }
 
-    public function addParticipants(array $participants)
+    public function addParticipants(array $participants): void
     {
-        $entities = [];
-
         $batchItems = [];
 
         foreach ($participants as $participant) {
@@ -26,23 +24,12 @@ class ConversationParticipationRepository extends BaseRepository
             ];
         }
 
-//        dd($batchItems);
-//
-//
-//        $this->getClient()->batchWriteItem(array(
-//            'TableName' => ConfigurationManager::getTableName(),
-//            'Item' => $this->conversation->toItem(),
-//        ));
-
-
-
-        $result = $this->getClient()->batchWriteItem([
+        $this->getClient()->batchWriteItem([
             'RequestItems' => [
                 ConfigurationManager::getTableName() => [
                     ...$batchItems
                 ]
             ]
         ]);
-        dd($result);
     }
 }

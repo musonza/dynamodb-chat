@@ -14,10 +14,10 @@ class InstallCommand extends Command
         $client = new DynamoDbClient([
             'version' => 'latest',
             'region'  => 'us-east-1',
-            'endpoint' => 'http://localhost:8000'
+//            'endpoint' => 'http://localhost:8000'
         ]);
 
-        $client->createTable(array(
+        $client->createTable([
             'TableName' => 'musonza_chat',
             'AttributeDefinitions' => [
                 [
@@ -26,6 +26,14 @@ class InstallCommand extends Command
                 ],
                 [
                     'AttributeName' => 'SK',
+                    'AttributeType' => 'S'
+                ],
+                [
+                    'AttributeName' => 'GSI1PK',
+                    'AttributeType' => 'S'
+                ],
+                [
+                    'AttributeName' => 'GSI1SK',
                     'AttributeType' => 'S'
                 ]
             ],
@@ -40,9 +48,31 @@ class InstallCommand extends Command
                 ]
             ],
             'ProvisionedThroughput' => [
-                'ReadCapacityUnits'  => 10,
-                'WriteCapacityUnits' => 20
+                'ReadCapacityUnits'  => 5,
+                'WriteCapacityUnits' => 5
+            ],
+            'GlobalSecondaryIndexes' => [
+                [
+                    'IndexName' => 'GS1',
+                    'KeySchema' => [
+                        [
+                            'AttributeName' => 'GSI1PK',
+                            'KeyType'       => 'HASH'
+                        ],
+                        [
+                            'AttributeName' => 'GSI1SK',
+                            'KeyType'       => 'RANGE'
+                        ]
+                    ],
+                    'Projection' => [
+                        'ProjectionType' => 'ALL'
+                    ],
+                    'ProvisionedThroughput' => [
+                        'ReadCapacityUnits'  => 5,
+                        'WriteCapacityUnits' => 5
+                    ],
+                ]
             ]
-        ));
+        ]);
     }
 }

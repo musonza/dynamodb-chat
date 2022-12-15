@@ -40,6 +40,14 @@ class Participation extends AbstractEntity
         ];
     }
 
+    public function getGSI1()
+    {
+        return [
+            'GSI1PK' => $this->getSortKey(),
+            'GSI1SK' => $this->getPartitionKey(),
+        ];
+    }
+
     public function getParticipantIdentifier(): string
     {
         return $this->participantId;
@@ -50,6 +58,7 @@ class Participation extends AbstractEntity
         return[
             ...$this->getPrimaryKey(),
             'Type' => ['S' => self::ENTITY_TYPE],
+            ...$this->getGSI1(),
             'CreatedAt' => ['S' => now()->toISOString()],
         ];
     }
