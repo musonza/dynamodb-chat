@@ -1,0 +1,36 @@
+{
+    "name": "musonza/laravel-dynamodb-chat",
+    "description": "Chat Package for Laravel. Create a Chat application for your multiple Models.",
+    "type": "library",
+    "require": {
+        "php": ">=8.1",
+        "illuminate/support": "^9.43",
+        "aws/aws-sdk-php-laravel": "^3.7",
+        "tuupola/ksuid": "^2.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "orchestra/testbench": "^7.15",
+        "squizlabs/php_codesniffer": "^3.7",
+        "friendsofphp/php-cs-fixer" : "^3.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Musonza\\LaravelDynamodbChat\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Musonza\\LaravelDynamodbChat\\Tests\\": "tests"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tinashe Musonza"
+        }
+    ],
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    }
+}
