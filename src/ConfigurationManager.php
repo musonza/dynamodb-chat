@@ -24,4 +24,9 @@ class ConfigurationManager
     {
         return config('musonza_dynamodb_chat.region');
     }
+
+    public static function getAttributesAllowed()
+    {
+        return config('musonza_dynamondb_chat.attributes_allowed_list');
+    }
 }

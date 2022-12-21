@@ -80,6 +80,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('musonza_dynamodb_chat.endpoint', 'http://localhost:8000');
         $app['config']->set('musonza_dynamodb_chat.region', 'us-east-1');
         $app['config']->set('musonza_dynamondb_chat.batch_limit', 25);
+        $app['config']->set('musonza_dynamondb_chat.attributes_allowed_list', [
+            'Subject',
+            'Description',
+            'isPrivate'
+        ]);
     }
 
     protected function query($key, $condition = null)

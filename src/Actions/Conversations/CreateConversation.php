@@ -2,21 +2,21 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 
-use Aws\DynamoDb\DynamoDbClient;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
-class CreateConversation
+class CreateConversation extends Action
 {
-    public function execute(string $subject = 'Conversation'): Conversation
-    {
-        $conversation = new Conversation();
-        $conversation->setSubject($subject);
-        app(DynamoDbClient::class)->putItem([
-            'TableName' => ConfigurationManager::getTableName(),
-            'Item' => $conversation->toItem(),
-        ]);
+    protected Conversation $conversation;
 
-        return $conversation;
+    public function __construct(Conversation $conversation)
+    {
+        $this->conversation = $conversation;
+    }
+
+    public function execute(): Conversation
+    {
+        $this->getTable()->put($this->conversation->toArray());
+        return $this->conversation;
     }
 }

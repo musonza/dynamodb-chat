@@ -19,15 +19,9 @@ class Chat
         $this->createConversationAction = $createConversation;
     }
 
-    public function createConversation(string $subject,  array $participantIds = []): Conversation
+    public function conversation(string $conversationId = null): Conversation
     {
-        $conversation = (new CreateConversation())->execute($subject);
-
-        if (!empty($participantIds)) {
-            $this->addParticipants($conversation->getConversationId(), $participantIds);
-        }
-
-        return $conversation;
+        return new Conversation($conversationId);
     }
 
     public function getConversationById(string $conversationId): Conversation

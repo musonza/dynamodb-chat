@@ -2,8 +2,9 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
-use Aws\DynamoDb\DynamoDbClient;
 use Bego\Model;
+use InvalidArgumentException;
+use Musonza\LaravelDynamodbChat\ConfigurationManager;
 
 class Entity extends Model
 {
@@ -16,6 +17,12 @@ class Entity extends Model
 
     protected $_sort = 'SK';
 
+    /**
+     * Entity attributes to update / create
+     * @var array
+     */
+    private array $attributes = [];
+
     public function toArray(): array
     {
         $item = $this->toItem();
@@ -25,6 +32,27 @@ class Entity extends Model
             $arr[$key] = array_values($value)[0];
         }
 
-        return $arr;
+        return array_merge($arr, $this->attributes);
+    }
+
+    public function setAttributes(array $attributes): self
+    {
+        $allowList = ConfigurationManager::getAttributesAllowed();
+
+        if(!empty($allowList)) {
+            foreach ($attributes as $key => $val) {
+                if (!in_array($key, ConfigurationManager::getAttributesAllowed())) {
+                    throw new InvalidArgumentException("Attribute {$key} is not in the allowed list.");
+                }
+            }
+        }
+
+        $this->attributes = $attributes;
+        return $this;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 }

@@ -3,7 +3,9 @@
 namespace Musonza\LaravelDynamodbChat\Entities;
 
 use Bego\Component\Resultset;
+use Chat;
 use Illuminate\Support\Carbon;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\CreateConversation;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Conversation extends Entity implements Contract
@@ -14,11 +16,27 @@ class Conversation extends Entity implements Contract
 
     protected string $conversationId;
 
-    protected string $subject = 'test';
+    protected string $subject = 'Conversation';
 
     protected Carbon $createdAt;
 
+    /**
+     * Result from query on a Conversation.
+     * @var Resultset|null
+     */
     protected ?Resultset $resultset = null;
+
+    /**
+     * IDs of participants to add to a conversation.
+     * @var array
+     */
+    protected array $participantIds = [];
+
+    /**
+     * Specifies whether the conversation is private or public.
+     * @var bool
+     */
+    protected bool $isPrivate = false;
 
     public function __construct($conversationId = null, Carbon $createdAt = null)
     {
@@ -34,6 +52,12 @@ class Conversation extends Entity implements Contract
     public function setSubject(string $subject): self
     {
         $this->subject = $subject;
+        return $this;
+    }
+
+    public function makePrivate(bool $isPrivate): self
+    {
+        $this->isPrivate = $isPrivate;
         return $this;
     }
 
@@ -82,8 +106,30 @@ class Conversation extends Entity implements Contract
         $this->resultset = $resultset;
     }
 
+    public function setParticipants(array $participantIds): self
+    {
+        $this->participantIds = $participantIds;
+        return $this;
+    }
+
     public function getResultSet(): ?Resultset
     {
        return $this->resultset;
+    }
+
+    public function create(): Conversation
+    {
+        $conversation = (new CreateConversation($this))->execute();
+
+        if (!empty($this->participantIds)) {
+            Chat::addParticipants($conversation->getConversationId(), $this->participantIds);
+        }
+
+        return $conversation;
+    }
+
+    public function update()
+    {
+        Chat::updateConversation($this->getConversationId(), $this->getAttributes());
     }
 }

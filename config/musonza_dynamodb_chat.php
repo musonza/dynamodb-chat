@@ -24,4 +24,11 @@ return [
      * @link https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
      */
     'batch_limit' => 25,
+
+    /**
+     * DynamoDB will allow you to add any attributes to your Table at any time.
+     * Add an allow list here to have more control and prevent arbitrary values .
+     * Note: An empty list means allow anything
+     */
+    'attributes_allowed_list' => [],
 ];

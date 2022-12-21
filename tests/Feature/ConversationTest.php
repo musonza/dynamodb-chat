@@ -18,23 +18,34 @@ class ConversationTest extends TestCase
         $this->chat = app(Chat::class);
     }
 
-    public function testCreateConversation()
+    public function testTheCreateConversation()
     {
         $subject = 'Conversation 1';
-        $conversation = $this->chat->createConversation($subject);
-        $conversationPartitionKey = array_values($conversation->getPartitionKey())[0];
+        $conversation = $this->chat->conversation()
+            ->setSubject($subject)
+            ->setAttributes([
+                'isPrivate' => 1,
+                'Description' => 'My description',
+            ])
+            ->create();
+
         $response = $this->query(
-            $conversationPartitionKey,
-            Condition::attribute('SK')->eq($conversationPartitionKey)
+            $conversation->getPK(),
+            Condition::attribute('SK')->eq($conversation->getSK())
         );
 
         $this->assertEquals($subject, $response->first()->attribute('Subject'));
+        $this->assertEquals(1, $response->first()->attribute('isPrivate'));
+        $this->assertEquals('My description', $response->first()->attribute('Description'));
         $this->assertEquals(1, $response->count(), 'One conversation created');
     }
 
     public function testGetConversationById()
     {
-        $conversation = $this->chat->createConversation('Hello');
+        $conversation = $this->chat->conversation()
+            ->setSubject('Hello')
+            ->create();
+
         $this->assertNull($conversation->getResultSet());
 
         $conversation = $this->chat->getConversationById($conversation->getConversationId());
@@ -43,7 +54,11 @@ class ConversationTest extends TestCase
 
     public function testCreateConversationWithParticipants()
     {
-        $conversation = $this->chat->createConversation('Group Chat One', ['jane', 'john']);
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group Chat One')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
         $this->assertEquals('Group Chat One', $conversation->getSubject());
 
         $conversationPartitionKey = array_values($conversation->getPartitionKey())[0];
@@ -76,16 +91,18 @@ class ConversationTest extends TestCase
 
     public function testAddConversationParticipants()
     {
-        $conversation = $this->chat->createConversation('Conversation');
+        $conversation = $this->chat->conversation()
+            ->setSubject('Conversation')
+            ->create();
+
         $this->chat->addParticipants($conversation->getConversationId(), [
             'james',
             'jane',
             'john'
         ]);
 
-        $conversationPartitionKey = array_values($conversation->getPartitionKey())[0];
         $response = $this->query(
-            $conversationPartitionKey,
+            $conversation->getPK(),
             Condition::attribute('SK')->beginsWith('PARTICIPANT#')
         );
 
@@ -100,13 +117,14 @@ class ConversationTest extends TestCase
             $participants[] = "user{$i}";
         }
 
-        $conversation = $this->chat->createConversation('Conversation', $participants);
+        $conversation = $this->chat->conversation()
+            ->setSubject('Conversation')
+            ->setParticipants($participants)
+            ->create();
 
         $this->chat->deleteParticipants($conversation->getConversationId(), ['user0', 'user1']);
-
-        $conversationPartitionKey = array_values($conversation->getPartitionKey())[0];
         $response = $this->query(
-            $conversationPartitionKey,
+            $conversation->getPK(),
             Condition::attribute('SK')->beginsWith('PARTICIPANT#')
         );
 
@@ -115,15 +133,20 @@ class ConversationTest extends TestCase
 
     public function testSendMessage()
     {
-        $conversation = $this->chat->createConversation('Group Two', ['messi', 'ronaldo', 'aguero']);
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group Two')
+            ->setParticipants(['messi', 'ronaldo', 'aguero'])
+            ->create();
+
         $conversationId = $conversation->getConversationId();
+
         $this->chat->messaging($conversationId)
             ->fromParticipant('ronaldo')
             ->message('Congratulations you are the G.O.A.T')
             ->send();
 
         $response = $this->query(
-            array_values($conversation->getPartitionKey())[0],
+            $conversation->getPK(),
             Condition::attribute('SK')->beginsWith('MSG#')
         );
 
@@ -148,15 +171,18 @@ class ConversationTest extends TestCase
             $participants[] = "user{$i}";
         }
 
-        $conversation = $this->chat->createConversation('Group Two', $participants);
-        $conversationId = $conversation->getConversationId();
-        $this->chat->messaging($conversationId)
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group Two')
+            ->setParticipants($participants)
+            ->create();
+
+        $this->chat->messaging($conversation->getConversationId())
             ->fromParticipant('user10')
             ->message('Hello')
             ->send();
 
         $response = $this->query(
-            array_values($conversation->getPartitionKey())[0],
+            $conversation->getPK(),
             Condition::attribute('SK')->beginsWith('MSG#')
         );
 
@@ -166,12 +192,20 @@ class ConversationTest extends TestCase
     public function testUpdateConversation()
     {
         $subject = 'Conversation 1';
-        $conversation = $this->chat->createConversation($subject);
+        $conversation = $this->chat->conversation()
+            ->setSubject($subject)
+            ->create();
 
+        $conversationId = $conversation->getConversationId();
         $newSubject = 'Conversation updated';
-        $this->chat->updateConversation($conversation->getConversationId(), [
-            'Subject' => $newSubject
-        ]);
+        $description = 'This is a description.';
+
+        $this->chat->conversation($conversationId)
+            ->setAttributes([
+                'Subject' => $newSubject,
+                'Description' => $description,
+            ])
+            ->update();
 
         $response = $this->query(
             $conversation->getPK(),
@@ -179,5 +213,6 @@ class ConversationTest extends TestCase
         );
 
         $this->assertEquals($newSubject, $response->first()->attribute('Subject'));
+        $this->assertEquals($description, $response->first()->attribute('Description'));
     }
 }
