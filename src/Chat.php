@@ -26,16 +26,7 @@ class Chat
 
     public function getConversationById(string $conversationId): Conversation
     {
-        $conversation = new Conversation($conversationId);
-        (new GetConversation($conversation))->execute();
-
-        return $conversation;
-    }
-
-    public function updateConversation(string $conversationId, array $attributes)
-    {
-        $conversation = new Conversation($conversationId);
-        (new UpdateConversation($conversation, $attributes))->execute();
+        return (new Conversation($conversationId))->first();
     }
 
     public function addParticipants(string $conversationId, array $participantIds): void

@@ -200,12 +200,14 @@ class ConversationTest extends TestCase
         $newSubject = 'Conversation updated';
         $description = 'This is a description.';
 
-        $this->chat->conversation($conversationId)
+        $updated = $this->chat->conversation($conversationId)
             ->setAttributes([
                 'Subject' => $newSubject,
                 'Description' => $description,
             ])
             ->update();
+
+        $this->assertTrue($updated);
 
         $response = $this->query(
             $conversation->getPK(),

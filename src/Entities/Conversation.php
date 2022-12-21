@@ -6,6 +6,8 @@ use Bego\Component\Resultset;
 use Chat;
 use Illuminate\Support\Carbon;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\CreateConversation;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\GetConversation;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\UpdateConversation;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Conversation extends Entity implements Contract
@@ -128,8 +130,14 @@ class Conversation extends Entity implements Contract
         return $conversation;
     }
 
-    public function update()
+    public function update(): ?bool
     {
-        Chat::updateConversation($this->getConversationId(), $this->getAttributes());
+        return (new UpdateConversation($this))->execute();
+    }
+
+    public function first(): self
+    {
+        (new GetConversation($this))->execute();
+        return $this;
     }
 }

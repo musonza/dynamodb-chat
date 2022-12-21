@@ -9,15 +9,13 @@ use Musonza\LaravelDynamodbChat\Entities\Conversation;
 class UpdateConversation extends Action
 {
     protected Conversation $conversation;
-    protected array $attributes;
 
-    public function __construct(Conversation $conversation, array $attributes)
+    public function __construct(Conversation $conversation)
     {
         $this->conversation = $conversation;
-        $this->attributes = $attributes;
     }
 
-    public function execute()
+    public function execute(): ?bool
     {
         $conversationPartitionKey = array_values($this->conversation->getPartitionKey())[0];
         $response = $this->getTable()
@@ -28,10 +26,10 @@ class UpdateConversation extends Action
 
         $item = $response->first();
 
-        foreach ($this->attributes as $attribute => $value) {
+        foreach ($this->conversation->getAttributes() as $attribute => $value) {
             $item->set($attribute, $value);
         }
 
-        $this->getTable()->update($item);
+        return $this->getTable()->update($item);
     }
 }
