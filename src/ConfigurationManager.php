@@ -19,4 +19,9 @@ class ConfigurationManager
     {
         return config('musonza_dynamondb_chat.batch_limit');
     }
+
+    public static function getRegion()
+    {
+        return config('musonza_dynamodb_chat.region');
+    }
 }

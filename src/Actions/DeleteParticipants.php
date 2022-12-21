@@ -2,12 +2,11 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions;
 
-use Aws\DynamoDb\DynamoDbClient;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 
-class AddParticipants extends Action
+class DeleteParticipants extends Action
 {
     protected Conversation $conversation;
     protected array $participantIds;
@@ -25,18 +24,19 @@ class AddParticipants extends Action
 
         foreach ($this->participantIds as $id) {
             if ($batchItemsCount == ConfigurationManager::getBatchLimit()) {
-                $this->saveItems($batchItems);
+                $this->deleteItems($batchItems);
                 $batchItems = [];
                 $batchItemsCount = 0;
             }
 
-            $batchItems[] = (new Participation($this->conversation, $id))->toArray();
-
+            $batchItems[] = [
+                'DeleteRequest' => ['Key' => (new Participation($this->conversation, $id))->getPrimaryKey()]
+            ];
             $batchItemsCount++;
         }
 
         if (!empty($batchItems)) {
-            $this->saveItems($batchItems);
+            $this->deleteItems($batchItems);
         }
     }
 }

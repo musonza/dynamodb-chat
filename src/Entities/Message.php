@@ -94,16 +94,4 @@ class Message extends Entity
             'Read' => ['N' => $this->read],
         ];
     }
-
-    public function toArray(): array
-    {
-        $item = $this->toItem();
-        $arr = [];
-
-        foreach ($item as $key => $value) {
-            $arr[$key] = array_values($value)[0];
-        }
-
-        return $arr;
-    }
 }

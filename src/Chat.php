@@ -5,6 +5,7 @@ namespace Musonza\LaravelDynamodbChat;
 use Musonza\LaravelDynamodbChat\Actions\AddParticipants;
 use Musonza\LaravelDynamodbChat\Actions\CreateConversation;
 use Musonza\LaravelDynamodbChat\Actions\CreateMessage;
+use Musonza\LaravelDynamodbChat\Actions\DeleteParticipants;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
 class Chat
@@ -31,6 +32,12 @@ class Chat
     {
         $conversation = new Conversation($conversationId);
         (new AddParticipants($conversation, $participantIds))->execute();
+    }
+
+    public function deleteParticipants(string $conversationId, array $participantIds): void
+    {
+        $conversation = new Conversation($conversationId);
+        (new DeleteParticipants($conversation, $participantIds))->execute();
     }
 
     public function messaging(string $conversation): CreateMessage

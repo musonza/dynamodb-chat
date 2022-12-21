@@ -4,6 +4,7 @@ namespace Musonza\LaravelDynamodbChat\Console;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Illuminate\Console\Command;
+use Musonza\LaravelDynamodbChat\ConfigurationManager;
 
 class InstallCommand extends Command
 {
@@ -11,14 +12,10 @@ class InstallCommand extends Command
 
     public function handle()
     {
-        $client = new DynamoDbClient([
-            'version' => 'latest',
-            'region'  => 'us-east-1',
-            'endpoint' => 'http://localhost:8000'
-        ]);
-
+        /** @var DynamoDbClient $client */
+        $client = app(DynamoDbClient::class);
         $client->createTable([
-            'TableName' => 'musonza_chat',
+            'TableName' => ConfigurationManager::getTableName(),
             'AttributeDefinitions' => [
                 [
                     'AttributeName' => 'PK',

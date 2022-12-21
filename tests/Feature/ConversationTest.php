@@ -3,11 +3,8 @@
 namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 
 use Bego\Condition;
-use Bego\Database;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Chat;
-use Musonza\LaravelDynamodbChat\Entities\Entity;
-use Musonza\LaravelDynamodbChat\Entities\Participation;
 use Musonza\LaravelDynamodbChat\Tests\TestCase;
 
 class ConversationTest extends TestCase
@@ -85,6 +82,27 @@ class ConversationTest extends TestCase
         $this->assertEquals(3, $response->count());
     }
 
+    public function testRemoveConversationParticipants()
+    {
+        $participants = [];
+
+        for($i = 0; $i < 10; $i++) {
+            $participants[] = "user{$i}";
+        }
+
+        $conversation = $this->chat->createConversation('Conversation', $participants);
+
+        $this->chat->deleteParticipants($conversation->getConversationId(), ['user0', 'user1']);
+
+        $conversationPartitionKey = array_values($conversation->getPartitionKey())[0];
+        $response = $this->query(
+            $conversationPartitionKey,
+            Condition::attribute('SK')->beginsWith('PARTICIPANT#')
+        );
+
+        $this->assertEquals(8, $response->count());
+    }
+
     public function testSendMessage()
     {
         $conversation = $this->chat->createConversation('Group Two', ['messi', 'ronaldo', 'aguero']);
@@ -135,9 +153,3 @@ class ConversationTest extends TestCase
         $this->assertEquals(50, $response->count(), 'Each participant receives a message');
     }
 }
-
-/** @var InstallCommand $i */
-//        $i = app(InstallCommand::class);
-//        $i->handle();
-//        dd();
-//

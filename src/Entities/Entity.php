@@ -17,4 +17,16 @@ class Entity extends Model
 //    public abstract function getPrimaryKey(): array;
 
 //    public abstract function toItem(): array;
+
+    public function toArray(): array
+    {
+        $item = $this->toItem();
+        $arr = [];
+
+        foreach ($item as $key => $value) {
+            $arr[$key] = array_values($value)[0];
+        }
+
+        return $arr;
+    }
 }
