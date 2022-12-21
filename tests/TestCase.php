@@ -21,10 +21,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->checkEnvironment();
 
         /** @var DynamoDbClient $client */
-//        $client = app(DynamoDbClient::class);
-//        $client->deleteTable([
-//            'TableName' => ConfigurationManager::getTableName(),
-//        ]);
+        $client = app(DynamoDbClient::class);
+        $client->deleteTable([
+            'TableName' => ConfigurationManager::getTableName(),
+        ]);
         parent::tearDown();
     }
 
@@ -35,7 +35,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->checkEnvironment();
 
         $this->database = app(Database::class);
-//        $this->createTable();
+        $this->createTable();
     }
 
     private function checkEnvironment()
@@ -81,9 +81,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('musonza_dynamodb_chat.region', 'us-east-1');
         $app['config']->set('musonza_dynamondb_chat.batch_limit', 25);
         $app['config']->set('musonza_dynamondb_chat.attributes_allowed_list', [
-            'Subject',
-            'Description',
-            'isPrivate'
+//            'Subject',
+//            'Description',
+//            'isPrivate'
         ]);
     }
 

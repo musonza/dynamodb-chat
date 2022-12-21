@@ -4,7 +4,6 @@ namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 
 use Bego\Component\Resultset;
 use Bego\Condition;
-use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Chat;
 use Musonza\LaravelDynamodbChat\Tests\TestCase;
 
@@ -24,7 +23,7 @@ class ConversationTest extends TestCase
         $conversation = $this->chat->conversation()
             ->setSubject($subject)
             ->setAttributes([
-                'isPrivate' => 1,
+                'IsPrivate' => 1,
                 'Description' => 'My description',
             ])
             ->create();
@@ -35,7 +34,7 @@ class ConversationTest extends TestCase
         );
 
         $this->assertEquals($subject, $response->first()->attribute('Subject'));
-        $this->assertEquals(1, $response->first()->attribute('isPrivate'));
+        $this->assertEquals(1, $response->first()->attribute('IsPrivate'));
         $this->assertEquals('My description', $response->first()->attribute('Description'));
         $this->assertEquals(1, $response->count(), 'One conversation created');
     }
@@ -61,7 +60,7 @@ class ConversationTest extends TestCase
 
         $this->assertEquals('Group Chat One', $conversation->getSubject());
 
-        $conversationPartitionKey = array_values($conversation->getPartitionKey())[0];
+        $conversationPartitionKey = $conversation->getPK();
         $response = $this->query(
             $conversationPartitionKey,
             Condition::attribute('SK')->beginsWith('PARTICIPANT#')
@@ -72,7 +71,7 @@ class ConversationTest extends TestCase
         $items = [];
 
         foreach ($response->toArrayOfObjects() as $object) {
-            $items[Str::replace('PARTICIPANT#', '', $object->SK)] = $object;
+            $items[$object->attribute('ParticipantId')] = $object;
         }
 
         $jane = $items['jane'];
@@ -158,9 +157,9 @@ class ConversationTest extends TestCase
             $items[$item->GSI2SK] = $item;
         }
 
-        $this->assertEquals(1, $items['PARTICIPANT#ronaldo']->Read, 'Sender message marked as read');
-        $this->assertEquals(0, $items['PARTICIPANT#messi']->Read);
-        $this->assertEquals(0, $items['PARTICIPANT#aguero']->Read);
+        $this->assertEquals(1, $items['PARTICIPANT#ronaldo']->attribute('Read'), 'Sender message marked as read');
+        $this->assertEquals(0, $items['PARTICIPANT#messi']->attribute('Read'));
+        $this->assertEquals(0, $items['PARTICIPANT#aguero']->attribute('Read'));
     }
 
     public function testWithParticipantsExceedingBatchLimit()

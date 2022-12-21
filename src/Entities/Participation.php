@@ -54,6 +54,7 @@ class Participation extends Entity
             ...$this->getPrimaryKey(),
             'Type' => ['S' => self::ENTITY_TYPE],
             ...$this->getGSI1(),
+            'ParticipantId' => ['S' => $this->getParticipantIdentifier()],
             'CreatedAt' => ['S' => now()->toISOString()],
         ];
     }
