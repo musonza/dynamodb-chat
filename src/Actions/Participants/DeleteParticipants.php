@@ -1,7 +1,8 @@
 <?php
 
-namespace Musonza\LaravelDynamodbChat\Actions;
+namespace Musonza\LaravelDynamodbChat\Actions\Participants;
 
+use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;

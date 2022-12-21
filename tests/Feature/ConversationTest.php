@@ -2,6 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 
+use Bego\Component\Resultset;
 use Bego\Condition;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Chat;
@@ -29,6 +30,15 @@ class ConversationTest extends TestCase
 
         $this->assertEquals($subject, $response->first()->attribute('Subject'));
         $this->assertEquals(1, $response->count(), 'One conversation created');
+    }
+
+    public function testGetConversationById()
+    {
+        $conversation = $this->chat->createConversation('Hello');
+        $this->assertNull($conversation->getResultSet());
+
+        $conversation = $this->chat->getConversationById($conversation->getConversationId());
+        $this->assertInstanceOf(Resultset::class, $conversation->getResultSet());
     }
 
     public function testCreateConversationWithParticipants()
@@ -157,7 +167,6 @@ class ConversationTest extends TestCase
     {
         $subject = 'Conversation 1';
         $conversation = $this->chat->createConversation($subject);
-        $conversationPartitionKey = array_values($conversation->getPartitionKey())[0];
 
         $newSubject = 'Conversation updated';
         $this->chat->updateConversation($conversation->getConversationId(), [
@@ -165,8 +174,8 @@ class ConversationTest extends TestCase
         ]);
 
         $response = $this->query(
-            $conversationPartitionKey,
-            Condition::attribute('SK')->eq($conversationPartitionKey)
+            $conversation->getPK(),
+            Condition::attribute('SK')->eq($conversation->getSK())
         );
 
         $this->assertEquals($newSubject, $response->first()->attribute('Subject'));

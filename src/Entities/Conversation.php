@@ -2,10 +2,11 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
+use Bego\Component\Resultset;
 use Illuminate\Support\Carbon;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
-class Conversation extends Entity
+class Conversation extends Entity implements Contract
 {
     const CONVERSATION_PK_PREFIX = 'CONVERSATION#%s';
 
@@ -17,16 +18,12 @@ class Conversation extends Entity
 
     protected Carbon $createdAt;
 
-    protected array $data = [];
+    protected ?Resultset $resultset = null;
 
-    public function __construct(
-        $conversationId = null,
-        Carbon $createdAt = null,
-        $data = []
-    ) {
+    public function __construct($conversationId = null, Carbon $createdAt = null)
+    {
         $this->createdAt = $createdAt ?? now();
         $this->conversationId = $conversationId ?? Helpers::generateKSUID($this->createdAt);
-//        $this->subject = $subject;
     }
 
     public function getConversationId(): string
@@ -70,8 +67,23 @@ class Conversation extends Entity
         ];
     }
 
-    public static function conversationFromItem()
+    public function getPK(): string
     {
+        return array_values($this->getPartitionKey())[0];
+    }
 
+    public function getSK(): string
+    {
+        return $this->getPK();
+    }
+
+    public function setResultSet(Resultset $resultset)
+    {
+        $this->resultset = $resultset;
+    }
+
+    public function getResultSet(): ?Resultset
+    {
+       return $this->resultset;
     }
 }

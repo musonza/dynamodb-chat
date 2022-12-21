@@ -1,6 +1,6 @@
 <?php
 
-namespace Musonza\LaravelDynamodbChat\Actions;
+namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;

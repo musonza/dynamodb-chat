@@ -16,10 +16,6 @@ class Entity extends Model
 
     protected $_sort = 'SK';
 
-//    public abstract function getPrimaryKey(): array;
-
-//    public abstract function toItem(): array;
-
     public function toArray(): array
     {
         $item = $this->toItem();

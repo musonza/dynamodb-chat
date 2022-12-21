@@ -1,13 +1,12 @@
 <?php
 
-namespace Musonza\LaravelDynamodbChat\Actions;
+namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
-use Aws\DynamoDb\DynamoDbClient;
-use Aws\DynamoDb\Marshaler;
 use Bego\Condition;
 use Bego\Database;
 use Bego\Exception;
 use Illuminate\Support\Str;
+use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Message;

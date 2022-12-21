@@ -15,14 +15,4 @@ class ConversationCommand extends Command
         // Get conversation by ID
         // Delete conversation by ID
     }
-
-    public function createConversation()
-    {
-        $subject = 'Group 1';
-        /** @var Conversation $conversation */
-        $conversation = app(Conversation::class);
-        $conversation->setSubject($subject);
-
-        dump($conversation->toItem());
-    }
 }

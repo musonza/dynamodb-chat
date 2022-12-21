@@ -1,8 +1,9 @@
 <?php
 
-namespace Musonza\LaravelDynamodbChat\Actions;
+namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 
 use Bego\Condition;
+use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
 class UpdateConversation extends Action

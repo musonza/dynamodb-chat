@@ -2,11 +2,12 @@
 
 namespace Musonza\LaravelDynamodbChat;
 
-use Musonza\LaravelDynamodbChat\Actions\AddParticipants;
-use Musonza\LaravelDynamodbChat\Actions\CreateConversation;
-use Musonza\LaravelDynamodbChat\Actions\CreateMessage;
-use Musonza\LaravelDynamodbChat\Actions\DeleteParticipants;
-use Musonza\LaravelDynamodbChat\Actions\UpdateConversation;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\CreateConversation;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\GetConversation;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\UpdateConversation;
+use Musonza\LaravelDynamodbChat\Actions\Messages\CreateMessage;
+use Musonza\LaravelDynamodbChat\Actions\Participants\AddParticipants;
+use Musonza\LaravelDynamodbChat\Actions\Participants\DeleteParticipants;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
 class Chat
@@ -25,6 +26,14 @@ class Chat
         if (!empty($participantIds)) {
             $this->addParticipants($conversation->getConversationId(), $participantIds);
         }
+
+        return $conversation;
+    }
+
+    public function getConversationById(string $conversationId): Conversation
+    {
+        $conversation = new Conversation($conversationId);
+        (new GetConversation($conversation))->execute();
 
         return $conversation;
     }
