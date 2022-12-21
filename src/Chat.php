@@ -6,6 +6,7 @@ use Musonza\LaravelDynamodbChat\Actions\AddParticipants;
 use Musonza\LaravelDynamodbChat\Actions\CreateConversation;
 use Musonza\LaravelDynamodbChat\Actions\CreateMessage;
 use Musonza\LaravelDynamodbChat\Actions\DeleteParticipants;
+use Musonza\LaravelDynamodbChat\Actions\UpdateConversation;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
 class Chat
@@ -26,6 +27,12 @@ class Chat
         }
 
         return $conversation;
+    }
+
+    public function updateConversation(string $conversationId, array $attributes)
+    {
+        $conversation = new Conversation($conversationId);
+        (new UpdateConversation($conversation, $attributes))->execute();
     }
 
     public function addParticipants(string $conversationId, array $participantIds): void

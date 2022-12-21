@@ -86,7 +86,7 @@ class ConversationTest extends TestCase
     {
         $participants = [];
 
-        for($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $participants[] = "user{$i}";
         }
 
@@ -121,7 +121,7 @@ class ConversationTest extends TestCase
 
         $items = [];
 
-        foreach($response->toArrayOfObjects() as $item) {
+        foreach ($response->toArrayOfObjects() as $item) {
             $items[$item->GSI2SK] = $item;
         }
 
@@ -134,7 +134,7 @@ class ConversationTest extends TestCase
     {
         $participants = [];
 
-        for($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $participants[] = "user{$i}";
         }
 
@@ -151,5 +151,24 @@ class ConversationTest extends TestCase
         );
 
         $this->assertEquals(50, $response->count(), 'Each participant receives a message');
+    }
+
+    public function testUpdateConversation()
+    {
+        $subject = 'Conversation 1';
+        $conversation = $this->chat->createConversation($subject);
+        $conversationPartitionKey = array_values($conversation->getPartitionKey())[0];
+
+        $newSubject = 'Conversation updated';
+        $this->chat->updateConversation($conversation->getConversationId(), [
+            'Subject' => $newSubject
+        ]);
+
+        $response = $this->query(
+            $conversationPartitionKey,
+            Condition::attribute('SK')->eq($conversationPartitionKey)
+        );
+
+        $this->assertEquals($newSubject, $response->first()->attribute('Subject'));
     }
 }

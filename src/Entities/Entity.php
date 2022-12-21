@@ -14,6 +14,8 @@ class Entity extends Model
 
     protected $_partition = 'PK';
 
+    protected $_sort = 'SK';
+
 //    public abstract function getPrimaryKey(): array;
 
 //    public abstract function toItem(): array;

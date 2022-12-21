@@ -3,27 +3,46 @@
 namespace Musonza\LaravelDynamodbChat\Tests;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Bego\Condition;
 use Bego\Database;
-use Musonza\LaravelDynamodbChat\ChatServiceProvider;
+use Exception;
 use Illuminate\Foundation\Application;
+use Musonza\LaravelDynamodbChat\ChatServiceProvider;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Console\InstallCommand;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
+use Musonza\LaravelDynamodbChat\Facades\Chat;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected Database $database;
 
+    public function tearDown(): void
+    {
+        $this->checkEnvironment();
+
+        /** @var DynamoDbClient $client */
+        $client = app(DynamoDbClient::class);
+        $client->deleteTable([
+            'TableName' => ConfigurationManager::getTableName(),
+        ]);
+        parent::tearDown();
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
-        if (!app()->environment('testing')) {
-            throw new \Exception("You can only run these tests in a testing environment");
-        }
+
+        $this->checkEnvironment();
 
         $this->database = app(Database::class);
         $this->createTable();
+    }
+
+    private function checkEnvironment()
+    {
+        if (!app()->environment('testing')) {
+            throw new Exception("You can only run these tests in a testing environment");
+        }
     }
 
     protected function createTable()
@@ -37,6 +56,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         return [
             ChatServiceProvider::class,
+        ];
+    }
+
+    protected function getPackageAliases($app)
+    {
+        return [
+            'Chat' => Chat::class,
         ];
     }
 
@@ -54,16 +80,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('musonza_dynamodb_chat.endpoint', 'http://localhost:8000');
         $app['config']->set('musonza_dynamodb_chat.region', 'us-east-1');
         $app['config']->set('musonza_dynamondb_chat.batch_limit', 25);
-    }
-
-    public function tearDown(): void
-    {
-        /** @var DynamoDbClient $client */
-        $client = app(DynamoDbClient::class);
-        $client->deleteTable([
-            'TableName' => ConfigurationManager::getTableName(),
-        ]);
-        parent::tearDown();
     }
 
     protected function query($key, $condition = null)
