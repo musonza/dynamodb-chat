@@ -14,4 +14,9 @@ class ConfigurationManager
     {
         return config('musonza_dynamodb_chat.endpoint');
     }
+
+    public static function getBatchLimit()
+    {
+        return config('musonza_dynamondb_chat.batch_limit');
+    }
 }

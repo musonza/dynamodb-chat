@@ -2,20 +2,40 @@
 
 namespace Musonza\LaravelDynamodbChat;
 
+use Musonza\LaravelDynamodbChat\Actions\AddParticipants;
+use Musonza\LaravelDynamodbChat\Actions\CreateConversation;
+use Musonza\LaravelDynamodbChat\Actions\CreateMessage;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
-use Musonza\LaravelDynamodbChat\Repositories\ConversationParticipationRepository;
-use Musonza\LaravelDynamodbChat\Repositories\ConversationRepository;
 
 class Chat
 {
-    public function createConversation(): ConversationRepository
+    protected CreateConversation $createConversationAction;
+
+    public function __construct(CreateConversation $createConversation)
     {
-        return app(ConversationRepository::class);
+        $this->createConversationAction = $createConversation;
     }
 
-    public function addParticipants(string $conversationId, array $participants)
+    public function createConversation(string $subject,  array $participantIds = []): Conversation
+    {
+        $conversation = (new CreateConversation())->execute($subject);
+
+        if (!empty($participantIds)) {
+            $this->addParticipants($conversation->getConversationId(), $participantIds);
+        }
+
+        return $conversation;
+    }
+
+    public function addParticipants(string $conversationId, array $participantIds): void
     {
         $conversation = new Conversation($conversationId);
-        (new ConversationParticipationRepository($conversation))->addParticipants($participants);
+        (new AddParticipants($conversation, $participantIds))->execute();
+    }
+
+    public function messaging(string $conversation): CreateMessage
+    {
+        $conversation = new Conversation($conversation);
+        return new CreateMessage($conversation);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
-class Participation extends AbstractEntity
+class Participation extends Entity
 {
     const PARTICIPATION_PK_PREFIX = 'PARTICIPANT#%s';
     const ENTITY_TYPE = 'PARTICIPATION';
@@ -23,16 +23,6 @@ class Participation extends AbstractEntity
         ];
     }
 
-    public function getPartitionKey(): array
-    {
-        return [
-            'S' => sprintf(
-                Conversation::CONVERSATION_PK_PREFIX,
-                $this->conversation->getConversationId()
-            )
-        ];
-    }
-
     public function getSortKey(): array
     {
         return [
@@ -40,7 +30,12 @@ class Participation extends AbstractEntity
         ];
     }
 
-    public function getGSI1()
+    public function getPartitionKey(): array
+    {
+        return $this->conversation->getPartitionKey();
+    }
+
+    public function getGSI1(): array
     {
         return [
             'GSI1PK' => $this->getSortKey(),

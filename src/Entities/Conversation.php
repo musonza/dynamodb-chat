@@ -5,13 +5,18 @@ namespace Musonza\LaravelDynamodbChat\Entities;
 use Illuminate\Support\Carbon;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
-class Conversation extends AbstractEntity
+class Conversation extends Entity
 {
     const CONVERSATION_PK_PREFIX = 'CONVERSATION#%s';
+
     const ENTITY_TYPE = 'CONVERSATION';
+
     protected string $conversationId;
-    protected string $subject = 'ConversationRepository';
+
+    protected string $subject = 'test';
+
     protected Carbon $createdAt;
+
     protected array $data = [];
 
     public function __construct(
@@ -19,11 +24,9 @@ class Conversation extends AbstractEntity
         Carbon $createdAt = null,
         $data = []
     ) {
-        // isDirectMessage
-        // isPrivate
-
         $this->createdAt = $createdAt ?? now();
         $this->conversationId = $conversationId ?? Helpers::generateKSUID($this->createdAt);
+//        $this->subject = $subject;
     }
 
     public function getConversationId(): string
@@ -41,6 +44,7 @@ class Conversation extends AbstractEntity
     {
         return $this->subject;
     }
+
     public function getPrimaryKey(): array
     {
         return [
@@ -64,5 +68,10 @@ class Conversation extends AbstractEntity
             'Subject' => ['S' => $this->getSubject()],
             'CreatedAt' => ['S' => $this->createdAt->toISOString()],
         ];
+    }
+
+    public static function conversationFromItem()
+    {
+
     }
 }

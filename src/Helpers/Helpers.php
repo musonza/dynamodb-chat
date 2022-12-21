@@ -7,7 +7,7 @@ use Tuupola\Ksuid;
 use Tuupola\KsuidFactory;
 class Helpers
 {
-    public static function generateKSUID(Carbon $date = null): string
+    public static function generateKSUID(Carbon $date): string
     {
         $ksuid = KsuidFactory::fromTimestamp($date->getTimestamp());
 

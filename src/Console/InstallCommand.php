@@ -14,7 +14,7 @@ class InstallCommand extends Command
         $client = new DynamoDbClient([
             'version' => 'latest',
             'region'  => 'us-east-1',
-//            'endpoint' => 'http://localhost:8000'
+            'endpoint' => 'http://localhost:8000'
         ]);
 
         $client->createTable([
@@ -34,6 +34,14 @@ class InstallCommand extends Command
                 ],
                 [
                     'AttributeName' => 'GSI1SK',
+                    'AttributeType' => 'S'
+                ],
+                [
+                    'AttributeName' => 'GSI2PK',
+                    'AttributeType' => 'S'
+                ],
+                [
+                    'AttributeName' => 'GSI2SK',
                     'AttributeType' => 'S'
                 ]
             ],
@@ -61,6 +69,26 @@ class InstallCommand extends Command
                         ],
                         [
                             'AttributeName' => 'GSI1SK',
+                            'KeyType'       => 'RANGE'
+                        ]
+                    ],
+                    'Projection' => [
+                        'ProjectionType' => 'ALL'
+                    ],
+                    'ProvisionedThroughput' => [
+                        'ReadCapacityUnits'  => 5,
+                        'WriteCapacityUnits' => 5
+                    ],
+                ],
+                [
+                    'IndexName' => 'GSI2',
+                    'KeySchema' => [
+                        [
+                            'AttributeName' => 'GSI2PK',
+                            'KeyType'       => 'HASH'
+                        ],
+                        [
+                            'AttributeName' => 'GSI2SK',
                             'KeyType'       => 'RANGE'
                         ]
                     ],
