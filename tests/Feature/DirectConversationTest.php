@@ -13,6 +13,7 @@ class DirectConversationTest extends TestCase
     public function testDirectConversationNotDuplicated()
     {
         $this->expectException(ConversationExistsException::class);
+
         $this->chat->conversation()
             ->setSubject('Conversation')
             ->setParticipants(['john', 'jane'])
@@ -28,6 +29,7 @@ class DirectConversationTest extends TestCase
     public function testDirectConversationRequiresTwoParticipants()
     {
         $this->expectException(InvalidConversationParticipants::class);
+
         $this->expectExceptionMessage(InvalidConversationParticipants::REQUIRED_PARTICIPANT_COUNT);
         $this->chat->conversation()
             ->setSubject('Conversation')
@@ -39,6 +41,7 @@ class DirectConversationTest extends TestCase
     public function testGetNonExistentDirectConversationDetails()
     {
         $this->expectException(ConversationNotFoundException::class);
+
         $this->chat->conversation()
             ->getDirectConversation('jane', 'john');
     }
