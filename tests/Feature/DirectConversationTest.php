@@ -29,8 +29,8 @@ class DirectConversationTest extends TestCase
     public function testDirectConversationRequiresTwoParticipants()
     {
         $this->expectException(InvalidConversationParticipants::class);
-
         $this->expectExceptionMessage(InvalidConversationParticipants::REQUIRED_PARTICIPANT_COUNT);
+
         $this->chat->conversation()
             ->setSubject('Conversation')
             ->setParticipants(['john', 'jane', 'doe'])
