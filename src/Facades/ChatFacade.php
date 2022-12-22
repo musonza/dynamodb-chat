@@ -3,11 +3,12 @@
 namespace Musonza\LaravelDynamodbChat\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Musonza\LaravelDynamodbChat\Chat;
 
-class Chat extends Facade
+class ChatFacade extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \Musonza\LaravelDynamodbChat\Chat::class;
+        return Chat::class;
     }
 }

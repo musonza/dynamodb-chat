@@ -46,16 +46,14 @@ class CreateMessage extends Action
      */
     public function execute()
     {
-        /** @var Database $db */
-        $db = app(Database::class);
         $message = (new Message($this->participation, $this->text, true))
             ->setRead(1);
 
-        $messagesTable = $db->table($message);
-        $messagesTable->put($message->toArray());
+        $table = $this->getTable();
+        $table->put($message->toArray());
 
         // get all participants
-        $participantsQuery = $messagesTable->query()
+        $participantsQuery = $table->query()
             ->key($message->toArray()['PK'])
             ->condition(Condition::attribute('SK')->beginsWith('PARTICIPANT#'))
             ->fetch();
@@ -66,19 +64,20 @@ class CreateMessage extends Action
 
         do {
             if ($batchCount == ConfigurationManager::getBatchLimit()) {
-                $messagesTable->putBatch($batchItems);
+                $table->putBatch($batchItems);
                 $batchItems = [];
                 $batchCount = 0;
             }
 
             $item = $participantsQuery->item($index);
-            $participation = new Participation($this->conversation, $item->attribute('ParticipantId'));
+            $recipient = new Participation($this->conversation, $item->attribute('ParticipantId'));
 
             // Sender already has an entry for the message
-            if (($this->participation->getParticipantIdentifier() !== $participation->getParticipantIdentifier())) {
-                $m = new Message($participation, $this->text);
-                $m->setSender($this->participation, $participation);
-                $batchItems[] = $m->toArray();
+            if (($this->participation->getParticipantIdentifier() !== $recipient->getParticipantIdentifier())) {
+                $batchItems[] = (new Message($recipient, $this->text))
+                    ->setSender($this->participation, $recipient)
+                    ->toArray();
+
                 $batchCount++;
             }
 
@@ -86,7 +85,7 @@ class CreateMessage extends Action
         } while($index < $participantsQuery->count());
 
         if (!empty($batchItems)) {
-            $messagesTable->putBatch($batchItems);
+            $table->putBatch($batchItems);
         }
     }
 }

@@ -5,19 +5,14 @@ namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 use Bego\Component\Resultset;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Chat;
+use Musonza\LaravelDynamodbChat\Entities\Conversation;
+use Musonza\LaravelDynamodbChat\Exceptions\ConversationExistsException;
+use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
 use Musonza\LaravelDynamodbChat\Tests\TestCase;
 
 class ConversationTest extends TestCase
 {
-    protected Chat $chat;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->chat = app(Chat::class);
-    }
-
-    public function testTheCreateConversation()
+    public function testCreateConversation()
     {
         $subject = 'Conversation 1';
         $conversation = $this->chat->conversation()
@@ -54,11 +49,11 @@ class ConversationTest extends TestCase
     public function testCreateConversationWithParticipants()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group Chat One')
+            ->setSubject('Group ChatFacade One')
             ->setParticipants(['jane', 'john'])
             ->create();
 
-        $this->assertEquals('Group Chat One', $conversation->getSubject());
+        $this->assertEquals('Group ChatFacade One', $conversation->getSubject());
 
         $conversationPartitionKey = $conversation->getPK();
         $response = $this->query(

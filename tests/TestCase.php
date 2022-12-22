@@ -6,15 +6,17 @@ use Aws\DynamoDb\DynamoDbClient;
 use Bego\Database;
 use Exception;
 use Illuminate\Foundation\Application;
+use Musonza\LaravelDynamodbChat\Chat;
 use Musonza\LaravelDynamodbChat\ChatServiceProvider;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Console\InstallCommand;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
-use Musonza\LaravelDynamodbChat\Facades\Chat;
+use Musonza\LaravelDynamodbChat\Facades\ChatFacade;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected Database $database;
+    protected Chat $chat;
 
     public function tearDown(): void
     {
@@ -35,6 +37,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->checkEnvironment();
 
         $this->database = app(Database::class);
+        $this->chat = app(Chat::class);
         $this->createTable();
     }
 
@@ -62,7 +65,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageAliases($app)
     {
         return [
-            'Chat' => Chat::class,
+            'Chat' => ChatFacade::class,
         ];
     }
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\CreateConversation;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\GetConversation;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\UpdateConversation;
+use Musonza\LaravelDynamodbChat\Exceptions\ConversationNotFoundException;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Conversation extends Entity implements Contract
@@ -40,10 +41,17 @@ class Conversation extends Entity implements Contract
      */
     protected bool $isPrivate = false;
 
+    protected bool $isDirect = false;
+
     public function __construct($conversationId = null, Carbon $createdAt = null)
     {
         $this->createdAt = $createdAt ?? now();
         $this->conversationId = $conversationId ?? Helpers::generateKSUID($this->createdAt);
+    }
+
+    public function setId(string $id)
+    {
+        $this->conversationId = $id;
     }
 
     public function getConversationId(): string
@@ -51,13 +59,24 @@ class Conversation extends Entity implements Contract
         return $this->conversationId;
     }
 
-    public function setSubject(string $subject): self
+    public function setSubject(string $subject): Conversation
     {
         $this->subject = $subject;
         return $this;
     }
 
-    public function makePrivate(bool $isPrivate): self
+    public function setIsDirect(bool $isDirect): Conversation
+    {
+        $this->isDirect = $isDirect;
+        return $this;
+    }
+
+    public function isDirect(): bool
+    {
+        return $this->isDirect;
+    }
+
+    public function makePrivate(bool $isPrivate): Conversation
     {
         $this->isPrivate = $isPrivate;
         return $this;
@@ -108,10 +127,15 @@ class Conversation extends Entity implements Contract
         $this->resultset = $resultset;
     }
 
-    public function setParticipants(array $participantIds): self
+    public function setParticipants(array $participantIds): Conversation
     {
         $this->participantIds = $participantIds;
         return $this;
+    }
+
+    public function getParticipantIds(): array
+    {
+        return $this->participantIds;
     }
 
     public function getResultSet(): ?Resultset
@@ -135,9 +159,28 @@ class Conversation extends Entity implements Contract
         return (new UpdateConversation($this))->execute();
     }
 
-    public function first(): self
+    public function first(): Conversation
     {
         (new GetConversation($this))->execute();
+        return $this;
+    }
+
+    /**
+     * Order of participant Ids doesn't matter
+     *
+     * @param string $participantOne
+     * @param string $participantTwo
+     * @return Conversation
+     */
+    public function getDirectConversation(string $participantOne, string $participantTwo): Conversation
+    {
+        $this->setId(Helpers::directConversationKey($participantOne, $participantTwo));
+        $this->first();
+
+        if ($this->getResultSet()->count() == 0) {
+            throw new ConversationNotFoundException($this);
+        }
+
         return $this;
     }
 }

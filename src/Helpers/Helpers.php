@@ -3,14 +3,17 @@
 namespace Musonza\LaravelDynamodbChat\Helpers;
 
 use Illuminate\Support\Carbon;
-use Tuupola\Ksuid;
 use Tuupola\KsuidFactory;
+
 class Helpers
 {
     public static function generateKSUID(Carbon $date): string
     {
-        $ksuid = KsuidFactory::fromTimestamp($date->getTimestamp());
+        return KsuidFactory::fromTimestamp($date->getTimestamp())->string();
+    }
 
-        return $ksuid->string();
+    public static function directConversationKey(string $id1, string $id2): string
+    {
+        return strcmp($id1, $id2) < 0 ? "DMP1#{$id1}DMP2#{$id2}" : "DMP1#{$id2}DMP2#{$id1}";
     }
 }
