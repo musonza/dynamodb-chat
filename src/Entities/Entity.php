@@ -3,6 +3,7 @@
 namespace Musonza\LaravelDynamodbChat\Entities;
 
 use Bego\Model;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 
@@ -23,7 +24,7 @@ class Entity extends Model
      */
     private array $attributes = [];
 
-    public function toArray(): array
+    public function toArray(array $only = []): array
     {
         $item = $this->toItem();
         $arr = [];
@@ -32,7 +33,13 @@ class Entity extends Model
             $arr[$key] = array_values($value)[0];
         }
 
-        return array_merge($arr, $this->attributes);
+        $arr = array_merge($arr, $this->attributes);
+
+        if (!empty($only)) {
+            return Arr::only($arr, $only);
+        }
+
+        return  $arr;
     }
 
     public function setAttributes(array $attributes): self

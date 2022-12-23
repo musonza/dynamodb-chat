@@ -2,6 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 
+use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
 use Bego\Component\Resultset;
 use Bego\Condition;
@@ -201,6 +202,51 @@ class ConversationTest extends TestCase
         $item = $this->marshaler->unmarshalItem($query->first()->attribute('Data'));
 
         $this->assertEquals($item, $data);
+    }
+
+    public function testDeleteMessage()
+    {
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
+        $message = $this->chat->messaging($conversation->getId())
+            ->message('jane', 'Hello')
+            ->send();
+
+        $this->chat->deleteMessage(
+            $conversation->getId(),
+            $message->getId(),
+            'jane'
+        );
+
+        $query = $this->query(
+            $message->getPK(),
+            Condition::attribute('SK')->eq($message->getSK())
+        );
+
+        $this->assertEquals(0, $query->count());
+    }
+
+    public function testCanOnlyDeleteOwnMessage()
+    {
+        $this->expectException(DynamoDbException::class);
+
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
+        $messageOwnedByJane = $this->chat->messaging($conversation->getId())
+            ->message('jane', 'Hello')
+            ->send();
+
+        $this->chat->deleteMessage(
+            $conversation->getId(),
+            $messageOwnedByJane->getId(),
+            'john'
+        );
     }
 
     public function testWithParticipantsExceedingBatchLimit()

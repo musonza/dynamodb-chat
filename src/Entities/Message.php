@@ -32,6 +32,11 @@ class Message extends Entity
         }
     }
 
+    public static function from(Participation $participant, string $messageId): Message
+    {
+        return (new static($participant, ''))->setId($messageId);
+    }
+
     public function setSender(Participation $participation, Participation $recipient): self
     {
         $gsi2 = [
@@ -74,20 +79,11 @@ class Message extends Entity
         return array_values($this->getSortKey())[0];
     }
 
-    /**
-     * Participant to display message to
-     * @return array
-     */
     public function getGSI2(): array
     {
         return $this->gsi2;
     }
 
-    /**
-     * Message sender
-     * @param array $gsi
-     * @return void
-     */
     public function setGSI2(array $gsi)
     {
         $this->gsi2 = $gsi;
@@ -129,6 +125,12 @@ class Message extends Entity
     public function setData(array $data)
     {
         $this->data = $data;
+        return $this;
+    }
+
+    public function setId(string $messageId): self
+    {
+        $this->messageId = $messageId;
         return $this;
     }
 }
