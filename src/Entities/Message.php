@@ -1,6 +1,7 @@
 <?php
 
 namespace Musonza\LaravelDynamodbChat\Entities;
+use Aws\DynamoDb\Marshaler;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Message extends Entity
@@ -10,9 +11,11 @@ class Message extends Entity
 
     protected Participation $participation;
     protected string $message;
+    protected array $data = [];
     protected bool $isSender;
     protected int $read = 0;
     protected array $gsi2 = [];
+    protected string $messageId = '';
 
     public function __construct(Participation $participation, string $message, bool $isSender = false)
     {
@@ -22,6 +25,10 @@ class Message extends Entity
 
         if ($isSender) {
             $this->setSender($participation, $participation);
+        }
+
+        if (!$this->messageId) {
+            $this->messageId = Helpers::generateKSUID(now());
         }
     }
 
@@ -53,23 +60,42 @@ class Message extends Entity
     public function getSortKey(): array
     {
         return [
-            'S' => sprintf(self::MESSAGE_KEY_PREFIX,  $this->getMessageId())
+            'S' => sprintf(self::MESSAGE_KEY_PREFIX,  $this->getId())
         ];
     }
 
+    public function getPK(): string
+    {
+        return array_values($this->getPartitionKey())[0];
+    }
+
+    public function getSK(): string
+    {
+        return array_values($this->getSortKey())[0];
+    }
+
+    /**
+     * Participant to display message to
+     * @return array
+     */
     public function getGSI2(): array
     {
         return $this->gsi2;
     }
 
+    /**
+     * Message sender
+     * @param array $gsi
+     * @return void
+     */
     public function setGSI2(array $gsi)
     {
         $this->gsi2 = $gsi;
     }
 
-    public function getMessageId(): string
+    public function getId(): string
     {
-        return Helpers::generateKSUID(now());
+        return $this->messageId;
     }
 
     public function getMessage(): string
@@ -85,13 +111,24 @@ class Message extends Entity
 
     public function toItem(): array
     {
+        $marshaler = new Marshaler();
+        $data = empty($this->data) ? [] : $marshaler->marshalJson(json_encode($this->data));
+
         return[
             ...$this->getPrimaryKey(),
             'Type' => ['S' => self::ENTITY_TYPE],
             ...$this->getGSI2(),
             'CreatedAt' => ['S' => now()->toISOString()],
             'Message' => ['S' => $this->getMessage()],
+            'Data' => ['S' => $data],
             'Read' => ['N' => $this->read],
+            'IsSender' => ['N' => $this->isSender],
         ];
+    }
+
+    public function setData(array $data)
+    {
+        $this->data = $data;
+        return $this;
     }
 }

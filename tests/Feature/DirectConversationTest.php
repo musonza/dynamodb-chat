@@ -49,7 +49,7 @@ class DirectConversationTest extends TestCase
             ->setIsDirect(true)
             ->create();
 
-        $this->chat->deleteParticipants($conversation->getConversationId(), ['jane']);
+        $this->chat->deleteParticipants($conversation->getId(), ['jane']);
     }
 
     public function testPreventsAddingParticipantsToDirectConversation()
@@ -63,7 +63,7 @@ class DirectConversationTest extends TestCase
             ->setIsDirect(true)
             ->create();
 
-        $this->chat->addParticipants($conversation->getConversationId(), ['doe']);
+        $this->chat->addParticipants($conversation->getId(), ['doe']);
     }
 
     public function testGetNonExistentDirectConversationDetails()

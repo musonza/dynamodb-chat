@@ -3,6 +3,7 @@
 namespace Musonza\LaravelDynamodbChat\Tests;
 
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\Marshaler;
 use Bego\Database;
 use Exception;
 use Illuminate\Foundation\Application;
@@ -17,17 +18,18 @@ class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected Database $database;
     protected Chat $chat;
+    protected Marshaler $marshaler;
 
     public function tearDown(): void
     {
         $this->checkEnvironment();
 
-        /** @var DynamoDbClient $client */
-        $client = app(DynamoDbClient::class);
-        $client->deleteTable([
-            'TableName' => ConfigurationManager::getTableName(),
-        ]);
-        parent::tearDown();
+//        /** @var DynamoDbClient $client */
+//        $client = app(DynamoDbClient::class);
+//        $client->deleteTable([
+//            'TableName' => ConfigurationManager::getTableName(),
+//        ]);
+//        parent::tearDown();
     }
 
     protected function setUp(): void
@@ -38,7 +40,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->database = app(Database::class);
         $this->chat = app(Chat::class);
-        $this->createTable();
+        $this->marshaler = new Marshaler();
+//        $this->createTable();
     }
 
     private function checkEnvironment()

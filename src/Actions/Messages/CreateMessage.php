@@ -18,35 +18,33 @@ class CreateMessage extends Action
     protected Conversation $conversation;
     protected Participation $participation;
     protected string $text = '';
+    protected array $data = [];
 
     public function __construct(Conversation $conversation)
     {
         $this->conversation = $conversation;
     }
 
-    public function fromParticipant($participant): self
+    public function message(string $participant, string $text, array $data = []): self
     {
         $this->participation = new Participation($this->conversation, $participant);
-        return $this;
-    }
-
-    public function message(string $text): self
-    {
         $this->text = $text;
+        $this->data = $data;
         return $this;
     }
 
-    public function send()
+    public function send(): Message
     {
-        $this->execute();
+        return $this->execute();
     }
 
     /**
      * @throws Exception
      */
-    public function execute()
+    public function execute(): Message
     {
         $message = (new Message($this->participation, $this->text, true))
+            ->setData($this->data)
             ->setRead(1);
 
         $table = $this->getTable();
@@ -76,6 +74,7 @@ class CreateMessage extends Action
             if (($this->participation->getParticipantIdentifier() !== $recipient->getParticipantIdentifier())) {
                 $batchItems[] = (new Message($recipient, $this->text))
                     ->setSender($this->participation, $recipient)
+                    ->setData($this->data)
                     ->toArray();
 
                 $batchCount++;
@@ -87,5 +86,7 @@ class CreateMessage extends Action
         if (!empty($batchItems)) {
             $table->putBatch($batchItems);
         }
+
+        return $message;
     }
 }

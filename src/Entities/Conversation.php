@@ -56,7 +56,7 @@ class Conversation extends Entity implements Contract
         $this->conversationId = $id;
     }
 
-    public function getConversationId(): string
+    public function getId(): string
     {
         return $this->conversationId;
     }
@@ -100,14 +100,14 @@ class Conversation extends Entity implements Contract
     public function getPartitionKey(): array
     {
         return [
-            'S' => sprintf(self::CONVERSATION_PK_PREFIX,  $this->getConversationId())
+            'S' => sprintf(self::CONVERSATION_PK_PREFIX,  $this->getId())
         ];
     }
 
     public function getSortKey(): array
     {
         return [
-            'S' => sprintf(self::CONVERSATION_PK_PREFIX,  $this->getConversationId())
+            'S' => sprintf(self::CONVERSATION_PK_PREFIX,  $this->getId())
         ];
     }
 
@@ -158,7 +158,7 @@ class Conversation extends Entity implements Contract
         $conversation = (new CreateConversation($this))->execute();
 
         if (!empty($this->participantIds)) {
-            Chat::addParticipants($conversation->getConversationId(), $this->participantIds);
+            Chat::addParticipants($conversation->getId(), $this->participantIds);
         }
 
         return $conversation;

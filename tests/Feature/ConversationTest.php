@@ -2,6 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 
+use Aws\DynamoDb\Marshaler;
 use Bego\Component\Resultset;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Chat;
@@ -42,7 +43,7 @@ class ConversationTest extends TestCase
 
         $this->assertNull($conversation->getResultSet());
 
-        $conversation = $this->chat->getConversationById($conversation->getConversationId());
+        $conversation = $this->chat->getConversationById($conversation->getId());
         $this->assertInstanceOf(Resultset::class, $conversation->getResultSet());
     }
 
@@ -82,7 +83,7 @@ class ConversationTest extends TestCase
         $this->assertEquals('PARTICIPANT#john', $john->attribute('SK'));
         $this->assertEquals('PARTICIPATION', $john->attribute('Type'));
 
-        $c = $this->chat->getConversationById($conversation->getConversationId());
+        $c = $this->chat->getConversationById($conversation->getId());
         $this->assertEquals(
             2,
             $c->getResultSet()->first()->attribute('ParticipantCount')
@@ -95,7 +96,7 @@ class ConversationTest extends TestCase
             ->setSubject('Conversation')
             ->create();
 
-        $this->chat->addParticipants($conversation->getConversationId(), [
+        $this->chat->addParticipants($conversation->getId(), [
             'james',
             'jane',
             'john'
@@ -122,7 +123,7 @@ class ConversationTest extends TestCase
             ->setParticipants($participants)
             ->create();
 
-        $this->chat->deleteParticipants($conversation->getConversationId(), ['user0', 'user1']);
+        $this->chat->deleteParticipants($conversation->getId(), ['user0', 'user1']);
         $response = $this->query(
             $conversation->getPK(),
             Condition::attribute('SK')->beginsWith('PARTICIPANT#')
@@ -130,7 +131,7 @@ class ConversationTest extends TestCase
 
         $this->assertEquals(8, $response->count());
 
-        $c = $this->chat->getConversationById($conversation->getConversationId());
+        $c = $this->chat->getConversationById($conversation->getId());
         $this->assertEquals(
             8,
             $c->getResultSet()->first()->attribute('ParticipantCount')
@@ -144,11 +145,10 @@ class ConversationTest extends TestCase
             ->setParticipants(['messi', 'ronaldo', 'aguero'])
             ->create();
 
-        $conversationId = $conversation->getConversationId();
+        $conversationId = $conversation->getId();
 
         $this->chat->messaging($conversationId)
-            ->fromParticipant('ronaldo')
-            ->message('Congratulations you are the G.O.A.T')
+            ->message('ronaldo', 'Congratulations you are the G.O.A.T')
             ->send();
 
         $response = $this->query(
@@ -169,6 +169,40 @@ class ConversationTest extends TestCase
         $this->assertEquals(0, $items['PARTICIPANT#aguero']->attribute('Read'));
     }
 
+    public function testSendMessageWithAdditionalDetails()
+    {
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
+        $data = [
+            'images' => [
+                [
+                    'file_name' => 'post_image.jpg',
+                    'file_url' => 'http://example.com/post_img.jpg',
+                ],
+                [
+                    'file_name' => 'post_image2.jpg',
+                    'file_url' => 'http://example.com/post_img2.jpg',
+                ],
+            ]
+        ];
+
+        $message = $this->chat->messaging($conversation->getId())
+            ->message('jane', 'Hello', $data)
+            ->send();
+
+        $query = $this->query(
+            $message->getPK(),
+            Condition::attribute('SK')->eq($message->getSK())
+        );
+
+        $item = $this->marshaler->unmarshalItem($query->first()->attribute('Data'));
+
+        $this->assertEquals($item, $data);
+    }
+
     public function testWithParticipantsExceedingBatchLimit()
     {
         $participants = [];
@@ -182,9 +216,8 @@ class ConversationTest extends TestCase
             ->setParticipants($participants)
             ->create();
 
-        $this->chat->messaging($conversation->getConversationId())
-            ->fromParticipant('user10')
-            ->message('Hello')
+        $this->chat->messaging($conversation->getId())
+            ->message('user10', 'Hello')
             ->send();
 
         $response = $this->query(
@@ -202,7 +235,7 @@ class ConversationTest extends TestCase
             ->setSubject($subject)
             ->create();
 
-        $conversationId = $conversation->getConversationId();
+        $conversationId = $conversation->getId();
         $newSubject = 'Conversation updated';
         $description = 'This is a description.';
 
@@ -224,3 +257,12 @@ class ConversationTest extends TestCase
         $this->assertEquals($description, $response->first()->attribute('Description'));
     }
 }
+
+//        for ($i = 0; $i < 6; $i++) {
+//            $sender = $i%2 ? 'jane' : 'john';
+//            $this->chat->messaging($conversation->getId())
+//                ->message($sender, 'Hello' . $i)
+//                ->send();
+//        }
+
+//        dd($conversation->getResultSet()->first());
