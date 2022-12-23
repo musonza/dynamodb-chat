@@ -30,7 +30,7 @@ class AddParticipants extends Action
             ->getResultSet()
             ->first();
 
-        if($item->attribute('ParticipantCount')) {
+        if ($item->attribute('ParticipantCount')) {
             $isDirect = Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
             if ($isDirect) {
                 throw new InvalidConversationParticipants(

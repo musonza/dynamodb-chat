@@ -38,20 +38,20 @@ class DirectConversationTest extends TestCase
             ->create();
     }
 
-//    public function testPreventsRemovingParticipantsFromDirectConversation()
-//    {
-//        $this->expectException(InvalidConversationParticipants::class);
-//        $this->expectExceptionMessage(InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE);
-//
-//        $conversation = $this->chat->conversation()
-//            ->setSubject('Conversation')
-//            ->setParticipants(['john', 'jane'])
-//            ->setIsDirect(true)
-//            ->create();
-//
-//        $this->chat->deleteParticipants($conversation->getConversationId(), ['jane']);
-//    }
-//
+    public function testPreventsRemovingParticipantsFromDirectConversation()
+    {
+        $this->expectException(InvalidConversationParticipants::class);
+        $this->expectExceptionMessage(InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE);
+
+        $conversation = $this->chat->conversation()
+            ->setSubject('Conversation')
+            ->setParticipants(['john', 'jane'])
+            ->setIsDirect(true)
+            ->create();
+
+        $this->chat->deleteParticipants($conversation->getConversationId(), ['jane']);
+    }
+
     public function testPreventsAddingParticipantsToDirectConversation()
     {
         $this->expectException(InvalidConversationParticipants::class);

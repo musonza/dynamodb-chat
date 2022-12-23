@@ -4,10 +4,12 @@ namespace Musonza\LaravelDynamodbChat\Actions\Participants;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result;
+use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
+use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
 
 class DeleteParticipants extends Action
 {
@@ -22,6 +24,21 @@ class DeleteParticipants extends Action
 
     public function execute()
     {
+        $item = $this->conversation
+            ->firstOrFail()
+            ->getResultSet()
+            ->first();
+
+        if ($item->attribute('ParticipantCount')) {
+            $isDirect = Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
+            if ($isDirect) {
+                throw new InvalidConversationParticipants(
+                    $this->conversation,
+                    InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
+                );
+            }
+        }
+
         $batchItems = [];
         $batchItemsCount = 0;
 
