@@ -24,12 +24,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         $this->checkEnvironment();
 
-//        /** @var DynamoDbClient $client */
-//        $client = app(DynamoDbClient::class);
-//        $client->deleteTable([
-//            'TableName' => ConfigurationManager::getTableName(),
-//        ]);
-//        parent::tearDown();
+        /** @var DynamoDbClient $client */
+        $client = app(DynamoDbClient::class);
+        $client->deleteTable([
+            'TableName' => ConfigurationManager::getTableName(),
+        ]);
+        parent::tearDown();
     }
 
     protected function setUp(): void
@@ -41,7 +41,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->database = app(Database::class);
         $this->chat = app(Chat::class);
         $this->marshaler = new Marshaler();
-//        $this->createTable();
+        $this->createTable();
     }
 
     private function checkEnvironment()
