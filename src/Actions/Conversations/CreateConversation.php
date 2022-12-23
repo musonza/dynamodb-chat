@@ -34,6 +34,8 @@ class CreateConversation extends Action
 
             $directConversationKey = Helpers::directConversationKey($participantIds[0], $participantIds[1]);
             $this->conversation->setId($directConversationKey);
+            $this->conversation->setType(Conversation::ENTITY_TYPE_DIRECT);
+
             $conditions = [
                 Condition::attribute('PK')->notEq($this->conversation->getPK())
             ];

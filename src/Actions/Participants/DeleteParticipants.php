@@ -2,6 +2,8 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions\Participants;
 
+use Aws\DynamoDb\DynamoDbClient;
+use Aws\Result;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
@@ -39,5 +41,24 @@ class DeleteParticipants extends Action
         if (!empty($batchItems)) {
             $this->deleteItems($batchItems);
         }
+
+        $this->decrement($this->conversation, count($this->participantIds));
+    }
+
+    protected function decrement(Conversation $conversation, int $count): Result
+    {
+        /** @var DynamoDbClient $client */
+        $client = app(DynamoDbClient::class);
+        $params = [
+            'TableName' => ConfigurationManager::getTableName(),
+            'Key' => $conversation->getPrimaryKey(),
+            'ExpressionAttributeValues' => [
+                ':inc' => ['N' => $count]
+            ],
+            'UpdateExpression' => 'SET ParticipantCount = ParticipantCount - :inc',
+            'ReturnValues' => 'UPDATED_NEW'
+        ];
+
+        return $client->updateItem($params);
     }
 }

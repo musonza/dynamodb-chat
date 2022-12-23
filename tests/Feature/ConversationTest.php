@@ -49,11 +49,11 @@ class ConversationTest extends TestCase
     public function testCreateConversationWithParticipants()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group ChatFacade One')
+            ->setSubject('Group Chat One')
             ->setParticipants(['jane', 'john'])
             ->create();
 
-        $this->assertEquals('Group ChatFacade One', $conversation->getSubject());
+        $this->assertEquals('Group Chat One', $conversation->getSubject());
 
         $conversationPartitionKey = $conversation->getPK();
         $response = $this->query(
@@ -81,6 +81,12 @@ class ConversationTest extends TestCase
         $this->assertEquals($conversationPartitionKey, $john->attribute('GSI1SK'));
         $this->assertEquals('PARTICIPANT#john', $john->attribute('SK'));
         $this->assertEquals('PARTICIPATION', $john->attribute('Type'));
+
+        $c = $this->chat->getConversationById($conversation->getConversationId());
+        $this->assertEquals(
+            2,
+            $c->getResultSet()->first()->attribute('ParticipantCount')
+        );
     }
 
     public function testAddConversationParticipants()
@@ -123,6 +129,12 @@ class ConversationTest extends TestCase
         );
 
         $this->assertEquals(8, $response->count());
+
+        $c = $this->chat->getConversationById($conversation->getConversationId());
+        $this->assertEquals(
+            8,
+            $c->getResultSet()->first()->attribute('ParticipantCount')
+        );
     }
 
     public function testSendMessage()

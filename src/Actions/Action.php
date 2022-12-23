@@ -3,9 +3,11 @@
 namespace Musonza\LaravelDynamodbChat\Actions;
 
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\Result;
 use Bego\Database;
 use Bego\Table;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
 
 abstract class Action

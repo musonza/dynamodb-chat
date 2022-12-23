@@ -15,7 +15,7 @@ class Conversation extends Entity implements Contract
 {
     const CONVERSATION_PK_PREFIX = 'CONVERSATION#%s';
 
-    const ENTITY_TYPE = 'CONVERSATION';
+    const ENTITY_TYPE_DIRECT = 'CONVERSATION_DIRECT';
 
     protected string $conversationId;
 
@@ -42,6 +42,8 @@ class Conversation extends Entity implements Contract
     protected bool $isPrivate = false;
 
     protected bool $isDirect = false;
+
+    protected string $entityType = 'CONVERSATION';
 
     public function __construct($conversationId = null, Carbon $createdAt = null)
     {
@@ -102,12 +104,20 @@ class Conversation extends Entity implements Contract
         ];
     }
 
+    public function getSortKey(): array
+    {
+        return [
+            'S' => sprintf(self::CONVERSATION_PK_PREFIX,  $this->getConversationId())
+        ];
+    }
+
     public function toItem(): array
     {
         return[
             ...$this->getPrimaryKey(),
-            'Type' => ['S' => self::ENTITY_TYPE],
+            'Type' => ['S' => $this->getEntityType()],
             'Subject' => ['S' => $this->getSubject()],
+            'ParticipantCount' => ['N' => 0],
             'CreatedAt' => ['S' => $this->createdAt->toISOString()],
         ];
     }
@@ -165,6 +175,17 @@ class Conversation extends Entity implements Contract
         return $this;
     }
 
+    public function firstOrFail(): Conversation
+    {
+        $this->first();
+
+        if (is_null($this->resultset->first())) {
+            throw new ConversationNotFoundException($this);
+        }
+
+        return $this;
+    }
+
     /**
      * Order of participant Ids doesn't matter
      *
@@ -182,5 +203,15 @@ class Conversation extends Entity implements Contract
         }
 
         return $this;
+    }
+
+    public function setType(string $entityType)
+    {
+        $this->entityType = $entityType;
+    }
+
+    public function getEntityType(): string
+    {
+        return $this->entityType;
     }
 }
