@@ -40,6 +40,22 @@ class MessageTest extends TestCase
         $this->assertEquals(0, $items['PARTICIPANT#aguero']->attribute('Read'));
     }
 
+    public function testOnlyParticipantsCanSendMessages()
+    {
+        $this->expectExceptionMessage('Participant is not part of the conversation');
+
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group Two')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
+        $conversationId = $conversation->getId();
+
+        $this->chat->messaging($conversationId)
+            ->message('randomUser', 'Hello')
+            ->send();
+    }
+
     public function testSendMessageWithAdditionalDetails()
     {
         $conversation = $this->chat->conversation()

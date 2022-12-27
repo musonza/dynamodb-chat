@@ -48,7 +48,21 @@ class CreateMessage extends Action
             ->setOriginalAndClonedMessageKeys($message->getId(), $message->getId())
             ->setRead(1);
 
+        // "CONVERSATION#EDgceOXCsCJN4cFOQap1KtS82zQ"
+        //"PARTICIPANT#jane"
+
         $table = $this->getTable();
+        // Check if user can send a message
+        $participant = $table->query()
+            ->key($this->conversation->getPK())
+            ->condition(
+                Condition::attribute('SK')->eq("PARTICIPANT#{$this->participation->getParticipantIdentifier()}")
+            )->fetch();
+
+        if (!$participant->count()) {
+            throw new \Exception("Participant is not part of the conversation");
+        }
+
         $table->put($message->toArray());
 
         // get all participants
