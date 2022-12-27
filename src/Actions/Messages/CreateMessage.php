@@ -43,8 +43,9 @@ class CreateMessage extends Action
      */
     public function execute(): Message
     {
-        $message = (new Message($this->participation, $this->text, true))
-            ->setData($this->data)
+        $message = new Message($this->participation, $this->text, true);
+        $message = $message->setData($this->data)
+            ->setOriginalAndClonedMessageKeys($message->getId(), $message->getId())
             ->setRead(1);
 
         $table = $this->getTable();
@@ -72,9 +73,10 @@ class CreateMessage extends Action
 
             // Sender already has an entry for the message
             if (($this->participation->getParticipantIdentifier() !== $recipient->getParticipantIdentifier())) {
-                $batchItems[] = (new Message($recipient, $this->text))
-                    ->setSender($this->participation, $recipient)
+                $recipientMsg = (new Message($recipient, $this->text));
+                $batchItems[] = $recipientMsg->setSender($this->participation, $recipient)
                     ->setData($this->data)
+                    ->setOriginalAndClonedMessageKeys($message->getId(), $recipientMsg->getId())
                     ->toArray();
 
                 $batchCount++;

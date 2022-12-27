@@ -35,6 +35,11 @@ class Participation extends Entity
         return $this->conversation->getPartitionKey();
     }
 
+    public function getPK(): string
+    {
+        return array_values($this->getPartitionKey())[0];
+    }
+
     public function getGSI1(): array
     {
         return [

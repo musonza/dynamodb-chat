@@ -18,6 +18,10 @@ class Entity extends Model
 
     protected $_sort = 'SK';
 
+    protected $_indexes = [
+        'GS1' => ['key' => 'GSI1PK']
+    ];
+
     /**
      * Entity attributes to update / create
      * @var array

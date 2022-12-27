@@ -27,7 +27,7 @@ class DeleteMessage extends Action
     public function execute()
     {
         $participant = new Participation($this->conversation, $this->participantId);
-        $message = Message::from($participant, $this->messageId);
+        $message = Message::createFrom($participant, $this->messageId);
 
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
@@ -36,6 +36,7 @@ class DeleteMessage extends Action
             'Key' => $message->getPrimaryKey(),
             'ExpressionAttributeValues' => [
                 ':SK' => ['S' => $message->getSK()],
+                // Only delete if the message is owned by the participant
                 ':GSI2SK' => ['S' => "PARTICIPANT#{$participant->getParticipantIdentifier()}"]
             ],
             'ConditionExpression' => 'SK = :SK AND GSI2SK = :GSI2SK',

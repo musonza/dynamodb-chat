@@ -2,11 +2,13 @@
 
 namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 
+use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
 use Bego\Component\Resultset;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Chat;
+use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Exceptions\ConversationExistsException;
 use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
@@ -25,9 +27,10 @@ class ConversationTest extends TestCase
             ])
             ->create();
 
+        $conditions = [Condition::attribute('SK')->eq($conversation->getSK())];
         $response = $this->query(
             $conversation->getPK(),
-            Condition::attribute('SK')->eq($conversation->getSK())
+            $conditions
         );
 
         $this->assertEquals($subject, $response->first()->attribute('Subject'));
@@ -58,9 +61,10 @@ class ConversationTest extends TestCase
         $this->assertEquals('Group Chat One', $conversation->getSubject());
 
         $conversationPartitionKey = $conversation->getPK();
+        $conditions = [Condition::attribute('SK')->beginsWith('PARTICIPANT#')];
         $response = $this->query(
             $conversationPartitionKey,
-            Condition::attribute('SK')->beginsWith('PARTICIPANT#')
+            $conditions
         );
 
         $this->assertEquals(2, $response->count(), 'Two participants created');
@@ -103,9 +107,10 @@ class ConversationTest extends TestCase
             'john'
         ]);
 
+        $conditions = [Condition::attribute('SK')->beginsWith('PARTICIPANT#')];
         $response = $this->query(
             $conversation->getPK(),
-            Condition::attribute('SK')->beginsWith('PARTICIPANT#')
+            $conditions
         );
 
         $this->assertEquals(3, $response->count());
@@ -125,9 +130,13 @@ class ConversationTest extends TestCase
             ->create();
 
         $this->chat->deleteParticipants($conversation->getId(), ['user0', 'user1']);
+
+        $conditions = [
+            Condition::attribute('SK')->beginsWith('PARTICIPANT#')
+        ];
         $response = $this->query(
             $conversation->getPK(),
-            Condition::attribute('SK')->beginsWith('PARTICIPANT#')
+            $conditions,
         );
 
         $this->assertEquals(8, $response->count());
@@ -152,9 +161,10 @@ class ConversationTest extends TestCase
             ->message('ronaldo', 'Congratulations you are the G.O.A.T')
             ->send();
 
+        $conditions = [Condition::attribute('SK')->beginsWith('MSG#')];
         $response = $this->query(
             $conversation->getPK(),
-            Condition::attribute('SK')->beginsWith('MSG#')
+            $conditions
         );
 
         $this->assertEquals(3, $response->count(), 'Each participant receives a message');
@@ -194,9 +204,10 @@ class ConversationTest extends TestCase
             ->message('jane', 'Hello', $data)
             ->send();
 
+        $conditions = [Condition::attribute('SK')->eq($message->getSK())];
         $query = $this->query(
             $message->getPK(),
-            Condition::attribute('SK')->eq($message->getSK())
+            $conditions
         );
 
         $item = $this->marshaler->unmarshalItem($query->first()->attribute('Data'));
@@ -221,12 +232,39 @@ class ConversationTest extends TestCase
             'jane'
         );
 
+        $conditions = [Condition::attribute('SK')->eq($message->getSK())];
         $query = $this->query(
             $message->getPK(),
-            Condition::attribute('SK')->eq($message->getSK())
+            $conditions
         );
 
         $this->assertEquals(0, $query->count());
+    }
+
+    public function testClearConversation()
+    {
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
+        for ($i = 0; $i < 6; $i++) {
+            $sender = $i%2 ? 'jane' : 'john';
+            $this->chat->messaging($conversation->getId())
+                ->message($sender, 'Hello' . $i)
+                ->send();
+        }
+
+        $this->chat->conversation($conversation->getId())->clear('john');
+
+        $sk = "PARTICIPANT#john";
+        $result = $this->query(
+            $conversation->getPK(),
+            [Condition::attribute('GSI1SK')->beginsWith($sk)],
+            'GS1'
+        );
+
+        $this->assertEquals(0, $result->count());
     }
 
     public function testCanOnlyDeleteOwnMessage()
@@ -266,9 +304,10 @@ class ConversationTest extends TestCase
             ->message('user10', 'Hello')
             ->send();
 
+        $conditions = [Condition::attribute('SK')->beginsWith('MSG#')];
         $response = $this->query(
             $conversation->getPK(),
-            Condition::attribute('SK')->beginsWith('MSG#')
+            $conditions
         );
 
         $this->assertEquals(50, $response->count(), 'Each participant receives a message');

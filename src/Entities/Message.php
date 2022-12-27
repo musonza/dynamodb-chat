@@ -14,6 +14,7 @@ class Message extends Entity
     protected array $data = [];
     protected bool $isSender;
     protected int $read = 0;
+    protected array $gsi1 = [];
     protected array $gsi2 = [];
     protected string $messageId = '';
 
@@ -32,7 +33,7 @@ class Message extends Entity
         }
     }
 
-    public static function from(Participation $participant, string $messageId): Message
+    public static function createFrom(Participation $participant, string $messageId): Message
     {
         return (new static($participant, ''))->setId($messageId);
     }
@@ -45,6 +46,23 @@ class Message extends Entity
         ];
 
         $this->setGSI2($gsi2);
+
+        return $this;
+    }
+
+    public function setOriginalAndClonedMessageKeys(string $originalMsgId, string $recipientMsgId): self
+    {
+//        $gsi1 = [
+//            'GSI1PK' => ['S' => "{$this->participation->getPK()}MSG#{$originalMsgId}"],
+//            'GSI1SK' => ['S' => "MSG#{$recipientMsgId}"]
+//        ];
+
+        $gsi1 = [
+            'GSI1PK' => ['S' => "{$this->participation->getPK()}"],
+            'GSI1SK' => ['S' => "PARTICIPANT#{$this->participation->getParticipantIdentifier()}#MSG{$recipientMsgId}"]
+        ];
+
+        $this->setGSI1($gsi1);
 
         return $this;
     }
@@ -79,6 +97,11 @@ class Message extends Entity
         return array_values($this->getSortKey())[0];
     }
 
+    public function getGSI1(): array
+    {
+        return $this->gsi1;
+    }
+
     public function getGSI2(): array
     {
         return $this->gsi2;
@@ -87,6 +110,11 @@ class Message extends Entity
     public function setGSI2(array $gsi)
     {
         $this->gsi2 = $gsi;
+    }
+
+    public function setGSI1(array $gsi)
+    {
+        $this->gsi1 = $gsi;
     }
 
     public function getId(): string
@@ -107,22 +135,28 @@ class Message extends Entity
 
     public function toItem(): array
     {
-        $marshaler = new Marshaler();
-        $data = empty($this->data) ? [] : $marshaler->marshalJson(json_encode($this->data));
-
-        return[
+        $item = [
             ...$this->getPrimaryKey(),
             'Type' => ['S' => self::ENTITY_TYPE],
+            ...$this->getGSI1(),
             ...$this->getGSI2(),
             'CreatedAt' => ['S' => now()->toISOString()],
             'Message' => ['S' => $this->getMessage()],
-            'Data' => ['S' => $data],
             'Read' => ['N' => $this->read],
             'IsSender' => ['N' => $this->isSender],
         ];
+
+        $marshaler = new Marshaler();
+        $data = empty($this->data) ? [] : $marshaler->marshalJson(json_encode($this->data));
+
+        if (!empty($data)) {
+            $item['Data'] = ['S' => $data];
+        }
+
+        return $item;
     }
 
-    public function setData(array $data)
+    public function setData(array $data): self
     {
         $this->data = $data;
         return $this;

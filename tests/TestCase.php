@@ -93,12 +93,21 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ]);
     }
 
-    protected function query($key, $condition = null)
+    protected function query($key, $conditions = [], $index = null)
     {
-        return $this->database->table(app(Entity::class))
-            ->query()
-            ->key($key)
-            ->condition($condition)
-            ->fetch();
+        $statement = $this->database->table(app(Entity::class))
+            ->query($index)
+            ->key($key);
+
+        foreach ($conditions as $condition) {
+            $statement->condition($condition);
+        }
+
+//        return $this->database->table(app(Entity::class))
+//            ->query()
+//            ->key($key)
+//            ->condition($condition)
+
+        return $statement->fetch();
     }
 }
