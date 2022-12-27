@@ -1,7 +1,7 @@
 ## Create a Conversation
 
 ```php
-$conversation = $this->chat->conversation()
+$conversation = Chat::conversation()
     ->setSubject('Group 1')
     ->setAttributes([
         'Description' => 'My description',
@@ -9,11 +9,11 @@ $conversation = $this->chat->conversation()
     ->create();
 ```
 
-## Creating a direct conversation
+## Create a direct conversation
 
 ```php
-Chat::conversation()
-    ->setSubject('Conversation 1')
+$conversation = Chat::conversation()
+    ->setSubject('Conversation')
     ->setParticipants(['johnID', 'janeID'])
     ->setIsDirect(true)
     ->create();
@@ -40,9 +40,11 @@ Chat::addParticipants($conversationId, [
 ## Remove participants from a Conversation
 
 ```php
-Chat::deleteParticipants($conversation->getId(), ['user1', 'user2']);
+Chat::deleteParticipants(
+    $conversation->getId(), 
+    ['user1', 'user2']
+);
 ```
-
 
 ## Update Conversation details
 
@@ -56,12 +58,31 @@ $updated = $this->chat->conversation($conversationId)
     ->update();
 ```
 
-## Create a direct conversation
+## Send Message
 
 ```php
-$conversation = $this->chat->conversation()
-    ->setSubject('Conversation')
-    ->setParticipants(['johnID', 'janeID'])
-    ->setIsDirect(true)
-    ->create();
+Chat::messaging($conversationId)
+    ->message($senderId, 'Hello')
+    ->send();
+```
+
+## Send Message with additional details
+
+```php
+$data = [
+    'images' => [
+        [
+            'file_name' => 'post_image.jpg',
+            'file_url' => 'http://example.com/post_img.jpg',
+        ],
+        [
+            'file_name' => 'post_image2.jpg',
+            'file_url' => 'http://example.com/post_img2.jpg',
+        ],
+    ]
+];
+
+$message = Chat::messaging($conversationId)
+    ->message($senderId, 'Hello', $data)
+    ->send();
 ```
