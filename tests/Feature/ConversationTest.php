@@ -182,6 +182,7 @@ class ConversationTest extends TestCase
             ->setAttributes([
                 'Subject' => $newSubject,
                 'Description' => $description,
+                // ... unchanged data
             ])
             ->update();
 

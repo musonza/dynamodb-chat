@@ -1,3 +1,13 @@
+## Create a Conversation
+
+```php
+$conversation = $this->chat->conversation()
+    ->setSubject('Group 1')
+    ->setAttributes([
+        'Description' => 'My description',
+    ])
+    ->create();
+```
 
 ## Creating a direct conversation
 
@@ -14,5 +24,44 @@ Chat::conversation()
 ## Get a conversation by id
 
 ```php
-$conversation = Chat::conversations()->getById($id);
+$conversation = Chat::getConversationById($id);
+```
+
+## Add participants to a Conversation
+
+```php
+Chat::addParticipants($conversationId, [
+    'jamesID',
+    'janeID',
+    'johnID'
+]);
+```
+
+## Remove participants from a Conversation
+
+```php
+Chat::deleteParticipants($conversation->getId(), ['user1', 'user2']);
+```
+
+
+## Update Conversation details
+
+```php
+$updated = $this->chat->conversation($conversationId)
+    ->setAttributes([
+        'Subject' => $newSubject,
+        'Description' => $description,
+        // ... unchanged data
+    ])
+    ->update();
+```
+
+## Create a direct conversation
+
+```php
+$conversation = $this->chat->conversation()
+    ->setSubject('Conversation')
+    ->setParticipants(['johnID', 'janeID'])
+    ->setIsDirect(true)
+    ->create();
 ```
