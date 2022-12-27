@@ -24,7 +24,7 @@ $conversation = Chat::conversation()
 ## Get a conversation by id
 
 ```php
-$conversation = Chat::getConversationById($id);
+$conversation = Chat::conversation($id)->first();
 ```
 
 ## Add participants to a Conversation

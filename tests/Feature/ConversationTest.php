@@ -134,7 +134,7 @@ class ConversationTest extends TestCase
 
         $this->assertEquals(8, $response->count());
 
-        $c = $this->chat->getConversationById($conversation->getId());
+        $c = $this->chat->conversation($conversation->getId())->first();
         $this->assertEquals(
             8,
             $c->getResultSet()->first()->attribute('ParticipantCount')
