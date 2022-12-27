@@ -248,7 +248,7 @@ class ConversationTest extends TestCase
             ->setParticipants(['jane', 'john'])
             ->create();
 
-        for ($i = 0; $i < 6; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $sender = $i%2 ? 'jane' : 'john';
             $this->chat->messaging($conversation->getId())
                 ->message($sender, 'Hello' . $i)

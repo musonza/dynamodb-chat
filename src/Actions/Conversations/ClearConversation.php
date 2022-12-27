@@ -20,16 +20,21 @@ class ClearConversation extends Action
         $this->participation = $participation;
     }
 
+    // TODO make this action queable
     public function execute()
     {
         $sk = "PARTICIPANT#{$this->participation->getParticipantIdentifier()}";
-        $result = $this->getTable()
+        $query = $this->getTable()
             ->query('GS1')
             ->key($this->conversation->getPK())
-            ->condition(Condition::attribute('GSI1SK')->beginsWith($sk))
-            ->fetch();
+            ->condition(Condition::attribute('GSI1SK')->beginsWith($sk));
 
-        // $result->getLastEvaluatedKey(); // if not null we have more items
-        $this->getTable()->deleteBatch($result->toArrayOfObjects());
+        $offset = null;
+
+        do {
+            $results = $query->fetch(1, $offset);
+            $this->getTable()->deleteBatch($results->toArrayOfObjects());
+            $offset = $results->getLastEvaluatedKey();
+        } while (!is_null($offset));
     }
 }
