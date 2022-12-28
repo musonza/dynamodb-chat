@@ -40,7 +40,7 @@ class ConversationTest extends TestCase
 
         $this->assertNull($conversation->getResultSet());
 
-        $conversation = $this->chat->getConversationById($conversation->getId());
+        $conversation = $this->chat->conversation($conversation->getId())->first();
         $this->assertInstanceOf(Resultset::class, $conversation->getResultSet());
     }
 
@@ -81,7 +81,7 @@ class ConversationTest extends TestCase
         $this->assertEquals('PARTICIPANT#john', $john->attribute('SK'));
         $this->assertEquals('PARTICIPATION', $john->attribute('Type'));
 
-        $c = $this->chat->getConversationById($conversation->getId());
+        $c = $this->chat->conversation($conversation->getId())->first();
         $this->assertEquals(
             2,
             $c->getResultSet()->first()->attribute('ParticipantCount')
