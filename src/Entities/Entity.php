@@ -19,7 +19,7 @@ class Entity extends Model
     protected $_sort = 'SK';
 
     protected $_indexes = [
-        'GS1' => ['key' => 'GSI1PK']
+        'GSI1' => ['key' => 'GSI1PK']
     ];
 
     /**

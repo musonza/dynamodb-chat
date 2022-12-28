@@ -58,7 +58,7 @@ class InstallCommand extends Command
             ],
             'GlobalSecondaryIndexes' => [
                 [
-                    'IndexName' => 'GS1',
+                    'IndexName' => 'GSI1',
                     'KeySchema' => [
                         [
                             'AttributeName' => 'GSI1PK',

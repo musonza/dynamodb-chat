@@ -25,7 +25,7 @@ class ClearConversation extends Action
     {
         $sk = "PARTICIPANT#{$this->participation->getParticipantIdentifier()}";
         $query = $this->getTable()
-            ->query('GS1')
+            ->query('GSI1')
             ->key($this->conversation->getPK())
             ->condition(Condition::attribute('GSI1SK')->beginsWith($sk));
 

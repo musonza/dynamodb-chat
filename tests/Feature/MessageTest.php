@@ -137,7 +137,7 @@ class MessageTest extends TestCase
         $result = $this->query(
             $conversation->getPK(),
             [Condition::attribute('GSI1SK')->beginsWith($sk)],
-            'GS1'
+            'GSI1'
         );
 
         $this->assertEquals(0, $result->count());
