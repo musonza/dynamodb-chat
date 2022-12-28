@@ -107,3 +107,12 @@ Deleting a message will remove it from the conversation for the specified user. 
 ```php
 Chat::deleteMessage($conversationId, $messageId, $recipientOwnerId);
 ```
+
+### Mark Message as read
+
+Marking a message as read will remove the unread indicator for the specified user. The message will still be visible to other participants.
+
+```php  
+Chat::message($conversationId, $messageId)
+    ->markAsRead($recipientOrOwnerId);
+```

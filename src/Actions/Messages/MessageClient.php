@@ -43,7 +43,7 @@ class MessageClient
         return (new CreateMessage($this->conversation, $this->participation, $this->text, $this->data))->execute();
     }
 
-    public function markRead(string $participant): bool
+    public function markAsRead(string $participant): bool
     {
         $participation = new Participation($this->conversation, $participant);
         return (new UpdateMessage($this->conversation, $participation, $this->messageId, ['Read' => true]))

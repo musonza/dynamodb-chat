@@ -179,7 +179,7 @@ class MessageTest extends TestCase
         $this->assertEquals(0, $response->item(0)->attribute('Read'));
         $messageId = $response->item(0)->attribute('SK');
         $this->chat->messaging($conversation->getId(), $messageId)
-            ->markRead('john');
+            ->markAsRead('john');
 
         $response = $this->query($conversation->getPK(), $conditions, 'GSI1');
         $this->assertEquals(1, $response->item(0)->attribute('Read'));
@@ -206,6 +206,6 @@ class MessageTest extends TestCase
 
         $this->expectException(ResourceNotFoundException::class);
         $this->chat->messaging($conversation->getId(), $johnMessageId)
-            ->markRead('jane');
+            ->markAsRead('jane');
     }
 }
