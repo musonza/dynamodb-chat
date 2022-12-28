@@ -46,6 +46,8 @@ Chat::addParticipants($conversationId, [
 
 ### Remove participants from a Conversation
 
+You can remove participants from a conversation at any time. However, they will still be able to see messages sent before they were removed. Otherwise, they will not be able to see any new messages or send messages.
+
 ```php
 Chat::deleteParticipants(
     $conversationId, 
