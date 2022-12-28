@@ -6,6 +6,7 @@ use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
+use Musonza\LaravelDynamodbChat\Exceptions\ResourceNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UpdateMessage extends Action
@@ -28,11 +29,18 @@ class UpdateMessage extends Action
 
     public function execute(): bool
     {
-        $item = $this->getTable()
-            ->fetch($this->conversation->getPK(), "MSG#{$this->messageId}");
+        // TODO resolve IDs cleanly
+        $gsi1sk = "PARTICIPANT#{$this->participation->getParticipantIdentifier()}#MSG{$this->messageId}";
 
-        if ($item->isEmpty()) {
-            new NotFoundHttpException('Message not found');
+        $item = $this->getTable()
+            ->query('GSI1')
+            ->key($this->conversation->getPK())
+            ->condition(Condition::attribute('GSI1SK')->beginsWith($gsi1sk))
+            ->fetch()
+            ->first();
+
+        if (is_null($item)) {
+            throw new ResourceNotFoundException('Message not found');
         }
 
         foreach ($this->attributes as $attribute => $value) {

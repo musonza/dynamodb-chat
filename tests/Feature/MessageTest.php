@@ -4,6 +4,7 @@ namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Bego\Condition;
+use Musonza\LaravelDynamodbChat\Exceptions\ResourceNotFoundException;
 use Musonza\LaravelDynamodbChat\Tests\TestCase;
 
 class MessageTest extends TestCase
@@ -182,5 +183,29 @@ class MessageTest extends TestCase
 
         $response = $this->query($conversation->getPK(), $conditions, 'GSI1');
         $this->assertEquals(1, $response->item(0)->attribute('Read'));
+    }
+
+    public function testMarksOnlyOwnedMessageRead()
+    {
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
+        $this->chat->messaging($conversation->getId())
+            ->message('jane', 'Hello')
+            ->send();
+
+        $response = $this->query(
+            $conversation->getPK(),
+            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#john#MSG')],
+            'GSI1'
+        );
+
+        $johnMessageId = $response->item(0)->attribute('SK');
+
+        $this->expectException(ResourceNotFoundException::class);
+        $this->chat->messaging($conversation->getId(), $johnMessageId)
+            ->markRead('jane');
     }
 }

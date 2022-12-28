@@ -3,9 +3,8 @@
 namespace Musonza\LaravelDynamodbChat\Exceptions;
 
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ConversationNotFoundException extends NotFoundHttpException
+class ConversationNotFoundException extends ResourceNotFoundException
 {
     public Conversation $conversation;
 
