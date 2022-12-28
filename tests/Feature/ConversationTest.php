@@ -2,7 +2,6 @@
 
 namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 
-use Aws\DynamoDb\Exception\DynamoDbException;
 use Bego\Component\Resultset;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Tests\TestCase;

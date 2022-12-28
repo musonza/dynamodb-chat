@@ -1,4 +1,6 @@
-## Create a Conversation
+## Conversations (aka Rooms, Groups etc)
+
+### Create a Conversation
 
 ```php
 $conversation = Chat::conversation()
@@ -9,7 +11,7 @@ $conversation = Chat::conversation()
     ->create();
 ```
 
-## Create a direct conversation
+### Create a direct conversation
 
 ```php
 $conversation = Chat::conversation()
@@ -21,14 +23,18 @@ $conversation = Chat::conversation()
 
 >Note: You will not be able to add additional participants to a direct conversation. Additionally, you can't remove a participant from a direct conversation.
 
-## Get a conversation by id
+### Get / resolve a direct Conversation
+
+You may want to get a direct conversation between two users. This is useful if you want to send a message to a user, but you don't know if they have a conversation with you already.
 
 ```php
-$conversation = Chat::conversation($id)
-    ->first();
+$conversation = Chat::conversation()
+    ->getDirectConversation($participant1Id, $participant2Id);
 ```
 
-## Add participants to a Conversation
+### Add participants to a Conversation
+
+You can add participants to a conversation at any time. However, they will not be able to see messages sent before they were added.
 
 ```php
 Chat::addParticipants($conversationId, [
@@ -38,7 +44,7 @@ Chat::addParticipants($conversationId, [
 ]);
 ```
 
-## Remove participants from a Conversation
+### Remove participants from a Conversation
 
 ```php
 Chat::deleteParticipants(
@@ -47,7 +53,7 @@ Chat::deleteParticipants(
 );
 ```
 
-## Update Conversation details
+### Update Conversation details
 
 ```php
 $updated = Chat::conversation($conversationId)
@@ -59,7 +65,9 @@ $updated = Chat::conversation($conversationId)
     ->update();
 ```
 
-## Send Message
+## Messages
+
+### Send Message
 
 ```php
 Chat::messaging($conversationId)
@@ -67,7 +75,9 @@ Chat::messaging($conversationId)
     ->send();
 ```
 
-## Send Message with additional details
+### Send Message with additional details
+
+You can send a message with additional details. This is useful if you want to send a message with a link to a resource, or a file.
 
 ```php
 $data = [
@@ -86,4 +96,12 @@ $data = [
 $message = Chat::messaging($conversationId)
     ->message($senderId, 'Hello', $data)
     ->send();
+```
+
+### Delete Message
+
+Deleting a message will remove it from the conversation for the specified user. The message will still be visible to other participants.
+
+```php
+Chat::deleteMessage($conversationId, $messageId, $recipientOwnerId);
 ```
