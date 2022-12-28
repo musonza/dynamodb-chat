@@ -2,6 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 use Aws\DynamoDb\Marshaler;
+use Musonza\LaravelDynamodbChat\Actions\Messages\CreateMessage;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Message extends Entity

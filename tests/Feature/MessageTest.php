@@ -102,11 +102,8 @@ class MessageTest extends TestCase
             ->message('jane', 'Hello')
             ->send();
 
-        $this->chat->deleteMessage(
-            $conversation->getId(),
-            $message->getId(),
-            'jane'
-        );
+        $this->chat->messaging($conversation->getId(), $message->getId())
+         ->delete('jane');
 
         $conditions = [Condition::attribute('SK')->eq($message->getSK())];
         $query = $this->query(
@@ -156,10 +153,34 @@ class MessageTest extends TestCase
             ->message('jane', 'Hello')
             ->send();
 
-        $this->chat->deleteMessage(
-            $conversation->getId(),
-            $messageOwnedByJane->getId(),
-            'john'
+        $this->chat->messaging($conversation->getId(), $messageOwnedByJane->getId())
+            ->delete('john');
+    }
+
+    public function testMarkMessageRead()
+    {
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
+        $this->chat->messaging($conversation->getId())
+            ->message('jane', 'Hello')
+            ->send();
+
+        $conditions = [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#john#MSG')];
+        $response = $this->query(
+            $conversation->getPK(),
+            $conditions,
+            'GSI1'
         );
+
+        $this->assertEquals(0, $response->item(0)->attribute('Read'));
+        $messageId = $response->item(0)->attribute('SK');
+        $this->chat->messaging($conversation->getId(), $messageId)
+            ->markRead('john');
+
+        $response = $this->query($conversation->getPK(), $conditions, 'GSI1');
+        $this->assertEquals(1, $response->item(0)->attribute('Read'));
     }
 }

@@ -3,9 +3,7 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
 use Bego\Condition;
-use Bego\Database;
 use Bego\Exception;
-use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
@@ -20,22 +18,16 @@ class CreateMessage extends Action
     protected string $text = '';
     protected array $data = [];
 
-    public function __construct(Conversation $conversation)
-    {
+    public function __construct(
+        Conversation $conversation,
+        Participation $participation,
+        string $text,
+        array $data = []
+    ) {
         $this->conversation = $conversation;
-    }
-
-    public function message(string $participant, string $text, array $data = []): self
-    {
-        $this->participation = new Participation($this->conversation, $participant);
+        $this->participation = $participation;
         $this->text = $text;
         $this->data = $data;
-        return $this;
-    }
-
-    public function send(): Message
-    {
-        return $this->execute();
     }
 
     /**
@@ -47,9 +39,6 @@ class CreateMessage extends Action
         $message = $message->setData($this->data)
             ->setOriginalAndClonedMessageKeys($message->getId(), $message->getId())
             ->setRead(1);
-
-        // "CONVERSATION#EDgceOXCsCJN4cFOQap1KtS82zQ"
-        //"PARTICIPANT#jane"
 
         $table = $this->getTable();
         // Check if user can send a message

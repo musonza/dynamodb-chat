@@ -2,9 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat;
 
-use Musonza\LaravelDynamodbChat\Actions\Conversations\CreateConversation;
-use Musonza\LaravelDynamodbChat\Actions\Messages\CreateMessage;
-use Musonza\LaravelDynamodbChat\Actions\Messages\DeleteMessage;
+use Musonza\LaravelDynamodbChat\Actions\Messages\MessageClient;
 use Musonza\LaravelDynamodbChat\Actions\Participants\AddParticipants;
 use Musonza\LaravelDynamodbChat\Actions\Participants\DeleteParticipants;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
@@ -28,15 +26,9 @@ class Chat
         (new DeleteParticipants($conversation, $participantIds))->execute();
     }
 
-    public function messaging(string $conversationId): CreateMessage
+    public function messaging(string $conversationId, string $messageId = null): MessageClient
     {
         $conversation = new Conversation($conversationId);
-        return new CreateMessage($conversation);
-    }
-
-    public function deleteMessage(string $conversationId, string $messageId, string $participantId): void
-    {
-        $conversation = new Conversation($conversationId);
-        (new DeleteMessage($conversation, $messageId, $participantId))->execute();
+        return new MessageClient($conversation, $messageId);
     }
 }

@@ -24,7 +24,7 @@ class DeleteMessage extends Action
         $this->participantId = $participantId;
     }
 
-    public function execute()
+    public function execute(): Result
     {
         $participant = new Participation($this->conversation, $this->participantId);
         $message = Message::createFrom($participant, $this->messageId);
@@ -42,6 +42,6 @@ class DeleteMessage extends Action
             'ConditionExpression' => 'SK = :SK AND GSI2SK = :GSI2SK',
         ];
 
-        $client->deleteItem($params);
+        return $client->deleteItem($params);
     }
 }
