@@ -24,7 +24,8 @@ $conversation = Chat::conversation()
 ## Get a conversation by id
 
 ```php
-$conversation = Chat::conversation($id)->first();
+$conversation = Chat::conversation($id)
+    ->first();
 ```
 
 ## Add participants to a Conversation
@@ -41,7 +42,7 @@ Chat::addParticipants($conversationId, [
 
 ```php
 Chat::deleteParticipants(
-    $conversation->getId(), 
+    $conversationId, 
     ['user1', 'user2']
 );
 ```
@@ -49,7 +50,7 @@ Chat::deleteParticipants(
 ## Update Conversation details
 
 ```php
-$updated = $this->chat->conversation($conversationId)
+$updated = Chat::conversation($conversationId)
     ->setAttributes([
         'Subject' => $newSubject,
         'Description' => $description,
