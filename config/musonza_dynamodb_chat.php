@@ -31,4 +31,10 @@ return [
      * Note: An empty list means allow anything
      */
     'attributes_allowed_list' => [],
+
+    /**
+     * Increment the parent message read count when a message is read
+     * However, if the parent message is deleted, the read count will not be incremented
+     */
+    'increment_parent_message_read_count' => true,
 ];

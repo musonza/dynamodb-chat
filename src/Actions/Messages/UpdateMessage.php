@@ -2,8 +2,11 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
+use Aws\DynamoDb\DynamoDbClient;
+use Aws\Result;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
+use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 use Musonza\LaravelDynamodbChat\Exceptions\ResourceNotFoundException;
@@ -54,23 +57,31 @@ class UpdateMessage extends Action
 
         // TODO this logic can be moved to an event listener
         // update ReadCount on parent message
-        if ($updated && isset($this->attributes['Read'])) {
-            $parentMessage = $this->getTable()
-                ->query()
-                ->key($this->conversation->getPK())
-                ->condition(Condition::attribute('SK')->eq("MSG#{$item->attribute('ParentId')}"))
-                ->fetch()
-                ->first();
-
-            // Possibly a parent message was deleted
-            if (is_null($parentMessage)) {
-                return $updated;
-            }
-
-            $parentMessage->set('ReadCount', $parentMessage->attribute('ReadCount') + 1);
-            $this->getTable()->update($parentMessage);
+        if ($updated && isset($this->attributes['Read']) && ConfigurationManager::getIncrementParentMessageReadCount()) {
+            $this->incrementReadCount($this->conversation, "MSG#{$item->attribute('ParentId')}");
         }
 
         return (bool) $updated;
+    }
+
+    private function incrementReadCount(Conversation $conversation, string $messageId): void
+    {
+        /** @var DynamoDbClient $client */
+        $client = app(DynamoDbClient::class);
+
+        $key = $conversation->getPrimaryKey();
+        $key['SK']['S'] = $messageId;
+
+        $params = [
+            'TableName' => ConfigurationManager::getTableName(),
+            'Key' => $key,
+            'ExpressionAttributeValues' => [
+                ':inc' => ['N' => 1]
+            ],
+            'UpdateExpression' => 'SET ReadCount = ReadCount + :inc',
+            'ReturnValues' => 'UPDATED_NEW'
+        ];
+
+        $client->updateItem($params);
     }
 }

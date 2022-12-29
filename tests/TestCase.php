@@ -85,8 +85,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('musonza_dynamodb_chat.table_name', 'musonza_chat');
         $app['config']->set('musonza_dynamodb_chat.endpoint', 'http://localhost:8000');
         $app['config']->set('musonza_dynamodb_chat.region', 'us-east-1');
-        $app['config']->set('musonza_dynamondb_chat.batch_limit', 25);
-        $app['config']->set('musonza_dynamondb_chat.attributes_allowed_list', [
+        $app['config']->set('musonza_dynamodb_chat.batch_limit', 25);
+        $app['config']->set('musonza_dynamodb_chat.increment_parent_message_read_count', true);
+        $app['config']->set('musonza_dynamodb_chat.attributes_allowed_list', [
 //            'Subject',
 //            'Description',
 //            'isPrivate'

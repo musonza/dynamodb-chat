@@ -17,7 +17,7 @@ class ConfigurationManager
 
     public static function getBatchLimit()
     {
-        return config('musonza_dynamondb_chat.batch_limit');
+        return config('musonza_dynamodb_chat.batch_limit');
     }
 
     public static function getRegion()
@@ -27,6 +27,11 @@ class ConfigurationManager
 
     public static function getAttributesAllowed()
     {
-        return config('musonza_dynamondb_chat.attributes_allowed_list');
+        return config('musonza_dynamodb_chat.attributes_allowed_list');
+    }
+
+    public static function getIncrementParentMessageReadCount()
+    {
+        return config('musonza_dynamodb_chat.increment_parent_message_read_count');
     }
 }
