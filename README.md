@@ -19,7 +19,7 @@
     - [Send Message with additional details](#send-message-with-additional-details)
     - [Delete Message](#delete-message)
     - [Mark Message as read](#mark-message-as-read)
-  - [Participants]
+- [DynamoDB access patterns](#dynamodb-access-patterns)
 </details>
 
 ## Introduction
@@ -150,3 +150,11 @@ Marking a message as read will remove the unread indicator for the specified use
 Chat::messaging($conversationId, $messageId)
     ->markAsRead($recipientOrOwnerId);
 ```
+
+### DynamoDB access patterns
+
+| Entity       |        PK         |                SK |     |
+|--------------|:-----------------:|------------------:|-----|
+| Conversation | CONVERSATION#{ID} | CONVERSATION#{ID} |     |
+| Participant  | CONVERSATION#{ID} |  PARTICIPANT#{ID} |     |
+| Message      | CONVERSATION#{ID} |          MSG#{ID} |     |
