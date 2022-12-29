@@ -1,11 +1,26 @@
 # Laravel DynamoDB Chat Library
+
+## Table of Contents
+
+<details><summary>Click to expand</summary>
+
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Usage](#usage)
+</details>
+
+## Introduction
+
 This is a simple chat library for DynamoDB. It is designed to be used with the AWS SDK for PHP. The package follows a single database design for DynamoDB.
+You can create a Chat application for your multiple entities.
 
 ## Installation
 
-## Conversations (aka Rooms, Groups etc)
+## Usage
 
-### Create a Conversation
+### Conversations (aka Rooms, Groups etc)
+
+#### Create a Conversation
 
 ```php
 $conversation = Chat::conversation()
@@ -16,7 +31,7 @@ $conversation = Chat::conversation()
     ->create();
 ```
 
-### Create a direct conversation
+#### Create a direct conversation
 
 ```php
 $conversation = Chat::conversation()
@@ -28,7 +43,7 @@ $conversation = Chat::conversation()
 
 >Note: You will not be able to add additional participants to a direct conversation. Additionally, you can't remove a participant from a direct conversation.
 
-### Get / resolve a direct Conversation
+#### Get / resolve a direct Conversation
 
 You may want to get a direct conversation between two users. This is useful if you want to send a message to a user, but you don't know if they have a conversation with you already.
 
@@ -37,7 +52,7 @@ $conversation = Chat::conversation()
     ->getDirectConversation($participant1Id, $participant2Id);
 ```
 
-### Add participants to a Conversation
+#### Add participants to a Conversation
 
 You can add participants to a conversation at any time. However, they will not be able to see messages sent before they were added.
 
@@ -49,7 +64,7 @@ Chat::addParticipants($conversationId, [
 ]);
 ```
 
-### Remove participants from a Conversation
+#### Remove participants from a Conversation
 
 You can remove participants from a conversation at any time. However, they will still be able to see messages sent before they were removed. Otherwise, they will not be able to see any new messages or send messages.
 
@@ -60,7 +75,7 @@ Chat::deleteParticipants(
 );
 ```
 
-### Update Conversation details
+#### Update Conversation details
 
 ```php
 $updated = Chat::conversation($conversationId)
@@ -72,9 +87,9 @@ $updated = Chat::conversation($conversationId)
     ->update();
 ```
 
-## Messages
+### Messages
 
-### Send Message
+#### Send Message
 
 ```php
 Chat::messaging($conversationId)
@@ -82,7 +97,7 @@ Chat::messaging($conversationId)
     ->send();
 ```
 
-### Send Message with additional details
+#### Send Message with additional details
 
 You can send a message with additional details. This is useful if you want to send a message with a link to a resource, or a file.
 
@@ -105,7 +120,7 @@ $message = Chat::messaging($conversationId)
     ->send();
 ```
 
-### Delete Message
+#### Delete Message
 
 Deleting a message will remove it from the conversation for the specified user. The message will still be visible to other participants.
 
@@ -114,7 +129,7 @@ Chat::messaging($conversationId, $messageId)
     ->delete($recipientOwnerId);
 ```
 
-### Mark Message as read
+#### Mark Message as read
 
 Marking a message as read will remove the unread indicator for the specified user. The message will still be visible to other participants.
 
