@@ -7,6 +7,11 @@
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Conversations](#conversations--aka-rooms-groups-etc-)
+    - [Create a Conversation](#create-a-conversation)
+    - [Create a direct conversation](#create-a-direct-conversation)
+    - [Get / resolve a direct Conversation](#get--resolve-a-direct-conversation)
+  - [Messages](#messages)
 </details>
 
 ## Introduction
