@@ -183,6 +183,20 @@ class MessageTest extends TestCase
 
         $response = $this->query($conversation->getPK(), $conditions, 'GSI1');
         $this->assertEquals(1, $response->item(0)->attribute('Read'));
+    }
+
+    public function testIncrementsParentMessageReadCount()
+    {
+        // Create a conversation with 3 participants
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group')
+            ->setParticipants(['jane', 'john', 'james'])
+            ->create();
+
+        // Send a message from Jane
+        $this->chat->messaging($conversation->getId())
+            ->message('jane', 'Hello')
+            ->send();
 
         $response = $this->query(
             $conversation->getPK(),
@@ -200,7 +214,7 @@ class MessageTest extends TestCase
             'GSI1'
         )->first();
 
-        $this->assertEquals(2, $parentMessage->attribute('ReadCount'));
+        $this->assertEquals(1, $parentMessage->attribute('ReadCount'));
     }
 
     public function testMarksOnlyOwnedMessageRead()
