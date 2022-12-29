@@ -162,7 +162,7 @@ class MessageTest extends TestCase
     {
         $conversation = $this->chat->conversation()
             ->setSubject('Group')
-            ->setParticipants(['jane', 'john'])
+            ->setParticipants(['jane', 'john', 'james'])
             ->create();
 
         $this->chat->messaging($conversation->getId())
@@ -183,6 +183,24 @@ class MessageTest extends TestCase
 
         $response = $this->query($conversation->getPK(), $conditions, 'GSI1');
         $this->assertEquals(1, $response->item(0)->attribute('Read'));
+
+        $response = $this->query(
+            $conversation->getPK(),
+            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#james#MSG')],
+            'GSI1'
+        );
+
+        $jamesMessageId = $response->item(0)->attribute('SK');
+        $this->chat->messaging($conversation->getId(), $jamesMessageId)
+            ->markAsRead('james');
+
+        $parentMessage = $this->query(
+            $conversation->getPK(),
+            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#jane#MSG')],
+            'GSI1'
+        )->first();
+
+        $this->assertEquals(2, $parentMessage->attribute('ReadCount'));
     }
 
     public function testMarksOnlyOwnedMessageRead()

@@ -18,6 +18,7 @@ class Message extends Entity
     protected array $gsi1 = [];
     protected array $gsi2 = [];
     protected string $messageId = '';
+    protected string $originalMsgId = '';
 
     public function __construct(Participation $participation, string $message, bool $isSender = false)
     {
@@ -53,10 +54,7 @@ class Message extends Entity
 
     public function setOriginalAndClonedMessageKeys(string $originalMsgId, string $recipientMsgId): self
     {
-//        $gsi1 = [
-//            'GSI1PK' => ['S' => "{$this->participation->getPK()}MSG#{$originalMsgId}"],
-//            'GSI1SK' => ['S' => "MSG#{$recipientMsgId}"]
-//        ];
+        $this->originalMsgId = $originalMsgId;
 
         $gsi1 = [
             'GSI1PK' => ['S' => "{$this->participation->getPK()}"],
@@ -144,7 +142,9 @@ class Message extends Entity
             'CreatedAt' => ['S' => now()->toISOString()],
             'Message' => ['S' => $this->getMessage()],
             'Read' => ['N' => $this->read],
+            'ReadCount' => ['N' => 0],
             'IsSender' => ['N' => $this->isSender],
+            'ParentId' => ['S' => $this->originalMsgId ?? $this->getId()],
         ];
 
         $marshaler = new Marshaler();

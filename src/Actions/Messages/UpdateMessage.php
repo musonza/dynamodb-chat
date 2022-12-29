@@ -50,6 +50,27 @@ class UpdateMessage extends Action
             $item->set($attribute, $value);
         }
 
-        return $this->getTable()->update($item);
+        $updated = $this->getTable()->update($item);
+
+        // TODO this logic can be moved to an event listener
+        // update ReadCount on parent message
+        if ($updated && isset($this->attributes['Read'])) {
+            $parentMessage = $this->getTable()
+                ->query()
+                ->key($this->conversation->getPK())
+                ->condition(Condition::attribute('SK')->eq("MSG#{$item->attribute('ParentId')}"))
+                ->fetch()
+                ->first();
+
+            // Possibly a parent message was deleted
+            if (is_null($parentMessage)) {
+                return $updated;
+            }
+
+            $parentMessage->set('ReadCount', $parentMessage->attribute('ReadCount') + 1);
+            $this->getTable()->update($parentMessage);
+        }
+
+        return (bool) $updated;
     }
 }
