@@ -19,11 +19,11 @@ class InstallCommand extends Command
             'TableName' => ConfigurationManager::getTableName(),
             'AttributeDefinitions' => [
                 [
-                    'AttributeName' => 'PK',
+                    'AttributeName' => Entity::PARTITION_KEY,
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => 'SK',
+                    'AttributeName' => Entity::SORT_KEY,
                     'AttributeType' => 'S'
                 ],
                 [
@@ -45,18 +45,15 @@ class InstallCommand extends Command
             ],
             'KeySchema' => [
                 [
-                    'AttributeName' => 'PK',
+                    'AttributeName' => Entity::PARTITION_KEY,
                     'KeyType'       => 'HASH'
                 ],
                 [
-                    'AttributeName' => 'SK',
+                    'AttributeName' => Entity::SORT_KEY,
                     'KeyType'       => 'RANGE'
                 ]
             ],
-            'ProvisionedThroughput' => [
-                'ReadCapacityUnits'  => 5,
-                'WriteCapacityUnits' => 5
-            ],
+            'ProvisionedThroughput' => ConfigurationManager::getProvisionedThroughput(),
             'GlobalSecondaryIndexes' => [
                 [
                     'IndexName' => Entity::GLOBAL_INDEX1,
@@ -73,10 +70,7 @@ class InstallCommand extends Command
                     'Projection' => [
                         'ProjectionType' => 'ALL'
                     ],
-                    'ProvisionedThroughput' => [
-                        'ReadCapacityUnits'  => 5,
-                        'WriteCapacityUnits' => 5
-                    ],
+                    'ProvisionedThroughput' => ConfigurationManager::getGlobalSecondaryIndex1ProvisionedThroughput(),
                 ],
                 [
                     'IndexName' => Entity::GLOBAL_INDEX2,
@@ -93,10 +87,7 @@ class InstallCommand extends Command
                     'Projection' => [
                         'ProjectionType' => 'ALL'
                     ],
-                    'ProvisionedThroughput' => [
-                        'ReadCapacityUnits'  => 5,
-                        'WriteCapacityUnits' => 5
-                    ],
+                    'ProvisionedThroughput' => ConfigurationManager::getGlobalSecondaryIndex2ProvisionedThroughput(),
                 ]
             ]
         ]);

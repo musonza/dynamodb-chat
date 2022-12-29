@@ -82,15 +82,31 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
-        $app['config']->set('musonza_dynamodb_chat.table_name', 'musonza_chat');
-        $app['config']->set('musonza_dynamodb_chat.endpoint', 'http://localhost:8000');
-        $app['config']->set('musonza_dynamodb_chat.region', 'us-east-1');
-        $app['config']->set('musonza_dynamodb_chat.batch_limit', 25);
-        $app['config']->set('musonza_dynamodb_chat.increment_parent_message_read_count', true);
-        $app['config']->set('musonza_dynamodb_chat.attributes_allowed_list', [
-//            'Subject',
-//            'Description',
-//            'isPrivate'
+        $app['config']->set('musonza_dynamodb_chat',[
+            'table_name' => 'musonza_chat',
+            'endpoint' => 'http://localhost:8000',
+            'region' => 'us-east-1',
+            'batch_limit' => 25,
+            'attributes_allowed_list' => [
+                'Subject',
+                'Description',
+                'IsPrivate'
+            ],
+            'increment_parent_message_read_count' => true,
+
+            'provisioned_throughput' => [
+                'ReadCapacityUnits'  => 5,
+                'WriteCapacityUnits' => 5
+            ],
+
+            'gsi1_provisioned_throughput' => [
+                'ReadCapacityUnits'  => 5,
+                'WriteCapacityUnits' => 5
+            ],
+            'gsi2_provisioned_throughput' => [
+                'ReadCapacityUnits'  => 5,
+                'WriteCapacityUnits' => 5
+            ]
         ]);
     }
 

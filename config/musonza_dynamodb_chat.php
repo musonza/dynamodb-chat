@@ -43,12 +43,27 @@ return [
         'WriteCapacityUnits' => 5
     ],
 
+    /**
+     * Global secondary index 1
+     */
     'gsi1_provisioned_throughput' => [
         'ReadCapacityUnits'  => 5,
         'WriteCapacityUnits' => 5
     ],
+
+    'gsi1_projection' => [
+        'ProjectionType' => 'ALL'
+    ],
+
+    /**
+     * Global secondary index 2
+     */
     'gsi2_provisioned_throughput' => [
         'ReadCapacityUnits'  => 5,
         'WriteCapacityUnits' => 5
-    ]
+    ],
+
+    'gsi2_projection' => [
+        'ProjectionType' => 'ALL'
+    ],
 ];

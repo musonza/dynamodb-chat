@@ -18,8 +18,8 @@ class Participation extends Entity
     public function getPrimaryKey(): array
     {
         return [
-            'PK' => $this->getPartitionKey(),
-            'SK' => $this->getSortKey(),
+            Entity::PARTITION_KEY => $this->getPartitionKey(),
+            Entity::SORT_KEY => $this->getSortKey(),
         ];
     }
 
@@ -43,8 +43,8 @@ class Participation extends Entity
     public function getGSI1(): array
     {
         return [
-            'GSI1PK' => $this->getSortKey(),
-            'GSI1SK' => $this->getPartitionKey(),
+            Entity::GLOBAL_INDEX1_PK => $this->getSortKey(),
+            Entity::GLOBAL_INDEX1_SK => $this->getPartitionKey(),
         ];
     }
 

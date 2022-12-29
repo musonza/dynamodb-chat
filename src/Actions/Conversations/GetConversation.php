@@ -5,6 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
+use Musonza\LaravelDynamodbChat\Entities\Entity;
 
 class GetConversation extends Action
 {
@@ -20,7 +21,7 @@ class GetConversation extends Action
         $resultSet = $this->getTable()
             ->query()
             ->key($this->conversation->getPK())
-            ->condition(Condition::attribute('SK')->eq($this->conversation->getSK()))
+            ->condition(Condition::attribute(Entity::SORT_KEY)->eq($this->conversation->getSK()))
             ->fetch();
 
         $this->conversation->setResultSet($resultSet);

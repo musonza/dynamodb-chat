@@ -34,4 +34,19 @@ class ConfigurationManager
     {
         return config('musonza_dynamodb_chat.increment_parent_message_read_count');
     }
+
+    public static function getProvisionedThroughput()
+    {
+        return config('musonza_dynamodb_chat.provisioned_throughput');
+    }
+
+    public static function getGlobalSecondaryIndex1ProvisionedThroughput()
+    {
+        return config('musonza_dynamodb_chat.gsi1_provisioned_throughput');
+    }
+
+    public static function getGlobalSecondaryIndex2ProvisionedThroughput()
+    {
+        return config('musonza_dynamodb_chat.gsi2_provisioned_throughput');
+    }
 }

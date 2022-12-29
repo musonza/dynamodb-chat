@@ -9,6 +9,8 @@ use Musonza\LaravelDynamodbChat\ConfigurationManager;
 
 class Entity extends Model
 {
+    public const PARTITION_KEY = 'PK';
+    public const SORT_KEY = 'SK';
     public const GLOBAL_INDEX1 = 'GSI1';
     public const GLOBAL_INDEX1_PK = 'GSI1PK';
     public const GLOBAL_INDEX1_SK = 'GSI1SK';
@@ -21,9 +23,9 @@ class Entity extends Model
      */
     protected $_name = 'musonza_chat';
 
-    protected $_partition = 'PK';
+    protected $_partition = self::PARTITION_KEY;
 
-    protected $_sort = 'SK';
+    protected $_sort = self::SORT_KEY;
 
     protected $_indexes = [
         self::GLOBAL_INDEX1 => ['key' => self::GLOBAL_INDEX1_PK]

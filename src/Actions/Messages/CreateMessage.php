@@ -7,6 +7,7 @@ use Bego\Exception;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
+use Musonza\LaravelDynamodbChat\Entities\Entity;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 
@@ -56,8 +57,8 @@ class CreateMessage extends Action
 
         // get all participants
         $participantsQuery = $table->query()
-            ->key($message->toArray()['PK'])
-            ->condition(Condition::attribute('SK')->beginsWith('PARTICIPANT#'))
+            ->key($message->toArray()[Entity::PARTITION_KEY])
+            ->condition(Condition::attribute(Entity::SORT_KEY)->beginsWith('PARTICIPANT#'))
             ->fetch();
 
         $index = 0;
