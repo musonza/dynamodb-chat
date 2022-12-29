@@ -36,5 +36,5 @@ return [
      * Increment the parent message read count when a message is read
      * However, if the parent message is deleted, the read count will not be incremented
      */
-    'increment_parent_message_read_count' => true,
+    'increment_parent_message_read_count' => false,
 ];

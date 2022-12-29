@@ -18,6 +18,8 @@ class Conversation extends Entity implements Contract
 {
     const CONVERSATION_PK_PREFIX = 'CONVERSATION#%s';
 
+    const CONVERSATION_ID_PREFIX = 'CONVERSATION#';
+
     const ENTITY_TYPE_DIRECT = 'CONVERSATION_DIRECT';
 
     protected string $conversationId;
@@ -51,7 +53,8 @@ class Conversation extends Entity implements Contract
     public function __construct($conversationId = null, Carbon $createdAt = null)
     {
         $this->createdAt = $createdAt ?? now();
-        $this->conversationId = $conversationId ?? Helpers::generateKSUID($this->createdAt);
+        $this->conversationId = $conversationId
+            ?? Helpers::generateId(self::CONVERSATION_ID_PREFIX, $this->createdAt);
     }
 
     public function setId(string $id)

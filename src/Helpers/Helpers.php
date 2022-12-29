@@ -7,6 +7,11 @@ use Tuupola\KsuidFactory;
 
 class Helpers
 {
+    public static function generateId(string $prefix, Carbon $date): string
+    {
+        return $prefix . self::generateKsuid($date);
+    }
+
     public static function generateKSUID(Carbon $date): string
     {
         return KsuidFactory::fromTimestamp($date->getTimestamp())->string();

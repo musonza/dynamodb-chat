@@ -20,7 +20,7 @@ class MessageClient
     public function __construct(Conversation $conversation, string $messageId = null)
     {
         $this->conversation = $conversation;
-        $this->messageId = Str::replace('MSG#', '', $messageId);
+        $this->messageId = $messageId;
     }
 
     public function message(string $participant, string $text, array $data = []): self

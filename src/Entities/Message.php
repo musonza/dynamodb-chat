@@ -2,13 +2,12 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 use Aws\DynamoDb\Marshaler;
-use Musonza\LaravelDynamodbChat\Actions\Messages\CreateMessage;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Message extends Entity
 {
     const ENTITY_TYPE = 'MSG';
-    const MESSAGE_KEY_PREFIX = 'MSG#%s';
+    const MESSAGE_KEY_PREFIX = 'MSG#';
 
     protected Participation $participation;
     protected string $message;
@@ -31,7 +30,7 @@ class Message extends Entity
         }
 
         if (!$this->messageId) {
-            $this->messageId = Helpers::generateKSUID(now());
+            $this->messageId = Helpers::generateId(self::MESSAGE_KEY_PREFIX, now());
         }
     }
 
@@ -82,7 +81,7 @@ class Message extends Entity
     public function getSortKey(): array
     {
         return [
-            'S' => sprintf(self::MESSAGE_KEY_PREFIX,  $this->getId())
+            'S' => $this->getId()
         ];
     }
 
