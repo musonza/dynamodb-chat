@@ -1,6 +1,7 @@
 <?php
 
 namespace Musonza\LaravelDynamodbChat;
+
 class ConfigurationManager
 {
     const TABLE_NAME = 'musonza_chat';
@@ -48,5 +49,15 @@ class ConfigurationManager
     public static function getGlobalSecondaryIndex2ProvisionedThroughput()
     {
         return config('musonza_dynamodb_chat.gsi2_provisioned_throughput');
+    }
+
+    public static function getPaginatorLimit()
+    {
+        return config('musonza_dynamodb_chat.default_pagination_limit');
+    }
+
+    public static function getPaginatorPages()
+    {
+        return config('musonza_dynamodb_chat.default_pagination_pages');
     }
 }

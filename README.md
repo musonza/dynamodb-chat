@@ -19,6 +19,7 @@
     - [Send Message with additional details](#send-message-with-additional-details)
     - [Delete Message](#delete-message)
     - [Mark Message as read](#mark-message-as-read)
+  - [Participants]
 </details>
 
 ## Introduction

@@ -106,14 +106,14 @@ class Conversation extends Entity implements Contract
     public function getPartitionKey(): array
     {
         return [
-            'S' => sprintf(self::CONVERSATION_PK_PREFIX,  $this->getId())
+            'S' => $this->getId()
         ];
     }
 
     public function getSortKey(): array
     {
         return [
-            'S' => sprintf(self::CONVERSATION_PK_PREFIX,  $this->getId())
+            'S' => $this->getId()
         ];
     }
 

@@ -33,7 +33,7 @@ class UpdateMessage extends Action
     public function execute(): bool
     {
         // TODO resolve IDs cleanly
-        $gsi1sk = "PARTICIPANT#{$this->participation->getParticipantIdentifier()}#MSG{$this->messageId}";
+        $gsi1sk = "PARTICIPANT#{$this->participation->getParticipantIdentifier()}{$this->messageId}";
 
         $item = $this->getTable()
             ->query('GSI1')

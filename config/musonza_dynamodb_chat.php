@@ -26,6 +26,16 @@ return [
     'batch_limit' => 25,
 
     /**
+     * The maximum number of items to evaluate (not necessarily the number of matching items).
+     */
+    'default_pagination_limit' => 10,
+
+    /**
+     * Number of pages to retrieve when paginating
+     */
+    'default_pagination_pages' => 1,
+
+    /**
      * DynamoDB will allow you to add any attributes to your Table at any time.
      * Add an allow list here to have more control and prevent arbitrary values .
      * Note: An empty list means allow anything

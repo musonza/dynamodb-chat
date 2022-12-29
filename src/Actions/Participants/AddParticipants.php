@@ -4,7 +4,6 @@ namespace Musonza\LaravelDynamodbChat\Actions\Participants;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result;
-use Bego\Database;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;

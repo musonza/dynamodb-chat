@@ -169,7 +169,7 @@ class MessageTest extends TestCase
             ->message('jane', 'Hello')
             ->send();
 
-        $conditions = [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#john#MSG')];
+        $conditions = [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#john')];
         $response = $this->query(
             $conversation->getPK(),
             $conditions,
@@ -200,7 +200,7 @@ class MessageTest extends TestCase
 
         $response = $this->query(
             $conversation->getPK(),
-            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#james#MSG')],
+            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#james')],
             'GSI1'
         );
 
@@ -210,7 +210,7 @@ class MessageTest extends TestCase
 
         $parentMessage = $this->query(
             $conversation->getPK(),
-            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#jane#MSG')],
+            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#jane')],
             'GSI1'
         )->first();
 
@@ -230,7 +230,7 @@ class MessageTest extends TestCase
 
         $response = $this->query(
             $conversation->getPK(),
-            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#john#MSG')],
+            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#john')],
             'GSI1'
         );
 
@@ -239,5 +239,34 @@ class MessageTest extends TestCase
         $this->expectException(ResourceNotFoundException::class);
         $this->chat->messaging($conversation->getId(), $johnMessageId)
             ->markAsRead('jane');
+    }
+
+    public function testGetMessages()
+    {
+        $conversation = $this->chat->conversation()
+            ->setSubject('Group')
+            ->setParticipants(['jane', 'john'])
+            ->create();
+
+        $totalMessages = 100;
+
+        for ($i = 0; $i < $totalMessages; $i++) {
+            $sender = $i%2 ? 'jane' : 'john';
+            $this->chat->messaging($conversation->getId())
+                ->message($sender, 'Hello' . $i)
+                ->send();
+        }
+
+        $offset = null;
+        $messagesCount = 0;
+
+        do {
+            $results = $this->chat->messaging($conversation->getId())
+                ->getMessages('john', $offset);
+            $offset = $results->getLastEvaluatedKey();
+            $messagesCount += $results->count();
+        } while (!is_null($offset));
+
+        $this->assertEquals($totalMessages, $messagesCount, "{$totalMessages} messages");
     }
 }

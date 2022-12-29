@@ -57,7 +57,7 @@ class Message extends Entity
 
         $gsi1 = [
             'GSI1PK' => ['S' => "{$this->participation->getPK()}"],
-            'GSI1SK' => ['S' => "PARTICIPANT#{$this->participation->getParticipantIdentifier()}#MSG{$recipientMsgId}"]
+            'GSI1SK' => ['S' => "PARTICIPANT#{$this->participation->getParticipantIdentifier()}{$recipientMsgId}"]
         ];
 
         $this->setGSI1($gsi1);

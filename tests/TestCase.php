@@ -87,6 +87,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'endpoint' => 'http://localhost:8000',
             'region' => 'us-east-1',
             'batch_limit' => 25,
+            'default_pagination_limit' => 10,
+            'default_pagination_pages' => 1,
             'attributes_allowed_list' => [
                 'Subject',
                 'Description',

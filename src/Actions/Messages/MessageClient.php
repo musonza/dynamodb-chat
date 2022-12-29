@@ -3,6 +3,7 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
 use Aws\Result;
+use Bego\Component\Resultset;
 use Bego\Condition;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
@@ -48,5 +49,11 @@ class MessageClient
         $participation = new Participation($this->conversation, $participant);
         return (new UpdateMessage($this->conversation, $participation, $this->messageId, ['Read' => true]))
             ->execute();
+    }
+
+    public function getMessages(string $participant, $offset = null): Resultset
+    {
+        $participation = new Participation($this->conversation, $participant);
+        return (new GetMessages($this->conversation, $participation))->execute($offset);
     }
 }

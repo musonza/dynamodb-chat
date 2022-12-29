@@ -19,6 +19,8 @@ class Helpers
 
     public static function directConversationKey(string $id1, string $id2): string
     {
-        return strcmp($id1, $id2) < 0 ? "DIRECT#P1#{$id1}P2#{$id2}" : "DIRECT#P1#{$id2}P2#{$id1}";
+        return strcmp($id1, $id2) < 0
+            ? "CONVERSATION#DIRECT#P1#{$id1}P2#{$id2}"
+            : "CONVERSATION#DIRECT#P1#{$id2}P2#{$id1}";
     }
 }
