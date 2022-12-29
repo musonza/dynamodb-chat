@@ -11,7 +11,14 @@
     - [Create a Conversation](#create-a-conversation)
     - [Create a direct conversation](#create-a-direct-conversation)
     - [Get / resolve a direct Conversation](#get--resolve-a-direct-conversation)
+    - [Add participants to a Conversation](#add-participants-to-a-conversation)
+    - [Remove participants from a Conversation](#remove-participants-from-a-conversation)
+    - [Update Conversation details](#update-conversation-details)
   - [Messages](#messages)
+    - [Send Message](#send-message)
+    - [Send Message with additional details](#send-message-with-additional-details)
+    - [Delete Message](#delete-message)
+    - [Mark Message as read](#mark-message-as-read)
 </details>
 
 ## Introduction
