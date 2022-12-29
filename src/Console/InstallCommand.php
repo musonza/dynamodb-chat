@@ -5,6 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Console;
 use Aws\DynamoDb\DynamoDbClient;
 use Illuminate\Console\Command;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Entities\Entity;
 
 class InstallCommand extends Command
 {
@@ -26,19 +27,19 @@ class InstallCommand extends Command
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => 'GSI1PK',
+                    'AttributeName' => Entity::GLOBAL_INDEX1_PK,
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => 'GSI1SK',
+                    'AttributeName' => Entity::GLOBAL_INDEX1_SK,
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => 'GSI2PK',
+                    'AttributeName' => Entity::GLOBAL_INDEX2_PK,
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => 'GSI2SK',
+                    'AttributeName' => Entity::GLOBAL_INDEX2_SK,
                     'AttributeType' => 'S'
                 ]
             ],
@@ -58,14 +59,14 @@ class InstallCommand extends Command
             ],
             'GlobalSecondaryIndexes' => [
                 [
-                    'IndexName' => 'GSI1',
+                    'IndexName' => Entity::GLOBAL_INDEX1,
                     'KeySchema' => [
                         [
-                            'AttributeName' => 'GSI1PK',
+                            'AttributeName' => Entity::GLOBAL_INDEX1_PK,
                             'KeyType'       => 'HASH'
                         ],
                         [
-                            'AttributeName' => 'GSI1SK',
+                            'AttributeName' => Entity::GLOBAL_INDEX1_SK,
                             'KeyType'       => 'RANGE'
                         ]
                     ],
@@ -78,14 +79,14 @@ class InstallCommand extends Command
                     ],
                 ],
                 [
-                    'IndexName' => 'GSI2',
+                    'IndexName' => Entity::GLOBAL_INDEX2,
                     'KeySchema' => [
                         [
-                            'AttributeName' => 'GSI2PK',
+                            'AttributeName' => Entity::GLOBAL_INDEX2_PK,
                             'KeyType'       => 'HASH'
                         ],
                         [
-                            'AttributeName' => 'GSI2SK',
+                            'AttributeName' => Entity::GLOBAL_INDEX2_SK,
                             'KeyType'       => 'RANGE'
                         ]
                     ],

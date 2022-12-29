@@ -2,11 +2,10 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 
-use Aws\DynamoDb\DynamoDbClient;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
+use Musonza\LaravelDynamodbChat\Entities\Entity;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 
 class ClearConversation extends Action
@@ -25,9 +24,9 @@ class ClearConversation extends Action
     {
         $sk = "PARTICIPANT#{$this->participation->getParticipantIdentifier()}";
         $query = $this->getTable()
-            ->query('GSI1')
+            ->query(Entity::GLOBAL_INDEX1)
             ->key($this->conversation->getPK())
-            ->condition(Condition::attribute('GSI1SK')->beginsWith($sk));
+            ->condition(Condition::attribute(Entity::GLOBAL_INDEX1_SK)->beginsWith($sk));
 
         $offset = null;
 

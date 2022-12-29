@@ -37,4 +37,18 @@ return [
      * However, if the parent message is deleted, the read count will not be incremented
      */
     'increment_parent_message_read_count' => false,
+
+    'provisioned_throughput' => [
+        'ReadCapacityUnits'  => 5,
+        'WriteCapacityUnits' => 5
+    ],
+
+    'gsi1_provisioned_throughput' => [
+        'ReadCapacityUnits'  => 5,
+        'WriteCapacityUnits' => 5
+    ],
+    'gsi2_provisioned_throughput' => [
+        'ReadCapacityUnits'  => 5,
+        'WriteCapacityUnits' => 5
+    ]
 ];

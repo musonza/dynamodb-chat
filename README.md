@@ -1,3 +1,8 @@
+# DynamoDB Chat Library
+This is a simple chat library for DynamoDB. It is designed to be used with the AWS SDK for PHP. The package follows a single database design for DynamoDB.
+
+## Installation
+
 ## Conversations (aka Rooms, Groups etc)
 
 ### Create a Conversation

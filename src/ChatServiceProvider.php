@@ -26,7 +26,5 @@ class ChatServiceProvider extends ServiceProvider
         $this->app->singleton(Database::class, function () {
             return new Database(app(DynamoDbClient::class), new Marshaler());
         });
-
-        //         $messagesTable = $db->table($message);
     }
 }

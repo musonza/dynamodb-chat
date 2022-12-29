@@ -9,6 +9,13 @@ use Musonza\LaravelDynamodbChat\ConfigurationManager;
 
 class Entity extends Model
 {
+    public const GLOBAL_INDEX1 = 'GSI1';
+    public const GLOBAL_INDEX1_PK = 'GSI1PK';
+    public const GLOBAL_INDEX1_SK = 'GSI1SK';
+    public const GLOBAL_INDEX2 = 'GSI2';
+    public const GLOBAL_INDEX2_PK = 'GSI2PK';
+    public const GLOBAL_INDEX2_SK = 'GSI2SK';
+
     /**
      * Table name
      */
@@ -19,7 +26,7 @@ class Entity extends Model
     protected $_sort = 'SK';
 
     protected $_indexes = [
-        'GSI1' => ['key' => 'GSI1PK']
+        self::GLOBAL_INDEX1 => ['key' => self::GLOBAL_INDEX1_PK]
     ];
 
     /**
