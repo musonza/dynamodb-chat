@@ -151,10 +151,26 @@ Chat::messaging($conversationId, $messageId)
     ->markAsRead($recipientOrOwnerId);
 ```
 
-### DynamoDB access patterns
+## DynamoDB access patterns
 
-| Entity       |        PK         |                SK |     |
-|--------------|:-----------------:|------------------:|-----|
-| Conversation | CONVERSATION#{ID} | CONVERSATION#{ID} |     |
-| Participant  | CONVERSATION#{ID} |  PARTICIPANT#{ID} |     |
-| Message      | CONVERSATION#{ID} |          MSG#{ID} |     |
+| Entity       |        PK         |                SK |
+|--------------|:-----------------:|------------------:|
+| Conversation | CONVERSATION#{ID} | CONVERSATION#{ID} |
+| Participant  | CONVERSATION#{ID} |  PARTICIPANT#{ID} |
+| Message      | CONVERSATION#{ID} |          MSG#{ID} |
+
+### GSI1
+
+| Entity       |      GSI1PK       |            GSI1SK |
+|--------------|:-----------------:|------------------:|
+| Conversation |                   |                   |
+| Participant  | PARTICIPANT#{ID}  | CONVERSATION#{ID} |
+| Message      | CONVERSATION#{ID} |          MSG#{ID} |
+
+### GSI2
+
+| Entity       |         GSI2PK         |                    GSI2SK |
+|--------------|:----------------------:|--------------------------:|
+| Conversation |                        |                           |
+| Participant  |                        |                           |
+| Message      | PARTICIPANT#{senderId} | PARTICIPANT#{recipientId} |
