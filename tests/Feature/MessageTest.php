@@ -5,6 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Tests\Feature;
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Exceptions\ResourceNotFoundException;
+use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 use Musonza\LaravelDynamodbChat\Tests\TestCase;
 
 class MessageTest extends TestCase
@@ -36,9 +37,9 @@ class MessageTest extends TestCase
             $items[$item->GSI2SK] = $item;
         }
 
-        $this->assertEquals(1, $items['PARTICIPANT#ronaldo']->attribute('Read'), 'Sender message marked as read');
-        $this->assertEquals(0, $items['PARTICIPANT#messi']->attribute('Read'));
-        $this->assertEquals(0, $items['PARTICIPANT#aguero']->attribute('Read'));
+        $this->assertEquals(1, $items[Helpers::gs1skFromParticipantIdentifier('ronaldo')]->attribute('Read'), 'Sender message marked as read');
+        $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier('messi')]->attribute('Read'));
+        $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier('aguero')]->attribute('Read'));
     }
 
     public function testOnlyParticipantsCanSendMessages()
@@ -169,7 +170,7 @@ class MessageTest extends TestCase
             ->message('jane', 'Hello')
             ->send();
 
-        $conditions = [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#john')];
+        $conditions = [Condition::attribute('GSI1SK')->beginsWith(Helpers::gs1skFromParticipantIdentifier('john'))];
         $response = $this->query(
             $conversation->getPK(),
             $conditions,
@@ -200,7 +201,7 @@ class MessageTest extends TestCase
 
         $response = $this->query(
             $conversation->getPK(),
-            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#james')],
+            [Condition::attribute('GSI1SK')->beginsWith(Helpers::gs1skFromParticipantIdentifier('james'))],
             'GSI1'
         );
 
@@ -210,7 +211,7 @@ class MessageTest extends TestCase
 
         $parentMessage = $this->query(
             $conversation->getPK(),
-            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#jane')],
+            [Condition::attribute('GSI1SK')->beginsWith(Helpers::gs1skFromParticipantIdentifier('jane'))],
             'GSI1'
         )->first();
 
@@ -230,7 +231,7 @@ class MessageTest extends TestCase
 
         $response = $this->query(
             $conversation->getPK(),
-            [Condition::attribute('GSI1SK')->beginsWith('PARTICIPANT#john')],
+            [Condition::attribute('GSI1SK')->beginsWith(Helpers::gs1skFromParticipantIdentifier('john'))],
             'GSI1'
         );
 
@@ -248,7 +249,7 @@ class MessageTest extends TestCase
             ->setParticipants(['jane', 'john'])
             ->create();
 
-        $totalMessages = 100;
+        $totalMessages = 50;
 
         for ($i = 0; $i < $totalMessages; $i++) {
             $sender = $i%2 ? 'jane' : 'john';
@@ -259,14 +260,17 @@ class MessageTest extends TestCase
 
         $offset = null;
         $messagesCount = 0;
+        $pages = 0;
 
         do {
             $results = $this->chat->messaging($conversation->getId())
                 ->getMessages('john', $offset);
             $offset = $results->getLastEvaluatedKey();
             $messagesCount += $results->count();
+            ++$pages;
         } while (!is_null($offset));
 
         $this->assertEquals($totalMessages, $messagesCount, "{$totalMessages} messages");
+        $this->assertEquals(6, $pages);
     }
 }

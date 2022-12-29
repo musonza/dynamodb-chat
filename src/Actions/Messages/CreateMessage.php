@@ -10,6 +10,7 @@ use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
+use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class CreateMessage extends Action
 {
@@ -46,7 +47,7 @@ class CreateMessage extends Action
         $participant = $table->query()
             ->key($this->conversation->getPK())
             ->condition(
-                Condition::attribute('SK')->eq("PARTICIPANT#{$this->participation->getParticipantIdentifier()}")
+                Condition::attribute('SK')->eq(Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId()))
             )->fetch();
 
         if (!$participant->count()) {
@@ -76,7 +77,7 @@ class CreateMessage extends Action
             $recipient = new Participation($this->conversation, $item->attribute('ParticipantId'));
 
             // Sender already has an entry for the message
-            if (($this->participation->getParticipantIdentifier() !== $recipient->getParticipantIdentifier())) {
+            if (($this->participation->getParticipantExternalId() !== $recipient->getParticipantExternalId())) {
                 $recipientMsg = (new Message($recipient, $this->text));
                 $batchItems[] = $recipientMsg->setSender($this->participation, $recipient)
                     ->setData($this->data)

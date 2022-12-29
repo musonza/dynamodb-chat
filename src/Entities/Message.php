@@ -42,8 +42,8 @@ class Message extends Entity
     public function setSender(Participation $participation, Participation $recipient): self
     {
         $gsi2 = [
-            'GSI2PK' => ['S' => "PARTICIPANT#{$participation->getParticipantIdentifier()}"],
-            'GSI2SK' => ['S' => "PARTICIPANT#{$recipient->getParticipantIdentifier()}"]
+            'GSI2PK' => ['S' => Helpers::gs1skFromParticipantIdentifier($participation->getParticipantExternalId())],
+            'GSI2SK' => ['S' => Helpers::gs1skFromParticipantIdentifier($recipient->getParticipantExternalId())],
         ];
 
         $this->setGSI2($gsi2);
@@ -54,10 +54,10 @@ class Message extends Entity
     public function setOriginalAndClonedMessageKeys(string $originalMsgId, string $recipientMsgId): self
     {
         $this->originalMsgId = $originalMsgId;
-
+        $gsi1sk = Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId()) . $recipientMsgId;
         $gsi1 = [
-            'GSI1PK' => ['S' => "{$this->participation->getPK()}"],
-            'GSI1SK' => ['S' => "PARTICIPANT#{$this->participation->getParticipantIdentifier()}{$recipientMsgId}"]
+            'GSI1PK' => ['S' => $this->participation->getPK()],
+            'GSI1SK' => ['S' => $gsi1sk]
         ];
 
         $this->setGSI1($gsi1);
@@ -146,8 +146,7 @@ class Message extends Entity
             'ParentId' => ['S' => $this->originalMsgId ?? $this->getId()],
         ];
 
-        $marshaler = new Marshaler();
-        $data = empty($this->data) ? [] : $marshaler->marshalJson(json_encode($this->data));
+        $data = empty($this->data) ? [] : (new Marshaler())->marshalJson(json_encode($this->data));
 
         if (!empty($data)) {
             $item['Data'] = ['S' => $data];

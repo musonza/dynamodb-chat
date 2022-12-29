@@ -37,7 +37,7 @@ class DeleteMessage extends Action
             'ExpressionAttributeValues' => [
                 ':SK' => ['S' => $message->getSK()],
                 // Only delete if the message is owned by the participant
-                ':GSI2SK' => ['S' => "PARTICIPANT#{$participant->getParticipantIdentifier()}"]
+                ':GSI2SK' => ['S' => "PARTICIPANT#{$participant->getParticipantExternalId()}"]
             ],
             'ConditionExpression' => 'SK = :SK AND GSI2SK = :GSI2SK',
         ];

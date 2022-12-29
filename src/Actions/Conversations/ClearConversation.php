@@ -7,6 +7,7 @@ use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
+use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class ClearConversation extends Action
 {
@@ -22,7 +23,7 @@ class ClearConversation extends Action
     // TODO make this action queable
     public function execute()
     {
-        $sk = "PARTICIPANT#{$this->participation->getParticipantIdentifier()}";
+        $sk = Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId());
         $query = $this->getTable()
             ->query(Entity::GLOBAL_INDEX1)
             ->key($this->conversation->getPK())

@@ -23,4 +23,9 @@ class Helpers
             ? "CONVERSATION#DIRECT#P1#{$id1}P2#{$id2}"
             : "CONVERSATION#DIRECT#P1#{$id2}P2#{$id1}";
     }
+
+    public static function gs1skFromParticipantIdentifier(string $id): string
+    {
+        return "PARTICIPANT#{$id}";
+    }
 }

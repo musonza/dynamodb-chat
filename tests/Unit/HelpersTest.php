@@ -13,7 +13,6 @@ class HelpersTest extends TestCase
         $id2 = 'id2';
         $key1 = Helpers::directConversationKey($id1, $id2);
         $key2 = Helpers::directConversationKey($id2, $id1);
-
         $this->assertEquals($key1, $key2);
         $this->assertEquals("CONVERSATION#DIRECT#P1#id1P2#id2", $key1);
     }

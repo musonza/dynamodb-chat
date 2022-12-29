@@ -32,10 +32,10 @@ class MessageClient
         return $this;
     }
 
-    public function delete(string $participant): Result
+    public function delete(string $participantExternalId): Result
     {
-        $participation = new Participation($this->conversation, $participant);
-        return (new DeleteMessage($this->conversation, $this->messageId, $participation->getParticipantIdentifier()))
+        $participation = new Participation($this->conversation, $participantExternalId);
+        return (new DeleteMessage($this->conversation, $this->messageId, $participation->getParticipantExternalId()))
             ->execute();
     }
 
@@ -44,16 +44,16 @@ class MessageClient
         return (new CreateMessage($this->conversation, $this->participation, $this->text, $this->data))->execute();
     }
 
-    public function markAsRead(string $participant): bool
+    public function markAsRead(string $participantExternalId): bool
     {
-        $participation = new Participation($this->conversation, $participant);
+        $participation = new Participation($this->conversation, $participantExternalId);
         return (new UpdateMessage($this->conversation, $participation, $this->messageId, ['Read' => true]))
             ->execute();
     }
 
-    public function getMessages(string $participant, $offset = null): Resultset
+    public function getMessages(string $participantExternalId, $offset = null): Resultset
     {
-        $participation = new Participation($this->conversation, $participant);
+        $participation = new Participation($this->conversation, $participantExternalId);
         return (new GetMessages($this->conversation, $participation))->execute($offset);
     }
 }

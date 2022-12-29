@@ -2,7 +2,6 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
-use Aws\DynamoDb\DynamoDbClient;
 use Bego\Component\Resultset;
 use Chat;
 use Illuminate\Support\Carbon;
@@ -10,14 +9,11 @@ use Musonza\LaravelDynamodbChat\Actions\Conversations\ClearConversation;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\CreateConversation;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\GetConversation;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\UpdateConversation;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Exceptions\ConversationNotFoundException;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Conversation extends Entity implements Contract
 {
-    const CONVERSATION_PK_PREFIX = 'CONVERSATION#%s';
-
     const CONVERSATION_ID_PREFIX = 'CONVERSATION#';
 
     const ENTITY_TYPE_DIRECT = 'CONVERSATION_DIRECT';
