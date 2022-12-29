@@ -1,4 +1,4 @@
-# DynamoDB Chat Library
+# Laravel DynamoDB Chat Library
 This is a simple chat library for DynamoDB. It is designed to be used with the AWS SDK for PHP. The package follows a single database design for DynamoDB.
 
 ## Installation
