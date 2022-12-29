@@ -117,6 +117,3 @@ Marking a message as read will remove the unread indicator for the specified use
 Chat::messaging($conversationId, $messageId)
     ->markAsRead($recipientOrOwnerId);
 ```
-
-// TODO
-// - Read count on parent message
