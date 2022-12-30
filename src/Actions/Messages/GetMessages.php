@@ -29,6 +29,7 @@ class GetMessages extends Action
             ->query(Entity::GLOBAL_INDEX1)
             ->key($this->conversation->getPK())
             ->condition(Condition::attribute(Entity::GLOBAL_INDEX1_SK)->beginsWith($gsi1skStartsWith))
+            ->reverse()
             ->limit(ConfigurationManager::getPaginatorLimit());
 
         return $query->fetch(ConfigurationManager::getPaginatorPages(), $offset);

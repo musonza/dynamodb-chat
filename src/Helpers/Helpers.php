@@ -3,6 +3,7 @@
 namespace Musonza\LaravelDynamodbChat\Helpers;
 
 use Illuminate\Support\Carbon;
+use Musonza\LaravelDynamodbChat\Entities\Participation;
 use Tuupola\KsuidFactory;
 
 class Helpers
@@ -27,5 +28,15 @@ class Helpers
     public static function gs1skFromParticipantIdentifier(string $id): string
     {
         return "PARTICIPANT#{$id}";
+    }
+
+    public static function gsi1PKForMessage(Participation $participation): string
+    {
+        return $participation->getPK();
+    }
+
+    public static function gsi1SKForMessage(Participation $participation, $recipientMsgId): string
+    {
+        return "PARTICIPANT#{$participation->getParticipantExternalId()}{$recipientMsgId}";
     }
 }

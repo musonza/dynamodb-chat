@@ -54,13 +54,10 @@ class Message extends Entity
     public function setOriginalAndClonedMessageKeys(string $originalMsgId, string $recipientMsgId): self
     {
         $this->originalMsgId = $originalMsgId;
-        $gsi1sk = Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId()) . $recipientMsgId;
-        $gsi1 = [
-            'GSI1PK' => ['S' => $this->participation->getPK()],
-            'GSI1SK' => ['S' => $gsi1sk]
-        ];
-
-        $this->setGSI1($gsi1);
+        $this->setGSI1([
+            Entity::GLOBAL_INDEX1_PK => ['S' => Helpers::gsi1PKForMessage($this->participation)],
+            Entity::GLOBAL_INDEX1_SK => ['S' => Helpers::gsi1SKForMessage($this->participation, $recipientMsgId)]
+        ]);
 
         return $this;
     }
