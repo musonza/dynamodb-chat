@@ -60,6 +60,8 @@ class Message extends Entity
             'GSI1SK' => ['S' => $gsi1sk]
         ];
 
+        // "PARTICIPANT#{$this->participation->getParticipantExternalId()}"
+
         $this->setGSI1($gsi1);
 
         return $this;

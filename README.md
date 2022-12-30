@@ -19,7 +19,6 @@
     - [Send Message with additional details](#send-message-with-additional-details)
     - [Delete Message](#delete-message)
     - [Mark Message as read](#mark-message-as-read)
-- [DynamoDB access patterns](#dynamodb-access-patterns)
 </details>
 
 ## Introduction
@@ -151,7 +150,11 @@ Chat::messaging($conversationId, $messageId)
     ->markAsRead($recipientOrOwnerId);
 ```
 
-## DynamoDB access patterns
+## DynamoDB Schema
+
+<details><summary>Click to expand</summary>
+
+### Entities
 
 | Entity       |        PK         |                SK |
 |--------------|:-----------------:|------------------:|
@@ -159,7 +162,7 @@ Chat::messaging($conversationId, $messageId)
 | Participant  | CONVERSATION#{ID} |  PARTICIPANT#{ID} |
 | Message      | CONVERSATION#{ID} |          MSG#{ID} |
 
-### GSI1
+#### GSI1
 
 | Entity       |      GSI1PK       |            GSI1SK |
 |--------------|:-----------------:|------------------:|
@@ -167,10 +170,12 @@ Chat::messaging($conversationId, $messageId)
 | Participant  | PARTICIPANT#{ID}  | CONVERSATION#{ID} |
 | Message      | CONVERSATION#{ID} |          MSG#{ID} |
 
-### GSI2
+#### GSI2
 
 | Entity       |         GSI2PK         |                    GSI2SK |
 |--------------|:----------------------:|--------------------------:|
 | Conversation |                        |                           |
 | Participant  |                        |                           |
-| Message      | PARTICIPANT#{senderId} | PARTICIPANT#{recipientId} |
+| Message      | PARTICIPANT#{SenderId} | PARTICIPANT#{RecipientId} |
+
+</details>

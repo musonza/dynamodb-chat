@@ -30,6 +30,11 @@ class Participation extends Entity
         ];
     }
 
+    public function getConversation(): Conversation
+    {
+        return $this->conversation;
+    }
+
     public function getPartitionKey(): array
     {
         return $this->conversation->getPartitionKey();

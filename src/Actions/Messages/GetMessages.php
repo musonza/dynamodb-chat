@@ -9,6 +9,7 @@ use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
+use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class GetMessages extends Action
 {
@@ -27,10 +28,16 @@ class GetMessages extends Action
         $gsi1skStartsWith = "PARTICIPANT#{$this->participation->getParticipantExternalId()}";
         $query = $this->getTable()
             ->query(Entity::GLOBAL_INDEX1)
-            ->key($this->conversation->getPK())
+            ->key($this->conversation->getPK() . $this->participation->getParticipantExternalId())
             ->condition(Condition::attribute(Entity::GLOBAL_INDEX1_SK)->beginsWith($gsi1skStartsWith))
             ->limit(ConfigurationManager::getPaginatorLimit());
 
         return $query->fetch(ConfigurationManager::getPaginatorPages(), $offset);
     }
 }
+
+//->query(Entity::GLOBAL_INDEX1)
+//    ->key(Helpers::gs1PKForMessage($this->participation))
+////            ->key(Helpers::gs1PKForMessage($this->participation))
+////            ->condition(Condition::attribute(Entity::GLOBAL_INDEX1_SK)->beginsWith($gsi1skStartsWith))
+//    ->limit(ConfigurationManager::getPaginatorLimit());
