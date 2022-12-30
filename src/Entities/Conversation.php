@@ -221,4 +221,9 @@ class Conversation extends Entity implements Contract
     {
         return $this->entityType;
     }
+
+    public function getKeyPrefix(): string
+    {
+        return 'CONVERSATION#';
+    }
 }

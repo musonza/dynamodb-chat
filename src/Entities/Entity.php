@@ -6,6 +6,7 @@ use Bego\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Entity extends Model
 {
@@ -74,5 +75,31 @@ class Entity extends Model
     public function getAttributes(): array
     {
         return $this->attributes;
+    }
+
+    public function getAttribute(string $key)
+    {
+        return $this->attributes[$key] ?? null;
+    }
+
+    public function setAttribute(string $key, $value): self
+    {
+        $this->attributes[$key] = $value;
+        return $this;
+    }
+
+    public static function newInstance($attributes = [], $exists = false): static
+    {
+        $model = new static;
+
+        if (!$exists) {
+            $model->setAttribute('Id', Helpers::generateId($model->getKeyPrefix(), now()));
+        }
+
+        foreach ($attributes as $key => $value) {
+            $model->setAttribute($key, $value);
+        }
+
+        return $model;
     }
 }

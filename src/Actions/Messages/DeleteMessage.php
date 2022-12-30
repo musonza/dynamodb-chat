@@ -10,6 +10,7 @@ use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
+use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class DeleteMessage extends Action
 {
@@ -27,7 +28,10 @@ class DeleteMessage extends Action
     public function execute(): Result
     {
         $participant = new Participation($this->conversation, $this->participantId);
-        $message = Message::createFrom($participant, $this->messageId);
+        $message = Message::newInstance([
+            'Id' => $this->messageId,
+            'ConversationId' => $this->conversation->getId(),
+        ], true);
 
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
@@ -37,7 +41,7 @@ class DeleteMessage extends Action
             'ExpressionAttributeValues' => [
                 ':SK' => ['S' => $message->getSK()],
                 // Only delete if the message is owned by the participant
-                ':GSI2SK' => ['S' => "PARTICIPANT#{$participant->getParticipantExternalId()}"]
+                ':GSI2SK' => ['S' => Helpers::gsi2SKForMessage($participant)]
             ],
             'ConditionExpression' => 'SK = :SK AND GSI2SK = :GSI2SK',
         ];

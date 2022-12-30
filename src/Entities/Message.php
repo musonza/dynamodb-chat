@@ -2,44 +2,19 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 use Aws\DynamoDb\Marshaler;
+use Bego\Component\Resultset;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
-class Message extends Entity
+class Message extends Entity implements Contract
 {
     const ENTITY_TYPE = 'MSG';
-    const MESSAGE_KEY_PREFIX = 'MSG#';
 
     protected Participation $participation;
-    protected string $message;
-    protected array $data = [];
-    protected bool $isSender;
-    protected int $read = 0;
     protected array $gsi1 = [];
     protected array $gsi2 = [];
-    protected string $messageId = '';
     protected string $originalMsgId = '';
 
-    public function __construct(Participation $participation, string $message, bool $isSender = false)
-    {
-        $this->participation = $participation;
-        $this->message = $message;
-        $this->isSender = $isSender;
-
-        if ($isSender) {
-            $this->setSender($participation, $participation);
-        }
-
-        if (!$this->messageId) {
-            $this->messageId = Helpers::generateId(self::MESSAGE_KEY_PREFIX, now());
-        }
-    }
-
-    public static function createFrom(Participation $participant, string $messageId): Message
-    {
-        return (new static($participant, ''))->setId($messageId);
-    }
-
-    public function setSender(Participation $participation, Participation $recipient): self
+    public function setSender(Participation $participation, Participation $recipient, string $originalMsgId): self
     {
         $gsi2 = [
             'GSI2PK' => ['S' => Helpers::gs1skFromParticipantIdentifier($participation->getParticipantExternalId())],
@@ -48,18 +23,21 @@ class Message extends Entity
 
         $this->setGSI2($gsi2);
 
+        $this->setOriginalAndClonedMessageKeys($recipient, $originalMsgId, $this->getId());
+
         return $this;
     }
 
-    public function setOriginalAndClonedMessageKeys(string $originalMsgId, string $recipientMsgId): self
-    {
+    private function setOriginalAndClonedMessageKeys(
+        Participation $recipient,
+        string $originalMsgId,
+        string $recipientMsgId
+    ) {
         $this->originalMsgId = $originalMsgId;
         $this->setGSI1([
-            Entity::GLOBAL_INDEX1_PK => ['S' => Helpers::gsi1PKForMessage($this->participation)],
-            Entity::GLOBAL_INDEX1_SK => ['S' => Helpers::gsi1SKForMessage($this->participation, $recipientMsgId)]
+            Entity::GLOBAL_INDEX1_PK => ['S' => Helpers::gsi1PKForMessage($recipient)],
+            Entity::GLOBAL_INDEX1_SK => ['S' => Helpers::gsi1SKForMessage($recipient, $recipientMsgId)]
         ]);
-
-        return $this;
     }
 
     public function getPrimaryKey(): array
@@ -72,7 +50,9 @@ class Message extends Entity
 
     public function getPartitionKey(): array
     {
-        return $this->participation->getPartitionKey();
+        return [
+            'S' => $this->getAttribute('ConversationId')
+        ];
     }
 
     public function getSortKey(): array
@@ -114,18 +94,12 @@ class Message extends Entity
 
     public function getId(): string
     {
-        return $this->messageId;
+        return $this->getAttribute('Id');
     }
 
     public function getMessage(): string
     {
-        return $this->message;
-    }
-
-    public function setRead(bool $isRead): self
-    {
-        $this->read = $isRead;
-        return $this;
+        return $this->getAttribute('Message');
     }
 
     public function toItem(): array
@@ -137,13 +111,15 @@ class Message extends Entity
             ...$this->getGSI2(),
             'CreatedAt' => ['S' => now()->toISOString()],
             'Message' => ['S' => $this->getMessage()],
-            'Read' => ['N' => $this->read],
+            'Read' => ['N' => $this->getAttribute('Read')],
             'ReadCount' => ['N' => 0],
-            'IsSender' => ['N' => $this->isSender],
+            'IsSender' => ['N' => $this->getAttribute('IsSender')],
             'ParentId' => ['S' => $this->originalMsgId ?? $this->getId()],
         ];
 
-        $data = empty($this->data) ? [] : (new Marshaler())->marshalJson(json_encode($this->data));
+        $data = empty($this->getAttribute('Data'))
+            ? []
+            : (new Marshaler())->marshalJson(json_encode($this->getAttribute('Data')));
 
         if (!empty($data)) {
             $item['Data'] = ['S' => $data];
@@ -152,15 +128,18 @@ class Message extends Entity
         return $item;
     }
 
-    public function setData(array $data): self
+    public function setResultSet(Resultset $resultset)
     {
-        $this->data = $data;
-        return $this;
+        // TODO: Implement setResultSet() method.
     }
 
-    public function setId(string $messageId): self
+    public function getResultSet(): ?Resultset
     {
-        $this->messageId = $messageId;
-        return $this;
+        // TODO: Implement getResultSet() method.
+    }
+
+    public function getKeyPrefix(): string
+    {
+        return 'MSG#';
     }
 }

@@ -39,4 +39,9 @@ class Helpers
     {
         return "PARTICIPANT#{$participation->getParticipantExternalId()}{$recipientMsgId}";
     }
+
+    public static function gsi2SKForMessage(Participation $participation): string
+    {
+        return "PARTICIPANT#{$participation->getParticipantExternalId()}";
+    }
 }

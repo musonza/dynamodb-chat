@@ -88,7 +88,7 @@ class MessageTest extends TestCase
             $conditions
         );
 
-        $item = $this->marshaler->unmarshalItem($query->first()->attribute('Data'));
+        $item = $query->first()->attribute('Data'); // $this->marshaler->unmarshalItem($query->first()->attribute('Data'));
 
         $this->assertEquals($item, $data);
     }

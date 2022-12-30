@@ -12,4 +12,5 @@ interface Contract
     public function getSK(): string;
     public function setResultSet(Resultset $resultset);
     public function getResultSet(): ?Resultset;
+    public function getKeyPrefix(): string;
 }

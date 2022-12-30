@@ -37,10 +37,21 @@ class CreateMessage extends Action
      */
     public function execute(): Message
     {
-        $message = new Message($this->participation, $this->text, true);
-        $message = $message->setData($this->data)
-            ->setOriginalAndClonedMessageKeys($message->getId(), $message->getId())
-            ->setRead(1);
+        $attributes = [
+            'ConversationId' => $this->conversation->getId(),
+            'ParticipantId' => $this->participation->getParticipantExternalId(),
+            'Message' => $this->text,
+            'IsSender' => true,
+            'ParentId' => null,
+        ];
+
+        if (!empty($this->data)) {
+            $attributes['Data'] = $this->data;
+        }
+
+        $message = Message::newInstance($attributes);
+        $message = $message->setSender($this->participation, $this->participation, $message->getId())
+            ->setAttribute('Read', true);
 
         $table = $this->getTable();
         // Check if user can send a message
@@ -78,10 +89,11 @@ class CreateMessage extends Action
 
             // Sender already has an entry for the message
             if (($this->participation->getParticipantExternalId() !== $recipient->getParticipantExternalId())) {
-                $recipientMsg = (new Message($recipient, $this->text));
-                $batchItems[] = $recipientMsg->setSender($this->participation, $recipient)
-                    ->setData($this->data)
-                    ->setOriginalAndClonedMessageKeys($message->getId(), $recipientMsg->getId())
+                $attributes['ParticipantId'] = $recipient->getParticipantExternalId();
+                $attributes['IsSender'] = false;
+                $attributes['ParentId'] = $message->getId();
+                $recipientMsg = Message::newInstance($attributes);
+                $batchItems[] = $recipientMsg->setSender($this->participation, $recipient, $message->getId())
                     ->toArray();
 
                 $batchCount++;
