@@ -153,6 +153,8 @@ Chat::messaging($conversationId, $messageId)
 
 ## DynamoDB access patterns
 
+<details><summary>Click to expand</summary>
+
 | Entity       |        PK         |                SK |
 |--------------|:-----------------:|------------------:|
 | Conversation | CONVERSATION#{ID} | CONVERSATION#{ID} |
@@ -174,3 +176,5 @@ Chat::messaging($conversationId, $messageId)
 | Conversation |                        |                           |
 | Participant  |                        |                           |
 | Message      | PARTICIPANT#{senderId} | PARTICIPANT#{recipientId} |
+
+</details>
