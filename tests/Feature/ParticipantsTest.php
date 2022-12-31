@@ -10,7 +10,9 @@ class ParticipantsTest extends TestCase
     public function testCreateConversationWithParticipants()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group Chat One')
+            ->setAttributes([
+                'Subject' => 'Group Chat One',
+            ])
             ->setParticipants(['jane', 'john'])
             ->create();
 
@@ -45,6 +47,7 @@ class ParticipantsTest extends TestCase
         $this->assertEquals('PARTICIPATION', $john->attribute('Type'));
 
         $c = $this->chat->conversation($conversation->getId())->first();
+
         $this->assertEquals(
             2,
             $c->getResultSet()->first()->attribute('ParticipantCount')
@@ -60,9 +63,13 @@ class ParticipantsTest extends TestCase
         }
 
         $conversation = $this->chat->conversation()
-            ->setSubject('Group Two')
+            ->setAttributes([
+                'Subject' => 'Group Two',
+            ])
             ->setParticipants($participants)
             ->create();
+
+        // 'Participants' => $participants,
 
         $this->chat->messaging($conversation->getId())
             ->message('user10', 'Hello')
@@ -86,7 +93,9 @@ class ParticipantsTest extends TestCase
         }
 
         $conversation = $this->chat->conversation()
-            ->setSubject('Conversation')
+            ->setAttributes([
+                'Subject' => 'Conversation',
+            ])
             ->setParticipants($participants)
             ->create();
 
@@ -112,7 +121,7 @@ class ParticipantsTest extends TestCase
     public function testAddConversationParticipants()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Conversation')
+            ->setAttributes(['Subject' => 'Conversation'])
             ->create();
 
         $this->chat->addParticipants($conversation->getId(), [

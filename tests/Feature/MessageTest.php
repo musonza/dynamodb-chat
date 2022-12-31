@@ -13,7 +13,9 @@ class MessageTest extends TestCase
     public function testSendMessage()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group Two')
+            ->setAttributes([
+                'Subject' => 'Group Two',
+            ])
             ->setParticipants(['messi', 'ronaldo', 'aguero'])
             ->create();
 
@@ -40,6 +42,7 @@ class MessageTest extends TestCase
         $this->assertEquals(1, $items[Helpers::gs1skFromParticipantIdentifier('ronaldo')]->attribute('Read'), 'Sender message marked as read');
         $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier('messi')]->attribute('Read'));
         $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier('aguero')]->attribute('Read'));
+        $this->assertEquals('MSG', $response->item(0)->attribute('Type'));
     }
 
     public function testOnlyParticipantsCanSendMessages()
@@ -47,7 +50,9 @@ class MessageTest extends TestCase
         $this->expectExceptionMessage('Participant is not part of the conversation');
 
         $conversation = $this->chat->conversation()
-            ->setSubject('Group Two')
+            ->setAttributes([
+                'Subject' => 'Group Two',
+            ])
             ->setParticipants(['jane', 'john'])
             ->create();
 
@@ -61,7 +66,9 @@ class MessageTest extends TestCase
     public function testSendMessageWithAdditionalDetails()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group')
+            ->setAttributes([
+                'Subject' => 'Group',
+            ])
             ->setParticipants(['jane', 'john'])
             ->create();
 
@@ -96,7 +103,9 @@ class MessageTest extends TestCase
     public function testDeleteMessage()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group')
+            ->setAttributes([
+                'Subject' => 'Group',
+            ])
             ->setParticipants(['jane', 'john'])
             ->create();
 
@@ -119,7 +128,7 @@ class MessageTest extends TestCase
     public function testClearConversation()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group')
+            ->setAttributes(['subject' => 'Group'])
             ->setParticipants(['jane', 'john'])
             ->create();
 
@@ -147,7 +156,7 @@ class MessageTest extends TestCase
         $this->expectException(DynamoDbException::class);
 
         $conversation = $this->chat->conversation()
-            ->setSubject('Group')
+            ->setAttributes(['subject' => 'Group'])
             ->setParticipants(['jane', 'john'])
             ->create();
 
@@ -162,7 +171,7 @@ class MessageTest extends TestCase
     public function testMarkMessageRead()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group')
+            ->setAttributes(['subject' => 'Group'])
             ->setParticipants(['jane', 'john', 'james'])
             ->create();
 
@@ -190,7 +199,7 @@ class MessageTest extends TestCase
     {
         // Create a conversation with 3 participants
         $conversation = $this->chat->conversation()
-            ->setSubject('Group')
+            ->setAttributes(['Subject' => 'Group'])
             ->setParticipants(['jane', 'john', 'james'])
             ->create();
 
@@ -221,7 +230,7 @@ class MessageTest extends TestCase
     public function testMarksOnlyOwnedMessageRead()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group')
+            ->setAttributes(['Subject' => 'Group'])
             ->setParticipants(['jane', 'john'])
             ->create();
 
@@ -245,7 +254,7 @@ class MessageTest extends TestCase
     public function testGetMessagesReturnsSortedItems()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Group')
+            ->setAttributes(['Subject' => 'Group'])
             ->setParticipants(['jane', 'john'])
             ->create();
 

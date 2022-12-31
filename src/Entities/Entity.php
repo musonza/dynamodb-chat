@@ -2,6 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
+use Bego\Component\Resultset;
 use Bego\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -38,6 +39,14 @@ class Entity extends Model
      */
     private array $attributes = [];
 
+    protected array $gsi1 = [];
+
+    protected array $gsi2 = [];
+
+    protected string $entityType = 'CHAT_ENTITY';
+
+    protected string $keyPrefix = 'CHAT';
+
     public function toArray(array $only = []): array
     {
         $item = $this->toItem();
@@ -60,15 +69,14 @@ class Entity extends Model
     {
         $allowList = ConfigurationManager::getAttributesAllowed();
 
-        if(!empty($allowList)) {
-            foreach ($attributes as $key => $val) {
-                if (!in_array($key, ConfigurationManager::getAttributesAllowed())) {
-                    throw new InvalidArgumentException("Attribute {$key} is not in the allowed list.");
-                }
+        foreach ($attributes as $key => $val) {
+            if (!empty($allowList) && !in_array($key, ConfigurationManager::getAttributesAllowed())) {
+                throw new InvalidArgumentException("Attribute {$key} is not in the allowed list.");
             }
+
+            $this->attributes[$key] = $val;
         }
 
-        $this->attributes = $attributes;
         return $this;
     }
 
@@ -77,9 +85,9 @@ class Entity extends Model
         return $this->attributes;
     }
 
-    public function getAttribute(string $key)
+    public function getAttribute(string $key, $default = null)
     {
-        return $this->attributes[$key] ?? null;
+        return $this->attributes[$key] ?? $default;
     }
 
     public function setAttribute(string $key, $value): self
@@ -93,7 +101,8 @@ class Entity extends Model
         $model = new static;
 
         if (!$exists) {
-            $model->setAttribute('Id', Helpers::generateId($model->getKeyPrefix(), now()));
+            $model->setAttribute('Id', Helpers::generateId($model->keyPrefix, now()));
+            $model->setAttribute('CreatedAt', now()->toISOString());
         }
 
         foreach ($attributes as $key => $value) {
@@ -101,5 +110,50 @@ class Entity extends Model
         }
 
         return $model;
+    }
+
+    public function getId(): string
+    {
+        return $this->getAttribute('Id');
+    }
+
+    public function getKeyPrefix(): string
+    {
+        return '';
+    }
+
+    public function getEntityType(): string
+    {
+        return $this->entityType;
+    }
+
+    public function setResultSet(Resultset $resultset)
+    {
+        $this->resultset = $resultset;
+    }
+
+    public function getResultSet(): ?Resultset
+    {
+        return $this->resultset;
+    }
+
+    public function getGSI1(): array
+    {
+        return $this->gsi1;
+    }
+
+    public function getGSI2(): array
+    {
+        return $this->gsi2;
+    }
+
+    public function setGSI2(array $gsi)
+    {
+        $this->gsi2 = $gsi;
+    }
+
+    public function setGSI1(array $gsi)
+    {
+        $this->gsi1 = $gsi;
     }
 }

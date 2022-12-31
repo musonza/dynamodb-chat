@@ -3,7 +3,7 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 
 use Bego\Condition;
-use InvalidArgumentException;
+use Chat;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Exceptions\ConversationExistsException;
@@ -14,14 +14,14 @@ class CreateConversation extends Action
 {
     protected Conversation $conversation;
 
-    public function __construct(Conversation $conversation)
+    public function __construct(array $attributes)
     {
-        $this->conversation = $conversation;
+        $this->conversation = Conversation::newInstance($attributes);
     }
 
     public function execute(): Conversation
     {
-        $participantIds = $this->conversation->getParticipantIds();
+        $participantIds = $this->conversation->getAttribute('Participants');
         $conditions = [];
 
         if ($this->conversation->isDirect()) {
@@ -33,8 +33,7 @@ class CreateConversation extends Action
             }
 
             $directConversationKey = Helpers::directConversationKey($participantIds[0], $participantIds[1]);
-            $this->conversation->setId($directConversationKey);
-            $this->conversation->setType(Conversation::ENTITY_TYPE_DIRECT);
+            $this->conversation->setAttribute('Id', $directConversationKey);
 
             $conditions = [
                 Condition::attribute('PK')->notEq($this->conversation->getPK())
@@ -45,6 +44,10 @@ class CreateConversation extends Action
 
         if (!$created) {
             throw new ConversationExistsException($this->conversation);
+        }
+
+        if (!empty($participantIds)) {
+            Chat::addParticipants($this->conversation->getId(), $participantIds);
         }
 
         return $this->conversation;

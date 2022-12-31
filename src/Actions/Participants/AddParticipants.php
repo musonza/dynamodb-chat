@@ -6,6 +6,7 @@ use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\ConversationClient;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
@@ -24,8 +25,8 @@ class AddParticipants extends Action
 
     public function execute()
     {
-        $item = $this->conversation
-            ->firstOrFail()
+        $conversationClient = new ConversationClient($this->conversation->getId());
+        $item = $conversationClient->first()
             ->getResultSet()
             ->first();
 
@@ -77,4 +78,18 @@ class AddParticipants extends Action
 
         return $client->updateItem($params);
     }
+
+//    private function validateParticipants($Participants, array $participantIds)
+//    {
+//        $participants = array_merge($Participants, $participantIds);
+//        $participants = array_unique($participants);
+//        $participants = array_values($participants);
+//
+//        if (count($participants) > ConfigurationManager::getMaxParticipants()) {
+//            throw new InvalidConversationParticipants(
+//                $this->conversation,
+//                InvalidConversationParticipants::MAX_PARTICIPANT_COUNT
+//            );
+//        }
+//    }
 }

@@ -2,17 +2,14 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 use Aws\DynamoDb\Marshaler;
-use Bego\Component\Resultset;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Message extends Entity implements Contract
 {
-    const ENTITY_TYPE = 'MSG';
-
     protected Participation $participation;
-    protected array $gsi1 = [];
-    protected array $gsi2 = [];
     protected string $originalMsgId = '';
+    protected string $entityType = 'MSG';
+    protected string $keyPrefix = 'MSG#';
 
     public function setSender(Participation $participation, Participation $recipient, string $originalMsgId): self
     {
@@ -72,31 +69,6 @@ class Message extends Entity implements Contract
         return array_values($this->getSortKey())[0];
     }
 
-    public function getGSI1(): array
-    {
-        return $this->gsi1;
-    }
-
-    public function getGSI2(): array
-    {
-        return $this->gsi2;
-    }
-
-    public function setGSI2(array $gsi)
-    {
-        $this->gsi2 = $gsi;
-    }
-
-    public function setGSI1(array $gsi)
-    {
-        $this->gsi1 = $gsi;
-    }
-
-    public function getId(): string
-    {
-        return $this->getAttribute('Id');
-    }
-
     public function getMessage(): string
     {
         return $this->getAttribute('Message');
@@ -106,10 +78,10 @@ class Message extends Entity implements Contract
     {
         $item = [
             ...$this->getPrimaryKey(),
-            'Type' => ['S' => self::ENTITY_TYPE],
+            'Type' => ['S' => $this->getEntityType()],
             ...$this->getGSI1(),
             ...$this->getGSI2(),
-            'CreatedAt' => ['S' => now()->toISOString()],
+            'CreatedAt' => ['S' => $this->getAttribute('CreatedAt')],
             'Message' => ['S' => $this->getMessage()],
             'Read' => ['N' => $this->getAttribute('Read')],
             'ReadCount' => ['N' => 0],
@@ -126,20 +98,5 @@ class Message extends Entity implements Contract
         }
 
         return $item;
-    }
-
-    public function setResultSet(Resultset $resultset)
-    {
-        // TODO: Implement setResultSet() method.
-    }
-
-    public function getResultSet(): ?Resultset
-    {
-        // TODO: Implement getResultSet() method.
-    }
-
-    public function getKeyPrefix(): string
-    {
-        return 'MSG#';
     }
 }
