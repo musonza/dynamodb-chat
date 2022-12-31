@@ -6,6 +6,7 @@ use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\ConversationClient;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
@@ -24,8 +25,8 @@ class DeleteParticipants extends Action
 
     public function execute()
     {
-        $item = $this->conversation
-            ->firstOrFail()
+        $conversationClient = new ConversationClient($this->conversation->getId());
+        $item = $conversationClient->first()
             ->getResultSet()
             ->first();
 

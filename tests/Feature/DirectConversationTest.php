@@ -15,12 +15,16 @@ class DirectConversationTest extends TestCase
         $this->expectException(ConversationExistsException::class);
 
         $this->chat->conversation()
-            ->setSubject('Conversation')
+            ->setAttributes([
+                'Subject' => 'Conversation 1',
+            ])
             ->setParticipants(['john', 'jane'])
             ->setIsDirect(true)
             ->create();
         $this->chat->conversation()
-            ->setSubject('Conversation')
+            ->setAttributes([
+                'Subject' => 'Conversation 2',
+            ])
             ->setParticipants(['jane', 'john'])
             ->setIsDirect(true)
             ->create();
@@ -32,7 +36,9 @@ class DirectConversationTest extends TestCase
         $this->expectExceptionMessage(InvalidConversationParticipants::REQUIRED_PARTICIPANT_COUNT);
 
         $this->chat->conversation()
-            ->setSubject('Conversation')
+            ->setAttributes([
+                'Subject' => 'Conversation',
+            ])
             ->setParticipants(['john', 'jane', 'doe'])
             ->setIsDirect(true)
             ->create();
@@ -44,7 +50,9 @@ class DirectConversationTest extends TestCase
         $this->expectExceptionMessage(InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE);
 
         $conversation = $this->chat->conversation()
-            ->setSubject('Conversation')
+            ->setAttributes([
+                'Subject' => 'Conversation',
+            ])
             ->setParticipants(['john', 'jane'])
             ->setIsDirect(true)
             ->create();
@@ -58,7 +66,9 @@ class DirectConversationTest extends TestCase
         $this->expectExceptionMessage(InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE);
 
         $conversation = $this->chat->conversation()
-            ->setSubject('Conversation')
+            ->setAttributes([
+                'Subject' => 'Conversation',
+            ])
             ->setParticipants(['john', 'jane'])
             ->setIsDirect(true)
             ->create();
@@ -77,7 +87,9 @@ class DirectConversationTest extends TestCase
     public function testGetExistingDirectConversationDetails()
     {
         $this->chat->conversation()
-            ->setSubject('Conversation 1')
+            ->setAttributes([
+                'Subject' => 'Conversation 1',
+            ])
             ->setParticipants(['john', 'jane'])
             ->setIsDirect(true)
             ->create();

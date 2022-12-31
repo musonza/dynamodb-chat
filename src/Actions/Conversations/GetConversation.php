@@ -25,5 +25,7 @@ class GetConversation extends Action
             ->fetch();
 
         $this->conversation->setResultSet($resultSet);
+
+        return $this->conversation;
     }
 }

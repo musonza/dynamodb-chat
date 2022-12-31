@@ -60,4 +60,9 @@ class ConfigurationManager
     {
         return config('musonza_dynamodb_chat.default_pagination_pages');
     }
+
+    public static function getMaxParticipants()
+    {
+        return config('musonza_dynamodb_chat.max_participants');
+    }
 }

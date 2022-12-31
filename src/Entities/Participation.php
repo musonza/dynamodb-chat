@@ -5,9 +5,9 @@ namespace Musonza\LaravelDynamodbChat\Entities;
 class Participation extends Entity
 {
     const PARTICIPATION_PK_PREFIX = 'PARTICIPANT#%s';
-    const ENTITY_TYPE = 'PARTICIPATION';
     protected Conversation $conversation;
     protected string $participantId;
+    protected string $entityType = 'PARTICIPATION';
 
     public function __construct(Conversation $conversation, string $participantId)
     {
@@ -57,7 +57,7 @@ class Participation extends Entity
     {
         return[
             ...$this->getPrimaryKey(),
-            'Type' => ['S' => self::ENTITY_TYPE],
+            'Type' => ['S' => $this->getEntityType()],
             ...$this->getGSI1(),
             'ParticipantId' => ['S' => $this->getParticipantExternalId()],
             'CreatedAt' => ['S' => now()->toISOString()],

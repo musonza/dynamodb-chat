@@ -8,12 +8,13 @@ use Musonza\LaravelDynamodbChat\Tests\TestCase;
 
 class ConversationTest extends TestCase
 {
-    public function testCreateConversation()
+    public function testCreateConversation1()
     {
         $subject = 'Conversation 1';
+
         $conversation = $this->chat->conversation()
-            ->setSubject($subject)
             ->setAttributes([
+                'Subject' => $subject,
                 'IsPrivate' => 1,
                 'Description' => 'My description',
             ])
@@ -26,6 +27,7 @@ class ConversationTest extends TestCase
         );
 
         $this->assertEquals($subject, $response->first()->attribute('Subject'));
+        $this->assertEquals('CONVERSATION', $response->first()->attribute('Type'));
         $this->assertEquals(1, $response->first()->attribute('IsPrivate'));
         $this->assertEquals('My description', $response->first()->attribute('Description'));
         $this->assertEquals(1, $response->count(), 'One conversation created');
@@ -34,7 +36,9 @@ class ConversationTest extends TestCase
     public function testGetConversationById()
     {
         $conversation = $this->chat->conversation()
-            ->setSubject('Hello')
+            ->setAttributes([
+                'Subject' => 'Hello',
+            ])
             ->create();
 
         $this->assertNull($conversation->getResultSet());
@@ -47,7 +51,9 @@ class ConversationTest extends TestCase
     {
         $subject = 'Conversation 1';
         $conversation = $this->chat->conversation()
-            ->setSubject($subject)
+            ->setAttributes([
+                'Subject' => $subject,
+            ])
             ->create();
 
         $conversationId = $conversation->getId();

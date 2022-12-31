@@ -10,6 +10,4 @@ interface Contract
     public function toItem(): array;
     public function getPK(): string;
     public function getSK(): string;
-    public function setResultSet(Resultset $resultset);
-    public function getResultSet(): ?Resultset;
 }

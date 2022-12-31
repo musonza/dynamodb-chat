@@ -4,8 +4,6 @@ namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
 use Aws\Result;
 use Bego\Component\Resultset;
-use Bego\Condition;
-use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
