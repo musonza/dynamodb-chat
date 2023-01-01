@@ -20,32 +20,33 @@ class Entity extends Model
     public const GLOBAL_INDEX2_PK = 'GSI2PK';
     public const GLOBAL_INDEX2_SK = 'GSI2SK';
 
-    /**
-     * Table name
-     */
+    // @phpstan-ignore-next-line
     protected $_name = 'musonza_chat';
-
+    // @phpstan-ignore-next-line
     protected $_partition = self::PARTITION_KEY;
-
+    // @phpstan-ignore-next-line
     protected $_sort = self::SORT_KEY;
-
+    // @phpstan-ignore-next-line
     protected $_indexes = [
         self::GLOBAL_INDEX1 => ['key' => self::GLOBAL_INDEX1_PK]
     ];
+
+    /**
+     * @var Resultset|null
+     */
+    protected ?Resultset $resultset = null;
 
     /**
      * Entity attributes to update / create
      * @var array
      */
     private array $attributes = [];
-
     protected array $gsi1 = [];
-
     protected array $gsi2 = [];
-
     protected string $entityType = 'CHAT_ENTITY';
-
     protected string $keyPrefix = 'CHAT';
+
+//    final public function __construct() { }
 
     public function toArray(array $only = []): array
     {
@@ -63,6 +64,11 @@ class Entity extends Model
         }
 
         return  $arr;
+    }
+
+    protected function toItem(): array
+    {
+        return [];
     }
 
     public function setAttributes(array $attributes): self
@@ -85,18 +91,18 @@ class Entity extends Model
         return $this->attributes;
     }
 
-    public function getAttribute(string $key, $default = null)
+    public function getAttribute(string $key, mixed $default = null): mixed
     {
         return $this->attributes[$key] ?? $default;
     }
 
-    public function setAttribute(string $key, $value): self
+    public function setAttribute(string $key, mixed $value): self
     {
         $this->attributes[$key] = $value;
         return $this;
     }
 
-    public static function newInstance($attributes = [], $exists = false): static
+    public static function newInstance(array $attributes = [], bool $exists = false): static
     {
         $model = new static;
 
@@ -127,7 +133,7 @@ class Entity extends Model
         return $this->entityType;
     }
 
-    public function setResultSet(Resultset $resultset)
+    public function setResultSet(Resultset $resultset): void
     {
         $this->resultset = $resultset;
     }
@@ -147,12 +153,12 @@ class Entity extends Model
         return $this->gsi2;
     }
 
-    public function setGSI2(array $gsi)
+    public function setGSI2(array $gsi): void
     {
         $this->gsi2 = $gsi;
     }
 
-    public function setGSI1(array $gsi)
+    public function setGSI1(array $gsi): void
     {
         $this->gsi1 = $gsi;
     }

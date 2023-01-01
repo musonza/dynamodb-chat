@@ -50,8 +50,13 @@ class DeleteParticipants extends Action
                 $batchItemsCount = 0;
             }
 
+            $participation = Participation::newInstance([
+                'ConversationId' => $this->conversation->getId(),
+                'Id' => $id,
+            ]);
+
             $batchItems[] = [
-                'DeleteRequest' => ['Key' => (new Participation($this->conversation, $id))->getPrimaryKey()]
+                'DeleteRequest' => ['Key' => $participation->getPrimaryKey()]
             ];
             $batchItemsCount++;
         }

@@ -27,7 +27,11 @@ class DeleteMessage extends Action
 
     public function execute(): Result
     {
-        $participant = new Participation($this->conversation, $this->participantId);
+        $participant = Participation::newInstance([
+            'Id' => $this->participantId,
+            'ConversationId' => $this->conversation->getId(),
+        ]);
+
         $message = Message::newInstance([
             'Id' => $this->messageId,
             'ConversationId' => $this->conversation->getId(),

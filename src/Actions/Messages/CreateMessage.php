@@ -85,7 +85,10 @@ class CreateMessage extends Action
             }
 
             $item = $participantsQuery->item($index);
-            $recipient = new Participation($this->conversation, $item->attribute('ParticipantId'));
+            $recipient = Participation::newInstance([
+                'Id' => $item->attribute('ParticipantId'),
+                'ConversationId' => $this->conversation->getId(),
+            ]);
 
             // Sender already has an entry for the message
             if (($this->participation->getParticipantExternalId() !== $recipient->getParticipantExternalId())) {

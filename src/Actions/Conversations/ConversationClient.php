@@ -77,7 +77,10 @@ class ConversationClient
 
     public function clear(string $participantId): void
     {
-        $participation = new Participation($this->conversation, $participantId);
+        $participation = Participation::newInstance([
+            'ConversationId' => $this->conversation->getId(),
+            'Id' => $participantId,
+        ]);
         (new ClearConversation($this->conversation, $participation))->execute();
     }
 }

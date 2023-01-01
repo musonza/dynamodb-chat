@@ -35,7 +35,7 @@ class Helpers
         return $participation->getPK();
     }
 
-    public static function gsi1SKForMessage(Participation $participation, $recipientMsgId): string
+    public static function gsi1SKForMessage(Participation $participation, string $recipientMsgId): string
     {
         return "PARTICIPANT#{$participation->getParticipantExternalId()}{$recipientMsgId}";
     }

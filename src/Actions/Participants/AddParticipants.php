@@ -25,8 +25,7 @@ class AddParticipants extends Action
 
     public function execute()
     {
-        $conversationClient = new ConversationClient($this->conversation->getId());
-        $item = $conversationClient->first()
+        $item = (new ConversationClient($this->conversation->getId()))->first()
             ->getResultSet()
             ->first();
 
@@ -50,7 +49,12 @@ class AddParticipants extends Action
                 $batchItemsCount = 0;
             }
 
-            $batchItems[] = (new Participation($this->conversation, $id))->toArray();
+            $participation = Participation::newInstance([
+                'ConversationId' => $this->conversation->getId(),
+                'Id' => $id,
+            ]);
+
+            $batchItems[] = $participation->toArray();
 
             $batchItemsCount++;
         }
@@ -78,18 +82,4 @@ class AddParticipants extends Action
 
         return $client->updateItem($params);
     }
-
-//    private function validateParticipants($Participants, array $participantIds)
-//    {
-//        $participants = array_merge($Participants, $participantIds);
-//        $participants = array_unique($participants);
-//        $participants = array_values($participants);
-//
-//        if (count($participants) > ConfigurationManager::getMaxParticipants()) {
-//            throw new InvalidConversationParticipants(
-//                $this->conversation,
-//                InvalidConversationParticipants::MAX_PARTICIPANT_COUNT
-//            );
-//        }
-//    }
 }

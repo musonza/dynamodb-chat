@@ -9,12 +9,15 @@ class Participation extends Entity
     protected string $participantId;
     protected string $entityType = 'PARTICIPATION';
 
-    public function __construct(Conversation $conversation, string $participantId)
-    {
-        $this->conversation = $conversation;
-        $this->participantId = $participantId;
-    }
+//    public function __construct(Conversation $conversation, string $participantId)
+//    {
+//        $this->conversation = $conversation;
+//        $this->participantId = $participantId;
+//    }
 
+    /**
+     * @return array<string, array>
+     */
     public function getPrimaryKey(): array
     {
         return [
@@ -30,14 +33,19 @@ class Participation extends Entity
         ];
     }
 
+    /**
+     * @return array<string, array>
+     */
     public function getPartitionKey(): array
     {
-        return $this->conversation->getPartitionKey();
+        return [
+            'S' => $this->getAttribute('ConversationId')
+        ];
     }
 
     public function getPK(): string
     {
-        return array_values($this->getPartitionKey())[0];
+        return $this->getAttribute('ConversationId');
     }
 
     public function getGSI1(): array
@@ -50,7 +58,7 @@ class Participation extends Entity
 
     public function getParticipantExternalId(): string
     {
-        return $this->participantId;
+        return $this->getAttribute('Id');
     }
 
     public function toItem(): array

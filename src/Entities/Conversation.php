@@ -2,25 +2,14 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
-use Bego\Component\Resultset;
 use Chat;
 use Illuminate\Support\Carbon;
-use Musonza\LaravelDynamodbChat\Actions\Conversations\ClearConversation;
-use Musonza\LaravelDynamodbChat\Actions\Conversations\GetConversation;
-use Musonza\LaravelDynamodbChat\Actions\Conversations\UpdateConversation;
-use Musonza\LaravelDynamodbChat\Exceptions\ConversationNotFoundException;
 
 class Conversation extends Entity implements Contract
 {
     const ENTITY_TYPE_DIRECT = 'CONVERSATION_DIRECT';
     protected string $subject = 'Conversation';
     protected Carbon $createdAt;
-    /**
-     * Result from query on a Conversation.
-     * @var Resultset|null
-     */
-    protected ?Resultset $resultset = null;
-
     /**
      * Specifies whether the conversation is private or public.
      * @var bool

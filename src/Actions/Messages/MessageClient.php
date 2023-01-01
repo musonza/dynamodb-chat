@@ -24,7 +24,11 @@ class MessageClient
 
     public function message(string $participant, string $text, array $data = []): self
     {
-        $this->participation = new Participation($this->conversation, $participant);
+        $this->participation = Participation::newInstance([
+            'Id' => $participant,
+            'ConversationId' => $this->conversation->getId(),
+        ]);
+
         $this->text = $text;
         $this->data = $data;
         return $this;
@@ -32,7 +36,10 @@ class MessageClient
 
     public function delete(string $participantExternalId): Result
     {
-        $participation = new Participation($this->conversation, $participantExternalId);
+        $participation = Participation::newInstance([
+            'ConversationId' => $this->conversation->getId(),
+            'Id' => $participantExternalId,
+        ]);
         return (new DeleteMessage($this->conversation, $this->messageId, $participation->getParticipantExternalId()))
             ->execute();
     }
@@ -44,14 +51,21 @@ class MessageClient
 
     public function markAsRead(string $participantExternalId): bool
     {
-        $participation = new Participation($this->conversation, $participantExternalId);
+        $participation = Participation::newInstance([
+            'ConversationId' => $this->conversation->getId(),
+            'Id' => $participantExternalId,
+        ]);
+
         return (new UpdateMessage($this->conversation, $participation, $this->messageId, ['Read' => true]))
             ->execute();
     }
 
     public function getMessages(string $participantExternalId, $offset = null): Resultset
     {
-        $participation = new Participation($this->conversation, $participantExternalId);
+        $participation = Participation::newInstance([
+            'ConversationId' => $this->conversation->getId(),
+            'Id' => $participantExternalId,
+        ]);
         return (new GetMessages($this->conversation, $participation))->execute($offset);
     }
 }

@@ -1,0 +1,11 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - src/Entities/
+
+    # Level 9 is the highest level
+    level: 7
+    checkMissingIterableValueType: false

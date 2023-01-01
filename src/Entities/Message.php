@@ -2,6 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 use Aws\DynamoDb\Marshaler;
+use JsonException;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Message extends Entity implements Contract
@@ -29,7 +30,7 @@ class Message extends Entity implements Contract
         Participation $recipient,
         string $originalMsgId,
         string $recipientMsgId
-    ) {
+    ): void {
         $this->originalMsgId = $originalMsgId;
         $this->setGSI1([
             Entity::GLOBAL_INDEX1_PK => ['S' => Helpers::gsi1PKForMessage($recipient)],
@@ -74,6 +75,9 @@ class Message extends Entity implements Contract
         return $this->getAttribute('Message');
     }
 
+    /**
+     * @throws JsonException
+     */
     public function toItem(): array
     {
         $item = [
@@ -91,7 +95,7 @@ class Message extends Entity implements Contract
 
         $data = empty($this->getAttribute('Data'))
             ? []
-            : (new Marshaler())->marshalJson(json_encode($this->getAttribute('Data')));
+            : (new Marshaler())->marshalJson(json_encode($this->getAttribute('Data'), JSON_THROW_ON_ERROR));
 
         if (!empty($data)) {
             $item['Data'] = ['S' => $data];
