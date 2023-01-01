@@ -20,11 +20,11 @@ class MessageClient
     private string $text = '';
     private array $data = [];
 
-    public function __construct(Conversation $conversation, string $messageId = null)
-    {
-        $this->conversation = $conversation;
-        $this->messageId = $messageId;
-    }
+//    public function __construct(Conversation $conversation, string $messageId = null)
+//    {
+//        $this->conversation = $conversation;
+//        $this->messageId = $messageId;
+//    }
 
     public function message(string $participant, string $text, array $data = []): self
     {
@@ -71,5 +71,17 @@ class MessageClient
             'Id' => $participantExternalId,
         ]);
         return (new GetMessages($this->conversation, $participation))->execute($offset);
+    }
+
+    public function setConversation(Conversation $conversation): self
+    {
+        $this->conversation = $conversation;
+        return $this;
+    }
+
+    public function setMessageId(?string $messageId): self
+    {
+        $this->messageId = $messageId;
+        return $this;
     }
 }

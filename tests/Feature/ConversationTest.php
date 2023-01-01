@@ -8,7 +8,7 @@ use Musonza\LaravelDynamodbChat\Tests\TestCase;
 
 class ConversationTest extends TestCase
 {
-    public function testCreateConversation1()
+    public function testCreateConversation()
     {
         $subject = 'Conversation 1';
 

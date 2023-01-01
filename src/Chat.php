@@ -10,9 +10,18 @@ use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
 class Chat
 {
+    protected ConversationClient $conversationClient;
+    protected MessageClient $messageClient;
+
+    public function __construct(ConversationClient $conversationClient, MessageClient $messageClient)
+    {
+        $this->conversationClient = $conversationClient;
+        $this->messageClient = $messageClient;
+    }
+
     public function conversation(string $conversationId = null): ConversationClient
     {
-        return new ConversationClient($conversationId);
+        return $this->conversationClient->setConversationId($conversationId);
     }
 
     public function addParticipants(string $conversationId, array $participantIds): void
@@ -30,6 +39,8 @@ class Chat
     public function messaging(string $conversationId, string $messageId = null): MessageClient
     {
         $conversation = Conversation::newInstance(['Id' => $conversationId], true);
-        return new MessageClient($conversation, $messageId);
+        return $this->messageClient
+            ->setConversation($conversation)
+            ->setMessageId($messageId);
     }
 }

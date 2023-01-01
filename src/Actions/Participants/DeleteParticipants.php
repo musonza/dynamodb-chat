@@ -25,7 +25,7 @@ class DeleteParticipants extends Action
 
     public function execute()
     {
-        $conversationClient = new ConversationClient($this->conversation->getId());
+        $conversationClient = (new ConversationClient())->setConversationId($this->conversation->getId());
         $item = $conversationClient->first()
             ->getResultSet()
             ->first();

@@ -21,6 +21,7 @@ class DirectConversationTest extends TestCase
             ->setParticipants(['john', 'jane'])
             ->setIsDirect(true)
             ->create();
+
         $this->chat->conversation()
             ->setAttributes([
                 'Subject' => 'Conversation 2',

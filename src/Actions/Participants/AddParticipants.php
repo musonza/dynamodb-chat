@@ -25,7 +25,8 @@ class AddParticipants extends Action
 
     public function execute()
     {
-        $item = (new ConversationClient($this->conversation->getId()))->first()
+        $item = (new ConversationClient())
+            ->setConversationId($this->conversation->getId())->first()
             ->getResultSet()
             ->first();
 

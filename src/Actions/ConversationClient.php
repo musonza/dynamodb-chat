@@ -16,12 +16,12 @@ class ConversationClient
     protected ?Conversation $conversation;
     protected array $attributes = [];
 
-    public function __construct(string $conversationId = null)
-    {
-        if ($conversationId) {
-            $this->conversation = Conversation::newInstance(['Id' => $conversationId]);
-        }
-    }
+//    public function __construct(string $conversationId = null)
+//    {
+//        if ($conversationId) {
+//            $this->conversation = Conversation::newInstance(['Id' => $conversationId]);
+//        }
+//    }
 
     public function first(): Conversation
     {
@@ -86,5 +86,11 @@ class ConversationClient
             'Id' => $participantId,
         ]);
         (new ClearConversation($this->conversation, $participation))->execute();
+    }
+
+    public function setConversationId(?string $conversationId): self
+    {
+        $this->conversation = Conversation::newInstance(['Id' => $conversationId]);
+        return $this;
     }
 }
