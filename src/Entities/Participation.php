@@ -9,12 +9,6 @@ class Participation extends Entity
     protected string $participantId;
     protected string $entityType = 'PARTICIPATION';
 
-//    public function __construct(Conversation $conversation, string $participantId)
-//    {
-//        $this->conversation = $conversation;
-//        $this->participantId = $participantId;
-//    }
-
     /**
      * @return array<string, array>
      */
