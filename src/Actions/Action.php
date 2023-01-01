@@ -18,7 +18,7 @@ abstract class Action
     {
         /** @var Database $db */
         $db = app(Database::class);
-        return $db->table(app(Entity::class));
+        return $db->table(app(Conversation::class));
     }
 
     protected function saveItems(array $batchItems): void

@@ -11,7 +11,7 @@ use Musonza\LaravelDynamodbChat\Chat;
 use Musonza\LaravelDynamodbChat\ChatServiceProvider;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Console\InstallCommand;
-use Musonza\LaravelDynamodbChat\Entities\Entity;
+use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Facades\ChatFacade;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -114,18 +114,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function query($key, $conditions = [], $index = null)
     {
-        $statement = $this->database->table(app(Entity::class))
+        $statement = $this->database->table(app(Conversation::class))
             ->query($index)
             ->key($key);
 
         foreach ($conditions as $condition) {
             $statement->condition($condition);
         }
-
-//        return $this->database->table(app(Entity::class))
-//            ->query()
-//            ->key($key)
-//            ->condition($condition)
 
         return $statement->fetch();
     }

@@ -5,7 +5,7 @@ use Aws\DynamoDb\Marshaler;
 use JsonException;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
-class Message extends Entity implements Contract
+class Message extends Entity
 {
     protected Participation $participation;
     protected string $originalMsgId = '';
@@ -70,11 +70,6 @@ class Message extends Entity implements Contract
         return array_values($this->getSortKey())[0];
     }
 
-    public function getMessage(): string
-    {
-        return $this->getAttribute('Message');
-    }
-
     /**
      * @throws JsonException
      */
@@ -86,7 +81,7 @@ class Message extends Entity implements Contract
             ...$this->getGSI1(),
             ...$this->getGSI2(),
             'CreatedAt' => ['S' => $this->getAttribute('CreatedAt')],
-            'Message' => ['S' => $this->getMessage()],
+            'Message' => ['S' => $this->getAttribute('Message')],
             'Read' => ['N' => $this->getAttribute('Read')],
             'ReadCount' => ['N' => 0],
             'IsSender' => ['N' => $this->getAttribute('IsSender')],

@@ -5,9 +5,8 @@ namespace Musonza\LaravelDynamodbChat\Entities;
 use Chat;
 use Illuminate\Support\Carbon;
 
-class Conversation extends Entity implements Contract
+class Conversation extends Entity
 {
-    const ENTITY_TYPE_DIRECT = 'CONVERSATION_DIRECT';
     protected string $subject = 'Conversation';
     protected Carbon $createdAt;
     /**

@@ -9,7 +9,7 @@ use InvalidArgumentException;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
-class Entity extends Model
+abstract class Entity extends Model
 {
     public const PARTITION_KEY = 'PK';
     public const SORT_KEY = 'SK';
@@ -46,7 +46,7 @@ class Entity extends Model
     protected string $entityType = 'CHAT_ENTITY';
     protected string $keyPrefix = 'CHAT';
 
-//    final public function __construct() { }
+    final public function __construct() { }
 
     public function toArray(array $only = []): array
     {
@@ -123,11 +123,6 @@ class Entity extends Model
         return $this->getAttribute('Id');
     }
 
-    public function getKeyPrefix(): string
-    {
-        return '';
-    }
-
     public function getEntityType(): string
     {
         return $this->entityType;
@@ -162,4 +157,8 @@ class Entity extends Model
     {
         $this->gsi1 = $gsi;
     }
+
+    abstract public function getPrimaryKey(): array;
+    abstract public function getPK(): string;
+    abstract public function getSK(): string;
 }

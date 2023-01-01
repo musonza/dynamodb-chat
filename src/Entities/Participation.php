@@ -65,4 +65,9 @@ class Participation extends Entity
             'CreatedAt' => ['S' => now()->toISOString()],
         ];
     }
+
+    public function getSK(): string
+    {
+        return '';
+    }
 }
