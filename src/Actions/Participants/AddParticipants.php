@@ -6,7 +6,7 @@ use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
-use Musonza\LaravelDynamodbChat\Actions\Conversations\ConversationClient;
+use Musonza\LaravelDynamodbChat\Actions\ConversationClient;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;

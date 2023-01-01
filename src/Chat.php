@@ -2,8 +2,8 @@
 
 namespace Musonza\LaravelDynamodbChat;
 
-use Musonza\LaravelDynamodbChat\Actions\Conversations\ConversationClient;
-use Musonza\LaravelDynamodbChat\Actions\Messages\MessageClient;
+use Musonza\LaravelDynamodbChat\Actions\ConversationClient;
+use Musonza\LaravelDynamodbChat\Actions\MessageClient;
 use Musonza\LaravelDynamodbChat\Actions\Participants\AddParticipants;
 use Musonza\LaravelDynamodbChat\Actions\Participants\DeleteParticipants;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;

@@ -1,7 +1,11 @@
 <?php
 
-namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
+namespace Musonza\LaravelDynamodbChat\Actions;
 
+use Musonza\LaravelDynamodbChat\Actions\Conversations\ClearConversation;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\CreateConversation;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\GetConversation;
+use Musonza\LaravelDynamodbChat\Actions\Conversations\UpdateConversation;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 use Musonza\LaravelDynamodbChat\Exceptions\ConversationNotFoundException;

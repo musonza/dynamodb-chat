@@ -1,9 +1,13 @@
 <?php
 
-namespace Musonza\LaravelDynamodbChat\Actions\Messages;
+namespace Musonza\LaravelDynamodbChat\Actions;
 
 use Aws\Result;
 use Bego\Component\Resultset;
+use Musonza\LaravelDynamodbChat\Actions\Messages\CreateMessage;
+use Musonza\LaravelDynamodbChat\Actions\Messages\DeleteMessage;
+use Musonza\LaravelDynamodbChat\Actions\Messages\GetMessages;
+use Musonza\LaravelDynamodbChat\Actions\Messages\UpdateMessage;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
