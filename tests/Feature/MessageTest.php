@@ -12,17 +12,11 @@ class MessageTest extends TestCase
 {
     public function testSendMessage()
     {
-        $conversation = $this->chat->conversation()
-            ->setAttributes([
-                'Subject' => 'Group Two',
-            ])
-            ->setParticipants(['messi', 'ronaldo', 'aguero'])
-            ->create();
-
+        $conversation = $this->createConversation();
         $conversationId = $conversation->getId();
 
         $this->chat->messaging($conversationId)
-            ->message('ronaldo', 'Congratulations you are the G.O.A.T')
+            ->message(self::PARTICIPANTS[0], 'Congratulations')
             ->send();
 
         $conditions = [Condition::attribute('SK')->beginsWith('MSG#')];
@@ -31,7 +25,7 @@ class MessageTest extends TestCase
             $conditions
         );
 
-        $this->assertEquals(3, $response->count(), 'Each participant receives a message');
+        $this->assertEquals(count(self::PARTICIPANTS), $response->count(), 'Each participant receives a message');
 
         $items = [];
 
@@ -39,9 +33,9 @@ class MessageTest extends TestCase
             $items[$item->GSI2SK] = $item;
         }
 
-        $this->assertEquals(1, $items[Helpers::gs1skFromParticipantIdentifier('ronaldo')]->attribute('Read'), 'Sender message marked as read');
-        $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier('messi')]->attribute('Read'));
-        $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier('aguero')]->attribute('Read'));
+        $this->assertEquals(1, $items[Helpers::gs1skFromParticipantIdentifier(self::PARTICIPANTS[0])]->attribute('Read'), 'Sender message marked as read');
+        $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier(self::PARTICIPANTS[1])]->attribute('Read'));
+        $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier(self::PARTICIPANTS[2])]->attribute('Read'));
         $this->assertEquals('MSG', $response->item(0)->attribute('Type'));
     }
 
@@ -49,13 +43,7 @@ class MessageTest extends TestCase
     {
         $this->expectExceptionMessage('Participant is not part of the conversation');
 
-        $conversation = $this->chat->conversation()
-            ->setAttributes([
-                'Subject' => 'Group Two',
-            ])
-            ->setParticipants(['jane', 'john'])
-            ->create();
-
+        $conversation = $this->createConversation();
         $conversationId = $conversation->getId();
 
         $this->chat->messaging($conversationId)
@@ -65,13 +53,7 @@ class MessageTest extends TestCase
 
     public function testSendMessageWithAdditionalDetails()
     {
-        $conversation = $this->chat->conversation()
-            ->setAttributes([
-                'Subject' => 'Group',
-            ])
-            ->setParticipants(['jane', 'john'])
-            ->create();
-
+        $conversation = $this->createConversation();
         $data = [
             'images' => [
                 [
@@ -86,7 +68,7 @@ class MessageTest extends TestCase
         ];
 
         $message = $this->chat->messaging($conversation->getId())
-            ->message('jane', 'Hello', $data)
+            ->message(self::PARTICIPANTS[0], 'Hello', $data)
             ->send();
 
         $conditions = [Condition::attribute('SK')->eq($message->getSK())];
@@ -95,26 +77,20 @@ class MessageTest extends TestCase
             $conditions
         );
 
-        $item = $query->first()->attribute('Data'); // $this->marshaler->unmarshalItem($query->first()->attribute('Data'));
+        $item = $query->first()->attribute('Data');
 
         $this->assertEquals($item, $data);
     }
 
     public function testDeleteMessage()
     {
-        $conversation = $this->chat->conversation()
-            ->setAttributes([
-                'Subject' => 'Group',
-            ])
-            ->setParticipants(['jane', 'john'])
-            ->create();
-
+        $conversation = $this->createConversation();
         $message = $this->chat->messaging($conversation->getId())
-            ->message('jane', 'Hello')
+            ->message(self::PARTICIPANTS[0], 'Hello')
             ->send();
 
         $this->chat->messaging($conversation->getId(), $message->getId())
-         ->delete('jane');
+         ->delete(self::PARTICIPANTS[0]);
 
         $conditions = [Condition::attribute('SK')->eq($message->getSK())];
         $query = $this->query(
@@ -127,21 +103,19 @@ class MessageTest extends TestCase
 
     public function testClearConversation()
     {
-        $conversation = $this->chat->conversation()
-            ->setAttributes(['subject' => 'Group'])
-            ->setParticipants(['jane', 'john'])
-            ->create();
+        $conversation = $this->createConversation(2);
 
         for ($i = 0; $i < 10; $i++) {
-            $sender = $i%2 ? 'jane' : 'john';
+            $sender = $i%2 ? self::PARTICIPANTS[0] : self::PARTICIPANTS[1];
             $this->chat->messaging($conversation->getId())
                 ->message($sender, 'Hello' . $i)
                 ->send();
         }
 
-        $this->chat->conversation($conversation->getId())->clear('john');
+        $this->chat->conversation($conversation->getId())->clear(self::PARTICIPANTS[0]);
 
-        $sk = "PARTICIPANT#john";
+        $sk = "PARTICIPANT#" . self::PARTICIPANTS[0];
+
         $result = $this->query(
             $conversation->getPK(),
             [Condition::attribute('GSI1SK')->beginsWith($sk)],
@@ -155,17 +129,14 @@ class MessageTest extends TestCase
     {
         $this->expectException(DynamoDbException::class);
 
-        $conversation = $this->chat->conversation()
-            ->setAttributes(['subject' => 'Group'])
-            ->setParticipants(['jane', 'john'])
-            ->create();
+        $conversation = $this->createConversation();
 
         $messageOwnedByJane = $this->chat->messaging($conversation->getId())
-            ->message('jane', 'Hello')
+            ->message(self::PARTICIPANTS[1], 'Hello')
             ->send();
 
         $this->chat->messaging($conversation->getId(), $messageOwnedByJane->getId())
-            ->delete('john');
+            ->delete(self::PARTICIPANTS[0]);
     }
 
     public function testMarkMessageRead()

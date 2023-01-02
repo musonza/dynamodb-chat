@@ -19,6 +19,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected Database $database;
     protected Chat $chat;
     protected Marshaler $marshaler;
+    public const PARTICIPANTS = [
+      'user1',
+      'user2',
+      'user3',
+      'user4',
+    ];
 
     public function tearDown(): void
     {
@@ -123,5 +129,18 @@ class TestCase extends \Orchestra\Testbench\TestCase
         }
 
         return $statement->fetch();
+    }
+
+    protected function createConversation(int $participantCount = null): Conversation
+    {
+        $participants = !is_null($participantCount)
+            ? array_slice(self::PARTICIPANTS, 0, $participantCount)
+            : self::PARTICIPANTS;
+
+        return $this->chat->conversation()
+            ->setAttributes([
+                'Subject' => 'Hello',
+            ])->setParticipants($participants)
+            ->create();
     }
 }
