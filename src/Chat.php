@@ -8,7 +8,7 @@ use Musonza\LaravelDynamodbChat\Actions\Participants\AddParticipants;
 use Musonza\LaravelDynamodbChat\Actions\Participants\DeleteParticipants;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
-class Chat
+final class Chat
 {
     protected ConversationClient $conversationClient;
     protected MessageClient $messageClient;
@@ -32,13 +32,13 @@ class Chat
     public function addParticipants(string $conversationId, array $participantIds): void
     {
         $conversation = $this->conversation->newInstance(['Id' => $conversationId], true);
-        (new AddParticipants($conversation, $participantIds))->execute();
+        (new AddParticipants($this->conversationClient, $conversation, $participantIds))->execute();
     }
 
     public function deleteParticipants(string $conversationId, array $participantIds): void
     {
         $conversation =  $this->conversation->newInstance(['Id' => $conversationId], true);
-        (new DeleteParticipants($conversation, $participantIds))->execute();
+        (new DeleteParticipants($this->conversationClient, $conversation, $participantIds))->execute();
     }
 
     public function messaging(string $conversationId, string $messageId = null): MessageClient

@@ -14,21 +14,20 @@ use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
 
 class DeleteParticipants extends Action
 {
+    protected ConversationClient $conversationClient;
     protected Conversation $conversation;
     protected array $participantIds;
 
-    public function __construct(Conversation $conversation, array $participantIds)
+    public function __construct(ConversationClient $conversationClient, Conversation $conversation, array $participantIds)
     {
+        $this->conversationClient = $conversationClient;
         $this->conversation = $conversation;
         $this->participantIds = $participantIds;
     }
 
     public function execute(): void
     {
-        $conversationClient = (app(ConversationClient::class))->setConversationId($this->conversation->getId());
-        $item = $conversationClient->first()
-            ->getResultSet()
-            ->first();
+        $item = $this->conversationClient->conversationToItem($this->conversation->getId());
 
         if ($item->attribute('ParticipantCount')) {
             $isDirect = Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');

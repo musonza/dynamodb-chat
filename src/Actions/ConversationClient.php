@@ -2,6 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions;
 
+use Bego\Item;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\ClearConversation;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\CreateConversation;
 use Musonza\LaravelDynamodbChat\Actions\Conversations\GetConversation;
@@ -21,6 +22,14 @@ class ConversationClient
     {
         $this->conversation = $conversation;
         $this->participation = $participation;
+    }
+
+    public function conversationToItem(string $conversationId): Item
+    {
+        return $this->setConversationId($conversationId)
+            ->first()
+            ->getResultSet()
+            ->first();
     }
 
     public function first(): Conversation
@@ -51,7 +60,7 @@ class ConversationClient
         return $this;
     }
 
-    public function update(): bool
+    public function update(): ?bool
     {
         $this->conversation->setAttributes($this->attributes);
         return (new UpdateConversation($this->conversation))->execute();
