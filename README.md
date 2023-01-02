@@ -37,8 +37,8 @@ You can create a Chat application for your multiple entities.
 
 ```php
 $conversation = Chat::conversation()
-    ->setSubject('Group 1')
     ->setAttributes([
+        'Subject' => 'Group 1',
         'Description' => 'My description',
     ])
     ->create();
@@ -48,7 +48,6 @@ $conversation = Chat::conversation()
 
 ```php
 $conversation = Chat::conversation()
-    ->setSubject('Conversation')
     ->setParticipants(['johnID', 'janeID'])
     ->setIsDirect(true)
     ->create();
