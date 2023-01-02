@@ -11,11 +11,11 @@ class ChatServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->bind('\Musonza\LaravelDynamodbChat\Chat', function () {
+        $this->app->bind('\Musonza\LaravelDynamodbChat\Chat', function (): Chat {
             return $this->app->make(Chat::class);
         });
 
-        $this->app->singleton(DynamoDbClient::class, function () {
+        $this->app->singleton(DynamoDbClient::class, function (): DynamoDbClient {
             return new DynamoDbClient([
                 'version' => 'latest',
                 'region'  => ConfigurationManager::getRegion(),
@@ -23,7 +23,7 @@ class ChatServiceProvider extends ServiceProvider
             ]);
         });
 
-        $this->app->singleton(Database::class, function () {
+        $this->app->singleton(Database::class, function (): Database {
             return new Database(app(DynamoDbClient::class), new Marshaler());
         });
     }

@@ -15,37 +15,27 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 class DeleteMessage extends Action
 {
     protected Conversation $conversation;
-    protected string $messageId;
-    protected string $participantId;
+    protected Participation $participation;
+    protected Message $message;
 
-    public function __construct(Conversation $conversation, string $messageId, string $participantId)
+    public function __construct(Conversation $conversation, Participation $participation, Message $message)
     {
         $this->conversation = $conversation;
-        $this->messageId = $messageId;
-        $this->participantId = $participantId;
+        $this->message = $message;
+        $this->participation = $participation;
     }
 
     public function execute(): Result
     {
-        $participant = app(Participation::class)->newInstance([
-            'Id' => $this->participantId,
-            'ConversationId' => $this->conversation->getId(),
-        ]);
-
-        $message = app(Message::class)->newInstance([
-            'Id' => $this->messageId,
-            'ConversationId' => $this->conversation->getId(),
-        ], true);
-
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
         $params = [
             'TableName' => ConfigurationManager::getTableName(),
-            'Key' => $message->getPrimaryKey(),
+            'Key' => $this->message->getPrimaryKey(),
             'ExpressionAttributeValues' => [
-                ':SK' => ['S' => $message->getSK()],
+                ':SK' => ['S' => $this->message->getSK()],
                 // Only delete if the message is owned by the participant
-                ':GSI2SK' => ['S' => Helpers::gsi2SKForMessage($participant)]
+                ':GSI2SK' => ['S' => Helpers::gsi2SKForMessage($this->participation)]
             ],
             'ConditionExpression' => 'SK = :SK AND GSI2SK = :GSI2SK',
         ];

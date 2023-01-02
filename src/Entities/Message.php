@@ -7,7 +7,6 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class Message extends Entity
 {
-    protected Participation $participation;
     protected string $originalMsgId = '';
     protected string $entityType = 'MSG';
     protected string $keyPrefix = 'MSG#';
@@ -85,7 +84,7 @@ class Message extends Entity
             'Read' => ['N' => $this->getAttribute('Read')],
             'ReadCount' => ['N' => 0],
             'IsSender' => ['N' => $this->getAttribute('IsSender')],
-            'ParentId' => ['S' => $this->originalMsgId ?? $this->getId()],
+            'ParentId' => ['S' => $this->originalMsgId],
         ];
 
         $data = empty($this->getAttribute('Data'))

@@ -39,7 +39,8 @@ class ConversationClient
 
     public function create(): Conversation
     {
-        return (new CreateConversation($this->attributes))->execute();
+        $conversation = $this->conversation->newInstance($this->attributes);
+        return (new CreateConversation($conversation))->execute();
     }
 
     public function setAttributes(array $attributes): self
@@ -81,7 +82,9 @@ class ConversationClient
 
         $this->conversation = $this->first();
 
-        if ($this->conversation->getResultSet()->count() == 0) {
+        $resultSet = $this->conversation->getResultSet();
+
+        if ($resultSet && $resultSet->count() == 0) {
             throw new ConversationNotFoundException($this->conversation);
         }
 

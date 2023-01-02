@@ -16,12 +16,18 @@ class DeleteParticipants extends Action
 {
     protected ConversationClient $conversationClient;
     protected Conversation $conversation;
+    protected Participation $participation;
     protected array $participantIds;
 
-    public function __construct(ConversationClient $conversationClient, Conversation $conversation, array $participantIds)
-    {
+    public function __construct(
+        ConversationClient $conversationClient,
+        Conversation $conversation,
+        Participation $participation,
+        array $participantIds
+    ){
         $this->conversationClient = $conversationClient;
         $this->conversation = $conversation;
+        $this->participation = $participation;
         $this->participantIds = $participantIds;
     }
 
@@ -49,7 +55,7 @@ class DeleteParticipants extends Action
                 $batchItemsCount = 0;
             }
 
-            $participation = app(Participation::class)->newInstance([
+            $participation = $this->participation->newInstance([
                 'ConversationId' => $this->conversation->getId(),
                 'Id' => $id,
             ]);

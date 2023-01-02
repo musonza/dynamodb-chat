@@ -16,20 +16,21 @@ use Musonza\LaravelDynamodbChat\Entities\Participation;
 class MessageClient
 {
     private Conversation $conversation;
-    private ?string $messageId;
+    private Message $message;
     private Participation $participation;
     private string $text = '';
     private array $data = [];
 
-//    public function __construct(Conversation $conversation, string $messageId = null)
-//    {
-//        $this->conversation = $conversation;
-//        $this->messageId = $messageId;
-//    }
+    public function __construct(Participation $participation, Conversation $conversation, Message $message)
+    {
+        $this->participation = $participation;
+        $this->conversation = $conversation;
+        $this->message = $message;
+    }
 
     public function message(string $participant, string $text, array $data = []): self
     {
-        $this->participation = app(Participation::class)->newInstance([
+        $this->participation = $this->participation->newInstance([
             'Id' => $participant,
             'ConversationId' => $this->conversation->getId(),
         ]);
@@ -39,38 +40,40 @@ class MessageClient
         return $this;
     }
 
-    public function delete(string $participantExternalId): Result
+    public function delete(string $participant): Result
     {
-        $participation = app(Participation::class)->newInstance([
+        $participation = $this->participation->newInstance([
+            'Id' => $participant,
             'ConversationId' => $this->conversation->getId(),
-            'Id' => $participantExternalId,
         ]);
-        return (new DeleteMessage($this->conversation, $this->messageId, $participation->getParticipantExternalId()))
+
+        return (new DeleteMessage($this->conversation, $participation, $this->message))
             ->execute();
     }
 
     public function send(): Entity
     {
-        return (new CreateMessage($this->conversation, $this->participation, $this->text, $this->data))->execute();
+        return (new CreateMessage($this->conversation, $this->participation, $this->message, $this->text, $this->data))->execute();
     }
 
-    public function markAsRead(string $participantExternalId): bool
+    public function markAsRead(string $participant): bool
     {
-        $participation = app(Participation::class)->newInstance([
+        $participation = $this->participation->newInstance([
+            'Id' => $participant,
             'ConversationId' => $this->conversation->getId(),
-            'Id' => $participantExternalId,
         ]);
 
-        return (new UpdateMessage($this->conversation, $participation, $this->messageId, ['Read' => true]))
+        return (new UpdateMessage($this->conversation, $participation, $this->message, ['Read' => true]))
             ->execute();
     }
 
-    public function getMessages(string $participantExternalId, array $offset = null): Resultset
+    public function getMessages(string $participant, array $offset = null): Resultset
     {
-        $participation = app(Participation::class)->newInstance([
+        $participation = $this->participation->newInstance([
+            'Id' => $participant,
             'ConversationId' => $this->conversation->getId(),
-            'Id' => $participantExternalId,
         ]);
+
         return (new GetMessages($this->conversation, $participation))->execute($offset);
     }
 
@@ -80,9 +83,9 @@ class MessageClient
         return $this;
     }
 
-    public function setMessageId(?string $messageId): self
+    public function setMessage(Message $message): self
     {
-        $this->messageId = $messageId;
+        $this->message = $message;
         return $this;
     }
 }

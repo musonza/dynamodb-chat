@@ -20,13 +20,25 @@ abstract class Entity extends Model
     public const GSI2_PARTITION_KEY = 'GSI2PK';
     public const GSI2_SORT_KEY = 'GSI2SK';
 
-    // @phpstan-ignore-next-line
+    /**
+     * @psalm-suppress MissingPropertyType
+     * @phpstan-ignore-next-line
+     */
     protected $_name = 'musonza_chat';
-    // @phpstan-ignore-next-line
+    /**
+     * @psalm-suppress MissingPropertyType
+     * @phpstan-ignore-next-line
+     */
     protected $_partition = self::PARTITION_KEY;
-    // @phpstan-ignore-next-line
+    /**
+     * @psalm-suppress MissingPropertyType
+     * @phpstan-ignore-next-line
+     */
     protected $_sort = self::SORT_KEY;
-    // @phpstan-ignore-next-line
+    /**
+     * @psalm-suppress MissingPropertyType
+     * @phpstan-ignore-next-line
+     */
     protected $_indexes = [
         self::GSI1_NAME => ['key' => self::GSI1_PARTITION_KEY]
     ];
@@ -46,7 +58,10 @@ abstract class Entity extends Model
     protected string $entityType = 'CHAT_ENTITY';
     protected string $keyPrefix = 'CHAT';
 
-    final public function __construct() { }
+    final public function __construct()
+    {
+        $this->resultset = null;
+    }
 
     public function toArray(array $only = []): array
     {

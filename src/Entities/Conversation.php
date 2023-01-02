@@ -2,13 +2,12 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
-use Chat;
 use Illuminate\Support\Carbon;
 
 class Conversation extends Entity
 {
     protected string $subject = 'Conversation';
-    protected Carbon $createdAt;
+    protected string $keyPrefix = 'CONVERSATION#';
     /**
      * Specifies whether the conversation is private or public.
      * @var bool

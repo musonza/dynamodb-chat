@@ -14,20 +14,22 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class CreateMessage extends Action
 {
-    protected Message $message;
     protected Conversation $conversation;
     protected Participation $participation;
+    protected Message $message;
     protected string $text = '';
     protected array $data = [];
 
     public function __construct(
         Conversation $conversation,
         Participation $participation,
+        Message $message,
         string $text,
         array $data = []
     ) {
         $this->conversation = $conversation;
         $this->participation = $participation;
+        $this->message = $message;
         $this->text = $text;
         $this->data = $data;
     }
@@ -49,7 +51,7 @@ class CreateMessage extends Action
             $attributes['Data'] = $this->data;
         }
 
-        $message = app(Message::class)->newInstance($attributes);
+        $message = $this->message->newInstance($attributes);
         $message = $message->setSender($this->participation, $this->participation, $message->getId())
             ->setAttribute('Read', true);
 
@@ -85,7 +87,7 @@ class CreateMessage extends Action
             }
 
             $item = $participantsQuery->item($index);
-            $recipient = app(Participation::class)->newInstance([
+            $recipient = $this->participation->newInstance([
                 'Id' => $item->attribute('ParticipantId'),
                 'ConversationId' => $this->conversation->getId(),
             ]);
@@ -95,7 +97,7 @@ class CreateMessage extends Action
                 $attributes['ParticipantId'] = $recipient->getParticipantExternalId();
                 $attributes['IsSender'] = false;
                 $attributes['ParentId'] = $message->getId();
-                $recipientMsg = app(Message::class)->newInstance($attributes);
+                $recipientMsg = $this->message->newInstance($attributes);
                 $batchItems[] = $recipientMsg->setSender($this->participation, $recipient, $message->getId())
                     ->toArray();
 

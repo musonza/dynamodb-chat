@@ -8,6 +8,7 @@ use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
+use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 use Musonza\LaravelDynamodbChat\Exceptions\ResourceNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -16,24 +17,24 @@ class UpdateMessage extends Action
 {
     protected Conversation $conversation;
     protected Participation $participation;
-    protected string $messageId;
+    protected Message $message;
     protected array $attributes;
     protected array $allowedAttributes = [
         'Read',
     ];
 
-    public function __construct(Conversation $conversation, Participation $participation, string $messageId, array $attributes)
+    public function __construct(Conversation $conversation, Participation $participation, Message $message, array $attributes)
     {
         $this->conversation = $conversation;
         $this->participation = $participation;
-        $this->messageId = $messageId;
+        $this->message = $message;
         $this->attributes = $attributes;
     }
 
     public function execute(): bool
     {
         // TODO resolve IDs cleanly
-        $gsi1sk = "PARTICIPANT#{$this->participation->getParticipantExternalId()}{$this->messageId}";
+        $gsi1sk = "PARTICIPANT#{$this->participation->getParticipantExternalId()}{$this->message->getId()}";
 
         $item = $this->getTable()
             ->query('GSI1')

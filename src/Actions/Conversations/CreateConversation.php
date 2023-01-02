@@ -3,8 +3,8 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 
 use Bego\Condition;
-use Musonza\LaravelDynamodbChat\Chat;
 use Musonza\LaravelDynamodbChat\Actions\Action;
+use Musonza\LaravelDynamodbChat\Chat;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Exceptions\ConversationExistsException;
 use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
@@ -14,9 +14,9 @@ class CreateConversation extends Action
 {
     protected Conversation $conversation;
 
-    public function __construct(array $attributes)
+    public function __construct(Conversation $conversation)
     {
-        $this->conversation = app(Conversation::class)->newInstance($attributes);
+        $this->conversation = $conversation;
     }
 
     public function execute(): Conversation

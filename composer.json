@@ -16,7 +16,8 @@
         "friendsofphp/php-cs-fixer" : "^3.0",
         "barryvdh/laravel-ide-helper": "^2.12",
         "phpstan/phpstan": "^1.9",
-        "nunomaduro/larastan": "^2.0"
+        "nunomaduro/larastan": "^2.0",
+        "vimeo/psalm": "^5.4"
     },
     "license": "MIT",
     "autoload": {
@@ -36,7 +37,8 @@
     ],
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "analyse": "vendor/bin/phpstan analyse --memory-limit=2G"
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=2G",
+        "psalm": "vendor/bin/psalm"
     },
     "config": {
         "allow-plugins": {

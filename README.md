@@ -150,6 +150,10 @@ Chat::messaging($conversationId, $messageId)
     ->markAsRead($recipientOrOwnerId);
 ```
 
+## TODO
+
+[] Reactions - like, dislike, laugh, etc
+
 ## DynamoDB access patterns
 
 <details><summary>Click to expand</summary>

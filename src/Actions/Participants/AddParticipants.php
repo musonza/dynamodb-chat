@@ -16,14 +16,18 @@ class AddParticipants extends Action
 {
     protected ConversationClient $conversationClient;
     protected Conversation $conversation;
+    protected Participation $participation;
     protected array $participantIds;
 
     public function __construct(
         ConversationClient $conversationClient,
-        Conversation $conversation, array $participantIds
+        Conversation $conversation,
+        Participation $participation,
+        array $participantIds
     ) {
         $this->conversationClient = $conversationClient;
         $this->conversation = $conversation;
+        $this->participation = $participation;
         $this->participantIds = $participantIds;
     }
 
@@ -51,7 +55,7 @@ class AddParticipants extends Action
                 $batchItemsCount = 0;
             }
 
-            $participation = app(Participation::class)->newInstance([
+            $participation = $this->participation->newInstance([
                 'ConversationId' => $this->conversation->getId(),
                 'Id' => $id,
             ]);

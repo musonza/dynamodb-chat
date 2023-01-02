@@ -5,8 +5,6 @@ namespace Musonza\LaravelDynamodbChat\Entities;
 class Participation extends Entity
 {
     const PARTICIPATION_PK_PREFIX = 'PARTICIPANT#%s';
-    protected Conversation $conversation;
-    protected string $participantId;
     protected string $entityType = 'PARTICIPATION';
 
     /**
