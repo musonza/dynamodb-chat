@@ -45,8 +45,8 @@ class Participation extends Entity
     public function getGSI1(): array
     {
         return [
-            Entity::GLOBAL_INDEX1_PK => $this->getSortKey(),
-            Entity::GLOBAL_INDEX1_SK => $this->getPartitionKey(),
+            Entity::GSI1_PARTITION_KEY => $this->getSortKey(),
+            Entity::GSI1_SORT_KEY => $this->getPartitionKey(),
         ];
     }
 

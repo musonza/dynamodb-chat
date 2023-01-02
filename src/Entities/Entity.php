@@ -13,12 +13,12 @@ abstract class Entity extends Model
 {
     public const PARTITION_KEY = 'PK';
     public const SORT_KEY = 'SK';
-    public const GLOBAL_INDEX1 = 'GSI1';
-    public const GLOBAL_INDEX1_PK = 'GSI1PK';
-    public const GLOBAL_INDEX1_SK = 'GSI1SK';
-    public const GLOBAL_INDEX2 = 'GSI2';
-    public const GLOBAL_INDEX2_PK = 'GSI2PK';
-    public const GLOBAL_INDEX2_SK = 'GSI2SK';
+    public const GSI1_NAME = 'GSI1';
+    public const GSI1_PARTITION_KEY = 'GSI1PK';
+    public const GSI1_SORT_KEY = 'GSI1SK';
+    public const GSI2_NAME = 'GSI2';
+    public const GSI2_PARTITION_KEY = 'GSI2PK';
+    public const GSI2_SORT_KEY = 'GSI2SK';
 
     // @phpstan-ignore-next-line
     protected $_name = 'musonza_chat';
@@ -28,7 +28,7 @@ abstract class Entity extends Model
     protected $_sort = self::SORT_KEY;
     // @phpstan-ignore-next-line
     protected $_indexes = [
-        self::GLOBAL_INDEX1 => ['key' => self::GLOBAL_INDEX1_PK]
+        self::GSI1_NAME => ['key' => self::GSI1_PARTITION_KEY]
     ];
 
     /**

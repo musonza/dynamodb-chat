@@ -25,9 +25,9 @@ class ClearConversation extends Action
     {
         $sk = Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId());
         $query = $this->getTable()
-            ->query(Entity::GLOBAL_INDEX1)
+            ->query(Entity::GSI1_NAME)
             ->key($this->conversation->getPK())
-            ->condition(Condition::attribute(Entity::GLOBAL_INDEX1_SK)->beginsWith($sk));
+            ->condition(Condition::attribute(Entity::GSI1_SORT_KEY)->beginsWith($sk));
 
         $offset = null;
 

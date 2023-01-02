@@ -26,9 +26,9 @@ class GetMessages extends Action
         // TODO resolve IDs cleanly
         $gsi1skStartsWith = "PARTICIPANT#{$this->participation->getParticipantExternalId()}";
         $query = $this->getTable()
-            ->query(Entity::GLOBAL_INDEX1)
+            ->query(Entity::GSI1_NAME)
             ->key($this->conversation->getPK())
-            ->condition(Condition::attribute(Entity::GLOBAL_INDEX1_SK)->beginsWith($gsi1skStartsWith))
+            ->condition(Condition::attribute(Entity::GSI1_SORT_KEY)->beginsWith($gsi1skStartsWith))
             ->reverse()
             ->limit(ConfigurationManager::getPaginatorLimit());
 

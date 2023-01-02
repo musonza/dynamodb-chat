@@ -27,19 +27,19 @@ class InstallCommand extends Command
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => Entity::GLOBAL_INDEX1_PK,
+                    'AttributeName' => Entity::GSI1_PARTITION_KEY,
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => Entity::GLOBAL_INDEX1_SK,
+                    'AttributeName' => Entity::GSI1_SORT_KEY,
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => Entity::GLOBAL_INDEX2_PK,
+                    'AttributeName' => Entity::GSI2_PARTITION_KEY,
                     'AttributeType' => 'S'
                 ],
                 [
-                    'AttributeName' => Entity::GLOBAL_INDEX2_SK,
+                    'AttributeName' => Entity::GSI2_SORT_KEY,
                     'AttributeType' => 'S'
                 ]
             ],
@@ -56,14 +56,14 @@ class InstallCommand extends Command
             'ProvisionedThroughput' => ConfigurationManager::getProvisionedThroughput(),
             'GlobalSecondaryIndexes' => [
                 [
-                    'IndexName' => Entity::GLOBAL_INDEX1,
+                    'IndexName' => Entity::GSI1_NAME,
                     'KeySchema' => [
                         [
-                            'AttributeName' => Entity::GLOBAL_INDEX1_PK,
+                            'AttributeName' => Entity::GSI1_PARTITION_KEY,
                             'KeyType'       => 'HASH'
                         ],
                         [
-                            'AttributeName' => Entity::GLOBAL_INDEX1_SK,
+                            'AttributeName' => Entity::GSI1_SORT_KEY,
                             'KeyType'       => 'RANGE'
                         ]
                     ],
@@ -73,14 +73,14 @@ class InstallCommand extends Command
                     'ProvisionedThroughput' => ConfigurationManager::getGlobalSecondaryIndex1ProvisionedThroughput(),
                 ],
                 [
-                    'IndexName' => Entity::GLOBAL_INDEX2,
+                    'IndexName' => Entity::GSI2_NAME,
                     'KeySchema' => [
                         [
-                            'AttributeName' => Entity::GLOBAL_INDEX2_PK,
+                            'AttributeName' => Entity::GSI2_PARTITION_KEY,
                             'KeyType'       => 'HASH'
                         ],
                         [
-                            'AttributeName' => Entity::GLOBAL_INDEX2_SK,
+                            'AttributeName' => Entity::GSI2_SORT_KEY,
                             'KeyType'       => 'RANGE'
                         ]
                     ],

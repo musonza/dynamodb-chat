@@ -33,8 +33,8 @@ class Message extends Entity
     ): void {
         $this->originalMsgId = $originalMsgId;
         $this->setGSI1([
-            Entity::GLOBAL_INDEX1_PK => ['S' => Helpers::gsi1PKForMessage($recipient)],
-            Entity::GLOBAL_INDEX1_SK => ['S' => Helpers::gsi1SKForMessage($recipient, $recipientMsgId)]
+            Entity::GSI1_PARTITION_KEY => ['S' => Helpers::gsi1PKForMessage($recipient)],
+            Entity::GSI1_SORT_KEY => ['S' => Helpers::gsi1SKForMessage($recipient, $recipientMsgId)]
         ]);
     }
 
