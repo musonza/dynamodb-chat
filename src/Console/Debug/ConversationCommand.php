@@ -9,7 +9,7 @@ class ConversationCommand extends Command
 {
     protected $signature = 'dynamo:chat:conversation';
 
-    public function handle()
+    public function handle(): void
     {
         // Create conversation
         // Get conversation by ID

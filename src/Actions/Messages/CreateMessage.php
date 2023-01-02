@@ -35,7 +35,7 @@ class CreateMessage extends Action
     /**
      * @throws Exception
      */
-    public function execute(): Message
+    public function execute(): Entity
     {
         $attributes = [
             'ConversationId' => $this->conversation->getId(),
@@ -49,7 +49,7 @@ class CreateMessage extends Action
             $attributes['Data'] = $this->data;
         }
 
-        $message = Message::newInstance($attributes);
+        $message = app(Message::class)->newInstance($attributes);
         $message = $message->setSender($this->participation, $this->participation, $message->getId())
             ->setAttribute('Read', true);
 
@@ -85,7 +85,7 @@ class CreateMessage extends Action
             }
 
             $item = $participantsQuery->item($index);
-            $recipient = Participation::newInstance([
+            $recipient = app(Participation::class)->newInstance([
                 'Id' => $item->attribute('ParticipantId'),
                 'ConversationId' => $this->conversation->getId(),
             ]);
@@ -95,7 +95,7 @@ class CreateMessage extends Action
                 $attributes['ParticipantId'] = $recipient->getParticipantExternalId();
                 $attributes['IsSender'] = false;
                 $attributes['ParentId'] = $message->getId();
-                $recipientMsg = Message::newInstance($attributes);
+                $recipientMsg = app(Message::class)->newInstance($attributes);
                 $batchItems[] = $recipientMsg->setSender($this->participation, $recipient, $message->getId())
                     ->toArray();
 

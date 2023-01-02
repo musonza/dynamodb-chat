@@ -23,9 +23,9 @@ class AddParticipants extends Action
         $this->participantIds = $participantIds;
     }
 
-    public function execute()
+    public function execute(): void
     {
-        $item = (new ConversationClient())
+        $item = (app(ConversationClient::class))
             ->setConversationId($this->conversation->getId())->first()
             ->getResultSet()
             ->first();
@@ -50,7 +50,7 @@ class AddParticipants extends Action
                 $batchItemsCount = 0;
             }
 
-            $participation = Participation::newInstance([
+            $participation = app(Participation::class)->newInstance([
                 'ConversationId' => $this->conversation->getId(),
                 'Id' => $id,
             ]);

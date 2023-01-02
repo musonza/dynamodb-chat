@@ -102,11 +102,11 @@ abstract class Entity extends Model
         return $this;
     }
 
-    public static function newInstance(array $attributes = [], bool $exists = false): static
+    public function newInstance(array $attributes = [], bool $exists = false): static
     {
         $model = new static;
 
-        if (!$exists) {
+        if (!$exists || !$model->getAttribute('Id')) {
             $model->setAttribute('Id', Helpers::generateId($model->keyPrefix, now()));
             $model->setAttribute('CreatedAt', now()->toISOString());
         }

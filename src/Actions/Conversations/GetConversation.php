@@ -16,7 +16,7 @@ class GetConversation extends Action
         $this->conversation = $conversation;
     }
 
-    public function execute()
+    public function execute(): Conversation
     {
         $resultSet = $this->getTable()
             ->query()

@@ -23,9 +23,9 @@ class DeleteParticipants extends Action
         $this->participantIds = $participantIds;
     }
 
-    public function execute()
+    public function execute(): void
     {
-        $conversationClient = (new ConversationClient())->setConversationId($this->conversation->getId());
+        $conversationClient = (app(ConversationClient::class))->setConversationId($this->conversation->getId());
         $item = $conversationClient->first()
             ->getResultSet()
             ->first();
@@ -50,7 +50,7 @@ class DeleteParticipants extends Action
                 $batchItemsCount = 0;
             }
 
-            $participation = Participation::newInstance([
+            $participation = app(Participation::class)->newInstance([
                 'ConversationId' => $this->conversation->getId(),
                 'Id' => $id,
             ]);

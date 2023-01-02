@@ -13,15 +13,15 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class ConversationClient
 {
-    protected ?Conversation $conversation;
+    protected Conversation $conversation;
+    protected Participation $participation;
     protected array $attributes = [];
 
-//    public function __construct(string $conversationId = null)
-//    {
-//        if ($conversationId) {
-//            $this->conversation = Conversation::newInstance(['Id' => $conversationId]);
-//        }
-//    }
+    public function __construct(Conversation $conversation, Participation $participation)
+    {
+        $this->conversation = $conversation;
+        $this->participation = $participation;
+    }
 
     public function first(): Conversation
     {
@@ -66,7 +66,7 @@ class ConversationClient
      */
     public function getDirectConversation(string $participantOne, string $participantTwo): Conversation
     {
-        $this->conversation = Conversation::newInstance([
+        $this->conversation = $this->conversation->newInstance([
             'Id' => Helpers::directConversationKey($participantOne, $participantTwo)
         ]);
 
@@ -81,7 +81,7 @@ class ConversationClient
 
     public function clear(string $participantId): void
     {
-        $participation = Participation::newInstance([
+        $participation = $this->participation->newInstance([
             'ConversationId' => $this->conversation->getId(),
             'Id' => $participantId,
         ]);
@@ -90,7 +90,7 @@ class ConversationClient
 
     public function setConversationId(?string $conversationId): self
     {
-        $this->conversation = Conversation::newInstance(['Id' => $conversationId]);
+        $this->conversation = $this->conversation->newInstance(['Id' => $conversationId]);
         return $this;
     }
 }

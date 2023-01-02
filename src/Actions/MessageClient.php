@@ -9,6 +9,7 @@ use Musonza\LaravelDynamodbChat\Actions\Messages\DeleteMessage;
 use Musonza\LaravelDynamodbChat\Actions\Messages\GetMessages;
 use Musonza\LaravelDynamodbChat\Actions\Messages\UpdateMessage;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
+use Musonza\LaravelDynamodbChat\Entities\Entity;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 
@@ -28,7 +29,7 @@ class MessageClient
 
     public function message(string $participant, string $text, array $data = []): self
     {
-        $this->participation = Participation::newInstance([
+        $this->participation = app(Participation::class)->newInstance([
             'Id' => $participant,
             'ConversationId' => $this->conversation->getId(),
         ]);
@@ -40,7 +41,7 @@ class MessageClient
 
     public function delete(string $participantExternalId): Result
     {
-        $participation = Participation::newInstance([
+        $participation = app(Participation::class)->newInstance([
             'ConversationId' => $this->conversation->getId(),
             'Id' => $participantExternalId,
         ]);
@@ -48,14 +49,14 @@ class MessageClient
             ->execute();
     }
 
-    public function send(): Message
+    public function send(): Entity
     {
         return (new CreateMessage($this->conversation, $this->participation, $this->text, $this->data))->execute();
     }
 
     public function markAsRead(string $participantExternalId): bool
     {
-        $participation = Participation::newInstance([
+        $participation = app(Participation::class)->newInstance([
             'ConversationId' => $this->conversation->getId(),
             'Id' => $participantExternalId,
         ]);
@@ -64,9 +65,9 @@ class MessageClient
             ->execute();
     }
 
-    public function getMessages(string $participantExternalId, $offset = null): Resultset
+    public function getMessages(string $participantExternalId, array $offset = null): Resultset
     {
-        $participation = Participation::newInstance([
+        $participation = app(Participation::class)->newInstance([
             'ConversationId' => $this->conversation->getId(),
             'Id' => $participantExternalId,
         ]);

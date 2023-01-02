@@ -11,7 +11,7 @@ class InstallCommand extends Command
 {
     protected $signature = 'dynamo:chat:install';
 
-    public function handle()
+    public function handle(): void
     {
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);

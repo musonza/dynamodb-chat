@@ -21,7 +21,7 @@ class ClearConversation extends Action
     }
 
     // TODO make this action queable
-    public function execute()
+    public function execute(): void
     {
         $sk = Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId());
         $query = $this->getTable()

@@ -8,10 +8,10 @@ use Bego\Database;
 use Bego\Table;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
-use Musonza\LaravelDynamodbChat\Entities\Entity;
 
 abstract class Action
 {
+    // @phpstan-ignore-next-line
     abstract public function execute();
 
     protected function getTable(): Table

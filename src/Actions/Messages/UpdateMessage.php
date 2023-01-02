@@ -57,7 +57,7 @@ class UpdateMessage extends Action
 
         // TODO this logic can be moved to an event listener
         // update ReadCount on parent message
-        if ($updated && isset($this->attributes['Read']) && ConfigurationManager::getIncrementParentMessageReadCount()) {
+        if ($updated && isset($this->attributes['Read']) && ConfigurationManager::shouldIncrementParentMessageReadCount()) {
             $this->incrementReadCount($this->conversation, $item->attribute('ParentId'));
         }
 

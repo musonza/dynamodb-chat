@@ -12,11 +12,16 @@ class Chat
 {
     protected ConversationClient $conversationClient;
     protected MessageClient $messageClient;
+    protected Conversation $conversation;
 
-    public function __construct(ConversationClient $conversationClient, MessageClient $messageClient)
-    {
+    public function __construct(
+        ConversationClient $conversationClient,
+        MessageClient $messageClient,
+        Conversation $conversation
+    ) {
         $this->conversationClient = $conversationClient;
         $this->messageClient = $messageClient;
+        $this->conversation = $conversation;
     }
 
     public function conversation(string $conversationId = null): ConversationClient
@@ -26,19 +31,19 @@ class Chat
 
     public function addParticipants(string $conversationId, array $participantIds): void
     {
-        $conversation = Conversation::newInstance(['Id' => $conversationId], true);
+        $conversation = $this->conversation->newInstance(['Id' => $conversationId], true);
         (new AddParticipants($conversation, $participantIds))->execute();
     }
 
     public function deleteParticipants(string $conversationId, array $participantIds): void
     {
-        $conversation = Conversation::newInstance(['Id' => $conversationId], true);
+        $conversation =  $this->conversation->newInstance(['Id' => $conversationId], true);
         (new DeleteParticipants($conversation, $participantIds))->execute();
     }
 
     public function messaging(string $conversationId, string $messageId = null): MessageClient
     {
-        $conversation = Conversation::newInstance(['Id' => $conversationId], true);
+        $conversation =  $this->conversation->newInstance(['Id' => $conversationId], true);
         return $this->messageClient
             ->setConversation($conversation)
             ->setMessageId($messageId);
