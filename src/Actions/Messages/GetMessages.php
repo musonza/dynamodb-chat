@@ -5,7 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 use Bego\Component\Resultset;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
@@ -31,8 +31,8 @@ class GetMessages extends Action
             ->key($this->conversation->getPK())
             ->condition(Condition::attribute(Entity::GSI1_SORT_KEY)->beginsWith($gsi1skStartsWith))
             ->reverse()
-            ->limit(ConfigurationManager::getPaginatorLimit());
+            ->limit(Configuration::getPaginatorLimit());
 
-        return $query->fetch(ConfigurationManager::getPaginatorPages(), $offset);
+        return $query->fetch(Configuration::getPaginatorPages(), $offset);
     }
 }

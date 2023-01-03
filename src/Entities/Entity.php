@@ -6,7 +6,7 @@ use Bego\Component\Resultset;
 use Bego\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 abstract class Entity extends Model
@@ -106,10 +106,10 @@ abstract class Entity extends Model
 
     public function setAttributes(array $attributes): self
     {
-        $allowList = ConfigurationManager::getAttributesAllowed();
+        $allowList = Configuration::getAttributesAllowed();
 
         foreach ($attributes as $key => $val) {
-            if (! empty($allowList) && ! in_array($key, ConfigurationManager::getAttributesAllowed())) {
+            if (! empty($allowList) && ! in_array($key, Configuration::getAttributesAllowed())) {
                 throw new InvalidArgumentException("Attribute {$key} is not in the allowed list.");
             }
 

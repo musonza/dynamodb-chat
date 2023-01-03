@@ -10,7 +10,7 @@ use Musonza\LaravelDynamodbChat\Tests\TestCase;
 
 class MessageTest extends TestCase
 {
-    public function testSendMessage()
+    public function testSendMessage1()
     {
         $conversation = $this->createConversation();
         $conversationId = $conversation->getId();
@@ -38,6 +38,10 @@ class MessageTest extends TestCase
         $this->assertEquals(0, $items[Helpers::gs1skFromParticipantIdentifier(self::PARTICIPANTS[2])]->attribute('Read'));
         $this->assertEquals('MSG', $response->item(0)->attribute('Type'));
     }
+
+//    public function testSendMessageWithExpiration()
+//    {
+//    }
 
     public function testOnlyParticipantsCanSendMessages()
     {

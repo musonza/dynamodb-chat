@@ -5,7 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result;
 use Musonza\LaravelDynamodbChat\Actions\Action;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
@@ -31,7 +31,7 @@ class DeleteMessage extends Action
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
         $params = [
-            'TableName' => ConfigurationManager::getTableName(),
+            'TableName' => Configuration::getTableName(),
             'Key' => $this->message->getPrimaryKey(),
             'ExpressionAttributeValues' => [
                 ':SK' => ['S' => $this->message->getSK()],

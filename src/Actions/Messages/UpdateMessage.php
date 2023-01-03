@@ -5,7 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 use Aws\DynamoDb\DynamoDbClient;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
@@ -60,7 +60,7 @@ class UpdateMessage extends Action
 
         // TODO this logic can be moved to an event listener
         // update ReadCount on parent message
-        if ($updated && isset($this->attributes['Read']) && ConfigurationManager::shouldIncrementParentMessageReadCount()) {
+        if ($updated && isset($this->attributes['Read']) && Configuration::shouldIncrementParentMessageReadCount()) {
             $this->incrementReadCount($this->conversation, $item->attribute('ParentId'));
         }
 
@@ -76,7 +76,7 @@ class UpdateMessage extends Action
         $key['SK']['S'] = $messageId;
 
         $params = [
-            'TableName' => ConfigurationManager::getTableName(),
+            'TableName' => Configuration::getTableName(),
             'Key' => $key,
             'ExpressionAttributeValues' => [
                 ':inc' => ['N' => 1],

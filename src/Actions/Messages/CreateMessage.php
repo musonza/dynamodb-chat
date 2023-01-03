@@ -5,7 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 use Bego\Condition;
 use Bego\Exception;
 use Musonza\LaravelDynamodbChat\Actions\Action;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
 use Musonza\LaravelDynamodbChat\Entities\Message;
@@ -50,6 +50,7 @@ class CreateMessage extends Action
             'Message' => $this->text,
             'IsSender' => true,
             'ParentId' => null,
+            'TTL' => 1672773018,
         ];
 
         if (! empty($this->data)) {
@@ -85,7 +86,7 @@ class CreateMessage extends Action
         $batchCount = 0;
 
         do {
-            if ($batchCount == ConfigurationManager::getBatchLimit()) {
+            if ($batchCount == Configuration::getBatchLimit()) {
                 $table->putBatch($batchItems);
                 $batchItems = [];
                 $batchCount = 0;

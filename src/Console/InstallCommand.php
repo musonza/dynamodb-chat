@@ -4,7 +4,7 @@ namespace Musonza\LaravelDynamodbChat\Console;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Illuminate\Console\Command;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
 
 class InstallCommand extends Command
@@ -16,7 +16,7 @@ class InstallCommand extends Command
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
         $client->createTable([
-            'TableName' => ConfigurationManager::getTableName(),
+            'TableName' => Configuration::getTableName(),
             'AttributeDefinitions' => [
                 [
                     'AttributeName' => Entity::PARTITION_KEY,
@@ -53,7 +53,7 @@ class InstallCommand extends Command
                     'KeyType' => 'RANGE',
                 ],
             ],
-            'ProvisionedThroughput' => ConfigurationManager::getProvisionedThroughput(),
+            'ProvisionedThroughput' => Configuration::getProvisionedThroughput(),
             'GlobalSecondaryIndexes' => [
                 [
                     'IndexName' => Entity::GSI1_NAME,
@@ -70,7 +70,7 @@ class InstallCommand extends Command
                     'Projection' => [
                         'ProjectionType' => 'ALL',
                     ],
-                    'ProvisionedThroughput' => ConfigurationManager::getGlobalSecondaryIndex1ProvisionedThroughput(),
+                    'ProvisionedThroughput' => Configuration::getGlobalSecondaryIndex1ProvisionedThroughput(),
                 ],
                 [
                     'IndexName' => Entity::GSI2_NAME,
@@ -87,8 +87,16 @@ class InstallCommand extends Command
                     'Projection' => [
                         'ProjectionType' => 'ALL',
                     ],
-                    'ProvisionedThroughput' => ConfigurationManager::getGlobalSecondaryIndex2ProvisionedThroughput(),
+                    'ProvisionedThroughput' => Configuration::getGlobalSecondaryIndex2ProvisionedThroughput(),
                 ],
+            ],
+        ]);
+
+        $client->updateTimeToLive([
+            'TableName' => Configuration::getTableName(),
+            'TimeToLiveSpecification' => [
+                'AttributeName' => 'TTL',
+                'Enabled' => true,
             ],
         ]);
     }

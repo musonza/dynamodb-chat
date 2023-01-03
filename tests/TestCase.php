@@ -9,7 +9,7 @@ use Exception;
 use Illuminate\Foundation\Application;
 use Musonza\LaravelDynamodbChat\Chat;
 use Musonza\LaravelDynamodbChat\ChatServiceProvider;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Console\InstallCommand;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Facades\ChatFacade;
@@ -36,7 +36,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
         $client->deleteTable([
-            'TableName' => ConfigurationManager::getTableName(),
+            'TableName' => Configuration::getTableName(),
         ]);
         parent::tearDown();
     }

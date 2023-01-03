@@ -5,7 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Actions;
 use Aws\DynamoDb\DynamoDbClient;
 use Bego\Database;
 use Bego\Table;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
 abstract class Action
@@ -37,7 +37,7 @@ abstract class Action
 
         $client->batchWriteItem([
             'RequestItems' => [
-                ConfigurationManager::getTableName() => [
+                Configuration::getTableName() => [
                     ...$batchItems,
                 ],
             ],

@@ -18,8 +18,8 @@ class ChatServiceProvider extends ServiceProvider
         $this->app->singleton(DynamoDbClient::class, function (): DynamoDbClient {
             return new DynamoDbClient([
                 'version' => 'latest',
-                'region' => ConfigurationManager::getRegion(),
-                'endpoint' => ConfigurationManager::getDynamodbEndpoint(),
+                'region' => Configuration::getRegion(),
+                'endpoint' => Configuration::getDynamodbEndpoint(),
             ]);
         });
 

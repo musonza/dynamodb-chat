@@ -7,7 +7,7 @@ use Aws\Result;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Actions\ConversationClient;
-use Musonza\LaravelDynamodbChat\ConfigurationManager;
+use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
@@ -52,7 +52,7 @@ class DeleteParticipants extends Action
         $batchItemsCount = 0;
 
         foreach ($this->participantIds as $id) {
-            if ($batchItemsCount == ConfigurationManager::getBatchLimit()) {
+            if ($batchItemsCount == Configuration::getBatchLimit()) {
                 $this->deleteItems($batchItems);
                 $batchItems = [];
                 $batchItemsCount = 0;
@@ -81,7 +81,7 @@ class DeleteParticipants extends Action
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
         $params = [
-            'TableName' => ConfigurationManager::getTableName(),
+            'TableName' => Configuration::getTableName(),
             'Key' => $conversation->getPrimaryKey(),
             'ExpressionAttributeValues' => [
                 ':inc' => ['N' => $count],
