@@ -29,7 +29,7 @@ class ConversationClient
 
     public function conversationToItem(string $conversationId): Item
     {
-        $resultSet = $this->setConversationId($conversationId)
+        $resultSet = $this->setConversation($conversationId)
             ->first()
             ->getResultSet();
 
@@ -113,7 +113,7 @@ class ConversationClient
         (new ClearConversation($this->conversation, $participation))->execute();
     }
 
-    public function setConversationId(?string $conversationId): self
+    public function setConversation(?string $conversationId): self
     {
         $this->conversation = $this->conversation->newInstance(['Id' => $conversationId]);
 

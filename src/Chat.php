@@ -38,7 +38,7 @@ final class Chat
 
     public function conversation(string $conversationId = null): ConversationClient
     {
-        return $this->conversationClient->setConversationId($conversationId);
+        return $this->conversationClient->setConversation($conversationId);
     }
 
     public function addParticipants(string $conversationId, array $participantIds): void
