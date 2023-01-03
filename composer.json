@@ -17,7 +17,8 @@
         "barryvdh/laravel-ide-helper": "^2.12",
         "phpstan/phpstan": "^1.9",
         "nunomaduro/larastan": "^2.0",
-        "vimeo/psalm": "^5.4"
+        "vimeo/psalm": "^5.4",
+        "rector/rector": "^0.15.2"
     },
     "license": "MIT",
     "autoload": {

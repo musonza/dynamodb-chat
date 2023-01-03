@@ -4,7 +4,7 @@ namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
-use Musonza\LaravelDynamodbChat\Chat;
+use Musonza\LaravelDynamodbChat\Facades\ChatFacade as Chat;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Exceptions\ConversationExistsException;
 use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
@@ -47,7 +47,7 @@ class CreateConversation extends Action
         }
 
         if (!empty($participantIds)) {
-            app(Chat::class)->addParticipants($this->conversation->getId(), $participantIds);
+            Chat::addParticipants($this->conversation->getId(), $participantIds);
         }
 
         return $this->conversation;
