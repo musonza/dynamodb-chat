@@ -16,9 +16,13 @@ use Musonza\LaravelDynamodbChat\Entities\Participation;
 class MessageClient
 {
     private Conversation $conversation;
+
     private Message $message;
+
     private Participation $participation;
+
     private string $text = '';
+
     private array $data = [];
 
     public function __construct(Participation $participation, Conversation $conversation, Message $message)
@@ -37,6 +41,7 @@ class MessageClient
 
         $this->text = $text;
         $this->data = $data;
+
         return $this;
     }
 
@@ -80,12 +85,14 @@ class MessageClient
     public function setConversation(Conversation $conversation): self
     {
         $this->conversation = $conversation;
+
         return $this;
     }
 
     public function setMessage(Message $message): self
     {
         $this->message = $message;
+
         return $this;
     }
 }

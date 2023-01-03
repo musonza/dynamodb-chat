@@ -13,9 +13,13 @@ use Musonza\LaravelDynamodbChat\Entities\Participation;
 final class Chat
 {
     protected ConversationClient $conversationClient;
+
     protected MessageClient $messageClient;
+
     protected Conversation $conversation;
+
     protected Message $message;
+
     protected Participation $participation;
 
     public function __construct(
@@ -46,15 +50,15 @@ final class Chat
 
     public function deleteParticipants(string $conversationId, array $participantIds): void
     {
-        $conversation =  $this->conversation->newInstance(['Id' => $conversationId], true);
+        $conversation = $this->conversation->newInstance(['Id' => $conversationId], true);
         (new DeleteParticipants($this->conversationClient, $conversation, $this->participation, $participantIds))
             ->execute();
     }
 
     public function messaging(string $conversationId, string $messageId = null): MessageClient
     {
-        $conversation =  $this->conversation->newInstance(['Id' => $conversationId], true);
-        $message =  $this->message->newInstance([
+        $conversation = $this->conversation->newInstance(['Id' => $conversationId], true);
+        $message = $this->message->newInstance([
             'Id' => $messageId,
             'ConversationId' => $conversationId,
         ], true);

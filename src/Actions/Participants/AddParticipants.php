@@ -15,8 +15,11 @@ use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
 class AddParticipants extends Action
 {
     protected ConversationClient $conversationClient;
+
     protected Conversation $conversation;
+
     protected Participation $participation;
+
     protected array $participantIds;
 
     public function __construct(
@@ -65,7 +68,7 @@ class AddParticipants extends Action
             $batchItemsCount++;
         }
 
-        if (!empty($batchItems)) {
+        if (! empty($batchItems)) {
             $this->saveItems($batchItems);
         }
 
@@ -80,10 +83,10 @@ class AddParticipants extends Action
             'TableName' => ConfigurationManager::getTableName(),
             'Key' => $conversation->getPrimaryKey(),
             'ExpressionAttributeValues' => [
-                ':inc' => ['N' => $count]
+                ':inc' => ['N' => $count],
             ],
             'UpdateExpression' => 'SET ParticipantCount = ParticipantCount + :inc',
-            'ReturnValues' => 'UPDATED_NEW'
+            'ReturnValues' => 'UPDATED_NEW',
         ];
 
         return $client->updateItem($params);

@@ -13,6 +13,7 @@ use Musonza\LaravelDynamodbChat\Entities\Participation;
 class GetMessages extends Action
 {
     private Conversation $conversation;
+
     private Participation $participation;
 
     public function __construct(Conversation $conversation, Participation $participation)

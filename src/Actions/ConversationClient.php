@@ -16,7 +16,9 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 class ConversationClient
 {
     protected Conversation $conversation;
+
     protected Participation $participation;
+
     protected array $attributes = [];
 
     public function __construct(Conversation $conversation, Participation $participation)
@@ -46,44 +48,49 @@ class ConversationClient
     public function create(): Conversation
     {
         $conversation = $this->conversation->newInstance($this->attributes);
+
         return (new CreateConversation($conversation))->execute();
     }
 
     public function setAttributes(array $attributes): self
     {
         $this->attributes = $attributes;
+
         return $this;
     }
 
     public function setParticipants(array $participants): static
     {
         $this->attributes['Participants'] = $participants;
+
         return $this;
     }
 
     public function setIsDirect(bool $isDirect): static
     {
         $this->attributes['IsDirect'] = $isDirect;
+
         return $this;
     }
 
     public function update(): ?bool
     {
         $this->conversation->setAttributes($this->attributes);
+
         return (new UpdateConversation($this->conversation))->execute();
     }
 
     /**
      * Order of participant Ids doesn't matter
      *
-     * @param string $participantOne
-     * @param string $participantTwo
+     * @param  string  $participantOne
+     * @param  string  $participantTwo
      * @return Conversation
      */
     public function getDirectConversation(string $participantOne, string $participantTwo): Conversation
     {
         $this->conversation = $this->conversation->newInstance([
-            'Id' => Helpers::directConversationKey($participantOne, $participantTwo)
+            'Id' => Helpers::directConversationKey($participantOne, $participantTwo),
         ]);
 
         $this->conversation = $this->first();
@@ -109,6 +116,7 @@ class ConversationClient
     public function setConversationId(?string $conversationId): self
     {
         $this->conversation = $this->conversation->newInstance(['Id' => $conversationId]);
+
         return $this;
     }
 }

@@ -15,9 +15,13 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 class CreateMessage extends Action
 {
     protected Conversation $conversation;
+
     protected Participation $participation;
+
     protected Message $message;
+
     protected string $text = '';
+
     protected array $data = [];
 
     public function __construct(
@@ -47,7 +51,7 @@ class CreateMessage extends Action
             'ParentId' => null,
         ];
 
-        if (!empty($this->data)) {
+        if (! empty($this->data)) {
             $attributes['Data'] = $this->data;
         }
 
@@ -63,8 +67,8 @@ class CreateMessage extends Action
                 Condition::attribute('SK')->eq(Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId()))
             )->fetch();
 
-        if (!$participant->count()) {
-            throw new \Exception("Participant is not part of the conversation");
+        if (! $participant->count()) {
+            throw new \Exception('Participant is not part of the conversation');
         }
 
         $table->put($message->toArray());
@@ -105,9 +109,9 @@ class CreateMessage extends Action
             }
 
             $index++;
-        } while($index < $participantsQuery->count());
+        } while ($index < $participantsQuery->count());
 
-        if (!empty($batchItems)) {
+        if (! empty($batchItems)) {
             $table->putBatch($batchItems);
         }
 

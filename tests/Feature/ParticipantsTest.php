@@ -102,7 +102,7 @@ class ParticipantsTest extends TestCase
         $this->chat->deleteParticipants($conversation->getId(), ['user0', 'user1']);
 
         $conditions = [
-            Condition::attribute('SK')->beginsWith('PARTICIPANT#')
+            Condition::attribute('SK')->beginsWith('PARTICIPANT#'),
         ];
         $response = $this->query(
             $conversation->getPK(),
@@ -127,7 +127,7 @@ class ParticipantsTest extends TestCase
         $this->chat->addParticipants($conversation->getId(), [
             'james',
             'jane',
-            'john'
+            'john',
         ]);
 
         $conditions = [Condition::attribute('SK')->beginsWith('PARTICIPANT#')];

@@ -17,13 +17,16 @@ use Musonza\LaravelDynamodbChat\Facades\ChatFacade;
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected Database $database;
+
     protected Chat $chat;
+
     protected Marshaler $marshaler;
+
     public const PARTICIPANTS = [
-      'user1',
-      'user2',
-      'user3',
-      'user4',
+        'user1',
+        'user2',
+        'user3',
+        'user4',
     ];
 
     public function tearDown(): void
@@ -52,8 +55,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     private function checkEnvironment()
     {
-        if (!app()->environment('testing')) {
-            throw new Exception("You can only run these tests in a testing environment");
+        if (! app()->environment('testing')) {
+            throw new Exception('You can only run these tests in a testing environment');
         }
     }
 
@@ -81,14 +84,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Define environment setup.
      *
-     * @param Application $app
-     *
+     * @param  Application  $app
      * @return void
      */
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
-        $app['config']->set('musonza_dynamodb_chat',[
+        $app['config']->set('musonza_dynamodb_chat', [
             'table_name' => 'musonza_chat',
             'endpoint' => 'http://localhost:8000',
             'region' => 'us-east-1',
@@ -98,23 +100,23 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'attributes_allowed_list' => [
                 'Subject',
                 'Description',
-                'IsPrivate'
+                'IsPrivate',
             ],
             'increment_parent_message_read_count' => true,
 
             'provisioned_throughput' => [
-                'ReadCapacityUnits'  => 5,
-                'WriteCapacityUnits' => 5
+                'ReadCapacityUnits' => 5,
+                'WriteCapacityUnits' => 5,
             ],
 
             'gsi1_provisioned_throughput' => [
-                'ReadCapacityUnits'  => 5,
-                'WriteCapacityUnits' => 5
+                'ReadCapacityUnits' => 5,
+                'WriteCapacityUnits' => 5,
             ],
             'gsi2_provisioned_throughput' => [
-                'ReadCapacityUnits'  => 5,
-                'WriteCapacityUnits' => 5
-            ]
+                'ReadCapacityUnits' => 5,
+                'WriteCapacityUnits' => 5,
+            ],
         ]);
     }
 
@@ -133,7 +135,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function createConversation(int $participantCount = null): Conversation
     {
-        $participants = !is_null($participantCount)
+        $participants = ! is_null($participantCount)
             ? array_slice(self::PARTICIPANTS, 0, $participantCount)
             : self::PARTICIPANTS;
 

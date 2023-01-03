@@ -64,7 +64,7 @@ class MessageTest extends TestCase
                     'file_name' => 'post_image2.jpg',
                     'file_url' => 'http://example.com/post_img2.jpg',
                 ],
-            ]
+            ],
         ];
 
         $message = $this->chat->messaging($conversation->getId())
@@ -106,15 +106,15 @@ class MessageTest extends TestCase
         $conversation = $this->createConversation(2);
 
         for ($i = 0; $i < 10; $i++) {
-            $sender = $i%2 ? self::PARTICIPANTS[0] : self::PARTICIPANTS[1];
+            $sender = $i % 2 ? self::PARTICIPANTS[0] : self::PARTICIPANTS[1];
             $this->chat->messaging($conversation->getId())
-                ->message($sender, 'Hello' . $i)
+                ->message($sender, 'Hello'.$i)
                 ->send();
         }
 
         $this->chat->conversation($conversation->getId())->clear(self::PARTICIPANTS[0]);
 
-        $sk = "PARTICIPANT#" . self::PARTICIPANTS[0];
+        $sk = 'PARTICIPANT#'.self::PARTICIPANTS[0];
 
         $result = $this->query(
             $conversation->getPK(),
@@ -232,9 +232,9 @@ class MessageTest extends TestCase
         $totalMessages = 3;
 
         for ($i = 0; $i < $totalMessages; $i++) {
-            $sender = $i%2 ? 'jane' : 'john';
+            $sender = $i % 2 ? 'jane' : 'john';
             $this->chat->messaging($conversation->getId())
-                ->message($sender, 'Hello' . $i)
+                ->message($sender, 'Hello'.$i)
                 ->send();
             sleep(1);
         }
@@ -250,8 +250,8 @@ class MessageTest extends TestCase
             $resultsCollection[] = $results;
             $offset = $results->getLastEvaluatedKey();
             $messagesCount += $results->count();
-            ++$pages;
-        } while (!is_null($offset));
+            $pages++;
+        } while (! is_null($offset));
 
         $this->assertEquals($totalMessages, $messagesCount, "{$totalMessages} messages");
 
