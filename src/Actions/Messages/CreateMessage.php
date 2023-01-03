@@ -14,11 +14,11 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class CreateMessage extends Action
 {
-    protected Conversation $conversation;
+    protected readonly Conversation $conversation;
 
-    protected Participation $participation;
+    protected readonly Participation $participation;
 
-    protected Message $message;
+    protected readonly Message $message;
 
     protected string $text = '';
 

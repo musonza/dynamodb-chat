@@ -8,7 +8,7 @@ use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
 class UpdateConversation extends Action
 {
-    protected Conversation $conversation;
+    protected readonly Conversation $conversation;
 
     public function __construct(Conversation $conversation)
     {

@@ -12,7 +12,7 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class CreateConversation extends Action
 {
-    protected Conversation $conversation;
+    protected readonly Conversation $conversation;
 
     public function __construct(Conversation $conversation)
     {

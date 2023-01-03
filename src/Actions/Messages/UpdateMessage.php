@@ -13,11 +13,11 @@ use Musonza\LaravelDynamodbChat\Exceptions\ResourceNotFoundException;
 
 class UpdateMessage extends Action
 {
-    protected Conversation $conversation;
+    protected readonly Conversation $conversation;
 
-    protected Participation $participation;
+    protected readonly Participation $participation;
 
-    protected Message $message;
+    protected readonly Message $message;
 
     protected array $attributes;
 

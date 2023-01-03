@@ -9,7 +9,7 @@ use Musonza\LaravelDynamodbChat\Entities\Entity;
 
 class GetConversation extends Action
 {
-    protected Conversation $conversation;
+    protected readonly Conversation $conversation;
 
     public function __construct(Conversation $conversation)
     {

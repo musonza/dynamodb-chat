@@ -16,11 +16,11 @@ class DeleteParticipants extends Action
 {
     protected ConversationClient $conversationClient;
 
-    protected Conversation $conversation;
+    protected readonly Conversation $conversation;
 
-    protected Participation $participation;
+    protected readonly Participation $participation;
 
-    protected array $participantIds;
+    protected readonly array $participantIds;
 
     public function __construct(
         ConversationClient $conversationClient,

@@ -11,9 +11,9 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class ClearConversation extends Action
 {
-    protected Conversation $conversation;
+    protected readonly Conversation $conversation;
 
-    protected Participation $participation;
+    protected readonly Participation $participation;
 
     public function __construct(Conversation $conversation, Participation $participation)
     {

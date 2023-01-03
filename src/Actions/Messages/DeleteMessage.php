@@ -13,11 +13,11 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class DeleteMessage extends Action
 {
-    protected Conversation $conversation;
+    protected readonly Conversation $conversation;
 
-    protected Participation $participation;
+    protected readonly Participation $participation;
 
-    protected Message $message;
+    protected readonly Message $message;
 
     public function __construct(Conversation $conversation, Participation $participation, Message $message)
     {
