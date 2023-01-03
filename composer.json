@@ -38,11 +38,17 @@
         }
     ],
     "scripts": {
-        "test": "vendor/bin/phpunit",
-        "analyse": "vendor/bin/phpstan analyse --memory-limit=2G",
-        "psalm": "vendor/bin/psalm",
         "lint-fix": "./vendor/bin/pint",
-        "lint": "./vendor/bin/pint --test"
+        "test:psalm": "vendor/bin/psalm",
+        "test:unit": "vendor/bin/phpunit",
+        "test:analyse": "vendor/bin/phpstan analyse --memory-limit=2G --ansi",
+        "test:lint": "./vendor/bin/pint --test",
+        "test": [
+            "@test:lint",
+            "@test:analyse",
+            "@test:psalm",
+            "@test:unit"
+        ]
     },
     "config": {
         "allow-plugins": {
