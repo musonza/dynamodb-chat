@@ -4,7 +4,7 @@ namespace Musonza\LaravelDynamodbChat;
 
 class ConfigurationManager
 {
-    const TABLE_NAME = 'musonza_chat';
+    public const TABLE_NAME = 'musonza_chat';
 
     public static function getTableName(): string
     {

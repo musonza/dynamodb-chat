@@ -144,7 +144,7 @@ abstract class Entity extends Model
 
     public function newInstance(array $attributes = [], bool $exists = false): static
     {
-        $model = new static;
+        $model = new static();
 
         if (! $exists || ! $model->getAttribute('Id')) {
             $model->setAttribute('Id', Helpers::generateId($model->keyPrefix, now()));
