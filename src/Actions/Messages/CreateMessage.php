@@ -40,6 +40,7 @@ class CreateMessage extends Action
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function execute(): Entity
     {

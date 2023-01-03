@@ -40,7 +40,9 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "analyse": "vendor/bin/phpstan analyse --memory-limit=2G",
-        "psalm": "vendor/bin/psalm"
+        "psalm": "vendor/bin/psalm",
+        "lint-fix": "./vendor/bin/pint",
+        "lint": "./vendor/bin/pint --test"
     },
     "config": {
         "allow-plugins": {
