@@ -10,6 +10,7 @@ use Musonza\LaravelDynamodbChat\Actions\Conversations\UpdateConversation;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 use Musonza\LaravelDynamodbChat\Exceptions\ConversationNotFoundException;
+use Musonza\LaravelDynamodbChat\Exceptions\ResourceNotFoundException;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 
 class ConversationClient
@@ -26,10 +27,15 @@ class ConversationClient
 
     public function conversationToItem(string $conversationId): Item
     {
-        return $this->setConversationId($conversationId)
+        $resultSet = $this->setConversationId($conversationId)
             ->first()
-            ->getResultSet()
-            ->first();
+            ->getResultSet();
+
+        if (is_null($resultSet)) {
+            throw new ResourceNotFoundException('Conversation not found');
+        }
+
+        return $resultSet->first();
     }
 
     public function first(): Conversation

@@ -116,7 +116,7 @@ abstract class Entity extends Model
     /**
      * @param null|string|true $value
      */
-    public function setAttribute(string $key, string|bool|null|array $value): self
+    public function setAttribute(string $key, string|bool|array|null $value): self
     {
         $this->attributes[$key] = $value;
         return $this;

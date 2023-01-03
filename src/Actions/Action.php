@@ -11,7 +11,10 @@ use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
 abstract class Action
 {
-    // @phpstan-ignore-next-line
+    /**
+     * @psalm-suppress MissingReturnType
+     * @phpstan-ignore-next-line
+     */
     abstract public function execute();
 
     protected function getTable(): Table
