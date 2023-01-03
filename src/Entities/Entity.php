@@ -60,7 +60,6 @@ abstract class Entity extends Model
 
     final public function __construct()
     {
-        $this->resultset = null;
     }
 
     public function toArray(array $only = []): array
@@ -106,12 +105,18 @@ abstract class Entity extends Model
         return $this->attributes;
     }
 
-    public function getAttribute(string $key, mixed $default = null): mixed
+    /**
+     * @param false|null $default
+     */
+    public function getAttribute(string $key, bool|string|array|null $default = null): mixed
     {
         return $this->attributes[$key] ?? $default;
     }
 
-    public function setAttribute(string $key, mixed $value): self
+    /**
+     * @param null|string|true $value
+     */
+    public function setAttribute(string $key, string|bool|null|array $value): self
     {
         $this->attributes[$key] = $value;
         return $this;
