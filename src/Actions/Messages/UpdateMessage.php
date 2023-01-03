@@ -3,7 +3,6 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Aws\Result;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
@@ -11,14 +10,17 @@ use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Message;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
 use Musonza\LaravelDynamodbChat\Exceptions\ResourceNotFoundException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UpdateMessage extends Action
 {
     protected Conversation $conversation;
+
     protected Participation $participation;
+
     protected Message $message;
+
     protected array $attributes;
+
     protected array $allowedAttributes = [
         'Read',
     ];
@@ -48,7 +50,7 @@ class UpdateMessage extends Action
         }
 
         foreach ($this->attributes as $attribute => $value) {
-            if (!in_array($attribute, $this->allowedAttributes)) {
+            if (! in_array($attribute, $this->allowedAttributes)) {
                 continue;
             }
             $item->set($attribute, $value);
@@ -77,10 +79,10 @@ class UpdateMessage extends Action
             'TableName' => ConfigurationManager::getTableName(),
             'Key' => $key,
             'ExpressionAttributeValues' => [
-                ':inc' => ['N' => 1]
+                ':inc' => ['N' => 1],
             ],
             'UpdateExpression' => 'SET ReadCount = ReadCount + :inc',
-            'ReturnValues' => 'UPDATED_NEW'
+            'ReturnValues' => 'UPDATED_NEW',
         ];
 
         $client->updateItem($params);

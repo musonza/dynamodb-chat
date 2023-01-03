@@ -15,8 +15,11 @@ use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
 class DeleteParticipants extends Action
 {
     protected ConversationClient $conversationClient;
+
     protected Conversation $conversation;
+
     protected Participation $participation;
+
     protected array $participantIds;
 
     public function __construct(
@@ -24,7 +27,7 @@ class DeleteParticipants extends Action
         Conversation $conversation,
         Participation $participation,
         array $participantIds
-    ){
+    ) {
         $this->conversationClient = $conversationClient;
         $this->conversation = $conversation;
         $this->participation = $participation;
@@ -61,12 +64,12 @@ class DeleteParticipants extends Action
             ]);
 
             $batchItems[] = [
-                'DeleteRequest' => ['Key' => $participation->getPrimaryKey()]
+                'DeleteRequest' => ['Key' => $participation->getPrimaryKey()],
             ];
             $batchItemsCount++;
         }
 
-        if (!empty($batchItems)) {
+        if (! empty($batchItems)) {
             $this->deleteItems($batchItems);
         }
 
@@ -81,10 +84,10 @@ class DeleteParticipants extends Action
             'TableName' => ConfigurationManager::getTableName(),
             'Key' => $conversation->getPrimaryKey(),
             'ExpressionAttributeValues' => [
-                ':inc' => ['N' => $count]
+                ':inc' => ['N' => $count],
             ],
             'UpdateExpression' => 'SET ParticipantCount = ParticipantCount - :inc',
-            'ReturnValues' => 'UPDATED_NEW'
+            'ReturnValues' => 'UPDATED_NEW',
         ];
 
         return $client->updateItem($params);

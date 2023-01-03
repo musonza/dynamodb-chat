@@ -2,10 +2,10 @@
 
 namespace Musonza\LaravelDynamodbChat;
 
+use Aws\DynamoDb\DynamoDbClient;
 use Aws\DynamoDb\Marshaler;
 use Bego\Database;
 use Illuminate\Support\ServiceProvider;
-use Aws\DynamoDb\DynamoDbClient;
 
 class ChatServiceProvider extends ServiceProvider
 {
@@ -18,7 +18,7 @@ class ChatServiceProvider extends ServiceProvider
         $this->app->singleton(DynamoDbClient::class, function (): DynamoDbClient {
             return new DynamoDbClient([
                 'version' => 'latest',
-                'region'  => ConfigurationManager::getRegion(),
+                'region' => ConfigurationManager::getRegion(),
                 'endpoint' => ConfigurationManager::getDynamodbEndpoint(),
             ]);
         });

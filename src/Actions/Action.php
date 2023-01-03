@@ -3,7 +3,6 @@
 namespace Musonza\LaravelDynamodbChat\Actions;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Aws\Result;
 use Bego\Database;
 use Bego\Table;
 use Musonza\LaravelDynamodbChat\ConfigurationManager;
@@ -13,6 +12,7 @@ abstract class Action
 {
     /**
      * @psalm-suppress MissingReturnType
+     *
      * @phpstan-ignore-next-line
      */
     abstract public function execute();
@@ -21,6 +21,7 @@ abstract class Action
     {
         /** @var Database $db */
         $db = app(Database::class);
+
         return $db->table(app(Conversation::class));
     }
 
@@ -37,9 +38,9 @@ abstract class Action
         $client->batchWriteItem([
             'RequestItems' => [
                 ConfigurationManager::getTableName() => [
-                    ...$batchItems
-                ]
-            ]
+                    ...$batchItems,
+                ],
+            ],
         ]);
     }
 }

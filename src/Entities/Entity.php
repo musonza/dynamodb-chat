@@ -12,35 +12,49 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 abstract class Entity extends Model
 {
     public const PARTITION_KEY = 'PK';
+
     public const SORT_KEY = 'SK';
+
     public const GSI1_NAME = 'GSI1';
+
     public const GSI1_PARTITION_KEY = 'GSI1PK';
+
     public const GSI1_SORT_KEY = 'GSI1SK';
+
     public const GSI2_NAME = 'GSI2';
+
     public const GSI2_PARTITION_KEY = 'GSI2PK';
+
     public const GSI2_SORT_KEY = 'GSI2SK';
 
     /**
      * @psalm-suppress MissingPropertyType
+     *
      * @phpstan-ignore-next-line
      */
     protected $_name = 'musonza_chat';
+
     /**
      * @psalm-suppress MissingPropertyType
+     *
      * @phpstan-ignore-next-line
      */
     protected $_partition = self::PARTITION_KEY;
+
     /**
      * @psalm-suppress MissingPropertyType
+     *
      * @phpstan-ignore-next-line
      */
     protected $_sort = self::SORT_KEY;
+
     /**
      * @psalm-suppress MissingPropertyType
+     *
      * @phpstan-ignore-next-line
      */
     protected $_indexes = [
-        self::GSI1_NAME => ['key' => self::GSI1_PARTITION_KEY]
+        self::GSI1_NAME => ['key' => self::GSI1_PARTITION_KEY],
     ];
 
     /**
@@ -50,12 +64,17 @@ abstract class Entity extends Model
 
     /**
      * Entity attributes to update / create
+     *
      * @var array
      */
     private array $attributes = [];
+
     protected array $gsi1 = [];
+
     protected array $gsi2 = [];
+
     protected string $entityType = 'CHAT_ENTITY';
+
     protected string $keyPrefix = 'CHAT';
 
     final public function __construct()
@@ -73,7 +92,7 @@ abstract class Entity extends Model
 
         $arr = array_merge($arr, $this->attributes);
 
-        if (!empty($only)) {
+        if (! empty($only)) {
             return Arr::only($arr, $only);
         }
 
@@ -90,7 +109,7 @@ abstract class Entity extends Model
         $allowList = ConfigurationManager::getAttributesAllowed();
 
         foreach ($attributes as $key => $val) {
-            if (!empty($allowList) && !in_array($key, ConfigurationManager::getAttributesAllowed())) {
+            if (! empty($allowList) && ! in_array($key, ConfigurationManager::getAttributesAllowed())) {
                 throw new InvalidArgumentException("Attribute {$key} is not in the allowed list.");
             }
 
@@ -106,7 +125,7 @@ abstract class Entity extends Model
     }
 
     /**
-     * @param false|null $default
+     * @param  false|null  $default
      */
     public function getAttribute(string $key, bool|string|array|null $default = null): mixed
     {
@@ -114,11 +133,12 @@ abstract class Entity extends Model
     }
 
     /**
-     * @param null|string|true $value
+     * @param  null|string|true  $value
      */
     public function setAttribute(string $key, string|bool|array|null $value): self
     {
         $this->attributes[$key] = $value;
+
         return $this;
     }
 
@@ -126,7 +146,7 @@ abstract class Entity extends Model
     {
         $model = new static;
 
-        if (!$exists || !$model->getAttribute('Id')) {
+        if (! $exists || ! $model->getAttribute('Id')) {
             $model->setAttribute('Id', Helpers::generateId($model->keyPrefix, now()));
             $model->setAttribute('CreatedAt', now()->toISOString());
         }
@@ -179,6 +199,8 @@ abstract class Entity extends Model
     }
 
     abstract public function getPrimaryKey(): array;
+
     abstract public function getPK(): string;
+
     abstract public function getSK(): string;
 }

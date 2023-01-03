@@ -1,6 +1,7 @@
 <?php
 
 namespace Musonza\LaravelDynamodbChat\Entities;
+
 use Aws\DynamoDb\Marshaler;
 use JsonException;
 use Musonza\LaravelDynamodbChat\Helpers\Helpers;
@@ -8,7 +9,9 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 class Message extends Entity
 {
     protected string $originalMsgId = '';
+
     protected string $entityType = 'MSG';
+
     protected string $keyPrefix = 'MSG#';
 
     public function setSender(Participation $participation, Participation $recipient, string $originalMsgId): self
@@ -33,7 +36,7 @@ class Message extends Entity
         $this->originalMsgId = $originalMsgId;
         $this->setGSI1([
             Entity::GSI1_PARTITION_KEY => ['S' => Helpers::gsi1PKForMessage($recipient)],
-            Entity::GSI1_SORT_KEY => ['S' => Helpers::gsi1SKForMessage($recipient, $recipientMsgId)]
+            Entity::GSI1_SORT_KEY => ['S' => Helpers::gsi1SKForMessage($recipient, $recipientMsgId)],
         ]);
     }
 
@@ -48,14 +51,14 @@ class Message extends Entity
     public function getPartitionKey(): array
     {
         return [
-            'S' => $this->getAttribute('ConversationId')
+            'S' => $this->getAttribute('ConversationId'),
         ];
     }
 
     public function getSortKey(): array
     {
         return [
-            'S' => $this->getId()
+            'S' => $this->getId(),
         ];
     }
 
@@ -91,7 +94,7 @@ class Message extends Entity
             ? []
             : (new Marshaler())->marshalJson(json_encode($this->getAttribute('Data'), JSON_THROW_ON_ERROR));
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             $item['Data'] = ['S' => $data];
         }
 

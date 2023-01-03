@@ -12,6 +12,7 @@ use Musonza\LaravelDynamodbChat\Helpers\Helpers;
 class ClearConversation extends Action
 {
     protected Conversation $conversation;
+
     protected Participation $participation;
 
     public function __construct(Conversation $conversation, Participation $participation)
@@ -35,6 +36,6 @@ class ClearConversation extends Action
             $results = $query->fetch(1, $offset);
             $this->getTable()->deleteBatch($results->toArrayOfObjects());
             $offset = $results->getLastEvaluatedKey();
-        } while (!is_null($offset));
+        } while (! is_null($offset));
     }
 }

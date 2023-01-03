@@ -2,17 +2,19 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
-use Illuminate\Support\Carbon;
-
 class Conversation extends Entity
 {
     protected string $subject = 'Conversation';
+
     protected string $keyPrefix = 'CONVERSATION#';
+
     /**
      * Specifies whether the conversation is private or public.
+     *
      * @var bool
      */
     protected bool $isPrivate = false;
+
     protected string $entityType = 'CONVERSATION';
 
     public function isDirect(): bool
@@ -36,7 +38,7 @@ class Conversation extends Entity
     public function getPartitionKey(): array
     {
         return [
-            'S' => $this->getId()
+            'S' => $this->getId(),
         ];
     }
 

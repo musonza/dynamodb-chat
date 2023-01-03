@@ -5,6 +5,7 @@ namespace Musonza\LaravelDynamodbChat\Entities;
 class Participation extends Entity
 {
     const PARTICIPATION_PK_PREFIX = 'PARTICIPANT#%s';
+
     protected string $entityType = 'PARTICIPATION';
 
     /**
@@ -21,7 +22,7 @@ class Participation extends Entity
     public function getSortKey(): array
     {
         return [
-            'S' => sprintf(self::PARTICIPATION_PK_PREFIX,  $this->getParticipantExternalId())
+            'S' => sprintf(self::PARTICIPATION_PK_PREFIX, $this->getParticipantExternalId()),
         ];
     }
 
@@ -31,7 +32,7 @@ class Participation extends Entity
     public function getPartitionKey(): array
     {
         return [
-            'S' => $this->getAttribute('ConversationId')
+            'S' => $this->getAttribute('ConversationId'),
         ];
     }
 

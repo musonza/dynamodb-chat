@@ -10,7 +10,7 @@ class Helpers
 {
     public static function generateId(string $prefix, Carbon $date): string
     {
-        return $prefix . self::generateKsuid($date);
+        return $prefix.self::generateKsuid($date);
     }
 
     public static function generateKSUID(Carbon $date): string

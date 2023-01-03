@@ -20,38 +20,38 @@ class InstallCommand extends Command
             'AttributeDefinitions' => [
                 [
                     'AttributeName' => Entity::PARTITION_KEY,
-                    'AttributeType' => 'S'
+                    'AttributeType' => 'S',
                 ],
                 [
                     'AttributeName' => Entity::SORT_KEY,
-                    'AttributeType' => 'S'
+                    'AttributeType' => 'S',
                 ],
                 [
                     'AttributeName' => Entity::GSI1_PARTITION_KEY,
-                    'AttributeType' => 'S'
+                    'AttributeType' => 'S',
                 ],
                 [
                     'AttributeName' => Entity::GSI1_SORT_KEY,
-                    'AttributeType' => 'S'
+                    'AttributeType' => 'S',
                 ],
                 [
                     'AttributeName' => Entity::GSI2_PARTITION_KEY,
-                    'AttributeType' => 'S'
+                    'AttributeType' => 'S',
                 ],
                 [
                     'AttributeName' => Entity::GSI2_SORT_KEY,
-                    'AttributeType' => 'S'
-                ]
+                    'AttributeType' => 'S',
+                ],
             ],
             'KeySchema' => [
                 [
                     'AttributeName' => Entity::PARTITION_KEY,
-                    'KeyType'       => 'HASH'
+                    'KeyType' => 'HASH',
                 ],
                 [
                     'AttributeName' => Entity::SORT_KEY,
-                    'KeyType'       => 'RANGE'
-                ]
+                    'KeyType' => 'RANGE',
+                ],
             ],
             'ProvisionedThroughput' => ConfigurationManager::getProvisionedThroughput(),
             'GlobalSecondaryIndexes' => [
@@ -60,15 +60,15 @@ class InstallCommand extends Command
                     'KeySchema' => [
                         [
                             'AttributeName' => Entity::GSI1_PARTITION_KEY,
-                            'KeyType'       => 'HASH'
+                            'KeyType' => 'HASH',
                         ],
                         [
                             'AttributeName' => Entity::GSI1_SORT_KEY,
-                            'KeyType'       => 'RANGE'
-                        ]
+                            'KeyType' => 'RANGE',
+                        ],
                     ],
                     'Projection' => [
-                        'ProjectionType' => 'ALL'
+                        'ProjectionType' => 'ALL',
                     ],
                     'ProvisionedThroughput' => ConfigurationManager::getGlobalSecondaryIndex1ProvisionedThroughput(),
                 ],
@@ -77,19 +77,19 @@ class InstallCommand extends Command
                     'KeySchema' => [
                         [
                             'AttributeName' => Entity::GSI2_PARTITION_KEY,
-                            'KeyType'       => 'HASH'
+                            'KeyType' => 'HASH',
                         ],
                         [
                             'AttributeName' => Entity::GSI2_SORT_KEY,
-                            'KeyType'       => 'RANGE'
-                        ]
+                            'KeyType' => 'RANGE',
+                        ],
                     ],
                     'Projection' => [
-                        'ProjectionType' => 'ALL'
+                        'ProjectionType' => 'ALL',
                     ],
                     'ProvisionedThroughput' => ConfigurationManager::getGlobalSecondaryIndex2ProvisionedThroughput(),
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 }
