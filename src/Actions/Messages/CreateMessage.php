@@ -46,17 +46,7 @@ class CreateMessage extends Action
     {
         $this->validateParticipant();
 
-        $attributes = [
-            'ConversationId' => $this->conversation->getId(),
-            'ParticipantId' => $this->participation->getId(),
-            'Message' => $this->text,
-            'IsSender' => true,
-            'ParentId' => null,
-        ];
-
-        if (! empty($this->data)) {
-            $attributes['Data'] = $this->data;
-        }
+        $attributes = $this->getMessageAttributes();
 
         $senderMessage = $this->createSenderMessage($attributes);
 
@@ -65,14 +55,6 @@ class CreateMessage extends Action
         $this->batchSaveMessagesForRecipients($attributes, $senderMessage);
 
         return $senderMessage;
-    }
-
-    private function createSenderMessage(array $attributes): Entity
-    {
-        $message = $this->message->newInstance($attributes);
-
-        return $message->setSender($this->participation, $this->participation, $message->getId())
-            ->setAttribute('Read', true);
     }
 
     /**
@@ -91,15 +73,29 @@ class CreateMessage extends Action
         }
     }
 
-    /**
-     * @throws Exception
-     */
-    private function getConversationParticipants(Entity $message): Resultset
+    protected function getMessageAttributes(): array
     {
-        return $this->getTable()->query()
-            ->key($message->toArray()[Entity::PARTITION_KEY])
-            ->condition(Condition::attribute(Entity::SORT_KEY)->beginsWith('PARTICIPANT#'))
-            ->fetch();
+        $attributes = [
+            'ConversationId' => $this->conversation->getId(),
+            'ParticipantId' => $this->participation->getId(),
+            'Message' => $this->text,
+            'IsSender' => true,
+            'ParentId' => null,
+        ];
+
+        if (! empty($this->data)) {
+            $attributes['Data'] = $this->data;
+        }
+
+        return $attributes;
+    }
+
+    private function createSenderMessage(array $attributes): Entity
+    {
+        $message = $this->message->newInstance($attributes);
+
+        return $message->setSender($this->participation, $this->participation, $message->getId())
+            ->setAttribute('Read', true);
     }
 
     /**
@@ -145,5 +141,16 @@ class CreateMessage extends Action
         if (! empty($batchItems)) {
             $table->putBatch($batchItems);
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getConversationParticipants(Entity $message): Resultset
+    {
+        return $this->getTable()->query()
+            ->key($message->toArray()[Entity::PARTITION_KEY])
+            ->condition(Condition::attribute(Entity::SORT_KEY)->beginsWith('PARTICIPANT#'))
+            ->fetch();
     }
 }
