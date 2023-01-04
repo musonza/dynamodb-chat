@@ -58,15 +58,15 @@ class CreateMessage extends Action
             $attributes['Data'] = $this->data;
         }
 
-        $message = $this->createSenderMessage($attributes);
+        $senderMessage = $this->createSenderMessage($attributes);
 
-        $this->getTable()->put($message->toArray());
+        $this->getTable()->put($senderMessage->toArray());
 
-        $participantsResult = $this->getConversationParticipants($message);
+        $participantsResult = $this->getConversationParticipants($senderMessage);
 
-        $this->batchSaveMessages($participantsResult, $attributes, $message);
+        $this->batchSaveMessages($participantsResult, $attributes, $senderMessage);
 
-        return $message;
+        return $senderMessage;
     }
 
     private function createSenderMessage(array $attributes): Entity

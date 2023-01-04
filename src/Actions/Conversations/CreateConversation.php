@@ -27,7 +27,6 @@ class CreateConversation extends Action
         if ($this->conversation->isDirect()) {
             if (count($participantIds) !== 2) {
                 throw new InvalidConversationParticipants(
-                    $this->conversation,
                     InvalidConversationParticipants::REQUIRED_PARTICIPANT_COUNT
                 );
             }

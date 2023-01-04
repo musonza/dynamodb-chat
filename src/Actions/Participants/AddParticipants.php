@@ -8,7 +8,6 @@ use Musonza\LaravelDynamodbChat\Actions\ConversationClient;
 use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Participation;
-use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
 
 class AddParticipants extends Action
 {
@@ -36,12 +35,7 @@ class AddParticipants extends Action
     {
         $item = $this->conversationClient->conversationToItem($this->conversation->getId());
 
-        if ($item->attribute('ParticipantCount') && $this->isDirectConversation($item)) {
-            throw new InvalidConversationParticipants(
-                $this->conversation,
-                InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
-            );
-        }
+        $this->restrictModifyingParticipantsInDirectChat($item);
 
         $this->batchSaveParticipants();
 

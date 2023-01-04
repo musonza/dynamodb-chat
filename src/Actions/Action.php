@@ -9,6 +9,7 @@ use Bego\Table;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
+use Musonza\LaravelDynamodbChat\Exceptions\InvalidConversationParticipants;
 
 abstract class Action
 {
@@ -35,6 +36,15 @@ abstract class Action
     protected function isDirectConversation(Item $item): bool
     {
         return Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
+    }
+
+    protected function restrictModifyingParticipantsInDirectChat(Item $item): void
+    {
+        if ($item->attribute('ParticipantCount') && $this->isDirectConversation($item)) {
+            throw new InvalidConversationParticipants(
+                InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
+            );
+        }
     }
 
     protected function deleteItems(array $batchItems): void
