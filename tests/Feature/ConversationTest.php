@@ -12,11 +12,23 @@ class ConversationTest extends TestCase
     {
         $subject = 'Conversation 1';
 
+        $data = [
+            'settings' => [
+                [
+                    'name' => 'foo',
+                ],
+                [
+                    'name' => 'bar',
+                ],
+            ],
+        ];
+
         $conversation = $this->chat->conversation()
             ->setAttributes([
                 'Subject' => $subject,
                 'IsPrivate' => 1,
                 'Description' => 'My description',
+                'Data' => $data,
             ])
             ->create();
 
@@ -31,6 +43,8 @@ class ConversationTest extends TestCase
         $this->assertEquals(1, $response->first()->attribute('IsPrivate'));
         $this->assertEquals('My description', $response->first()->attribute('Description'));
         $this->assertEquals(1, $response->count(), 'One conversation created');
+
+        $this->assertEquals($data, $response->first()->attribute('Data'));
     }
 
     public function testGetConversationById()

@@ -2,6 +2,8 @@
 
 namespace Musonza\LaravelDynamodbChat\Entities;
 
+use Aws\DynamoDb\Marshaler;
+
 class Conversation extends Entity
 {
     protected string $subject = 'Conversation';
@@ -29,13 +31,23 @@ class Conversation extends Entity
 
     public function toItem(): array
     {
-        return [
+        $item = [
             ...$this->getPrimaryKey(),
             'Type' => ['S' => $this->getEntityType()],
             'Subject' => ['S' => $this->getAttribute('Subject')],
             'ParticipantCount' => ['N' => 0],
             'CreatedAt' => ['S' => $this->getAttribute('CreatedAt')],
         ];
+
+        $data = empty($this->getAttribute('Data'))
+            ? []
+            : (new Marshaler())->marshalJson(json_encode($this->getAttribute('Data'), JSON_THROW_ON_ERROR));
+
+        if (! empty($data)) {
+            $item['Data'] = ['S' => $data];
+        }
+
+        return $item;
     }
 
     public function getPrimaryKey(): array
