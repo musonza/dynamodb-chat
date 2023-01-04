@@ -39,7 +39,7 @@ class AddParticipants extends Action
 
         $this->batchSaveParticipants();
 
-        $this->incrementParticipantCount($this->conversation, count($this->participantIds));
+        $this->incrementParticipantCount(count($this->participantIds));
     }
 
     private function batchSaveParticipants(): void
@@ -69,13 +69,13 @@ class AddParticipants extends Action
         }
     }
 
-    private function incrementParticipantCount(Conversation $conversation, int $count): void
+    private function incrementParticipantCount(int $count): void
     {
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
         $params = [
             'TableName' => Configuration::getTableName(),
-            'Key' => $conversation->getPrimaryKey(),
+            'Key' => $this->conversation->getPrimaryKey(),
             'ExpressionAttributeValues' => [
                 ':inc' => ['N' => $count],
             ],

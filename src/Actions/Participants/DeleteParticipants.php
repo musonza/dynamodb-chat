@@ -39,7 +39,7 @@ class DeleteParticipants extends Action
 
         $this->batchDeleteParticipants();
 
-        $this->decrementParticipantCount($this->conversation, count($this->participantIds));
+        $this->decrementParticipantCount(count($this->participantIds));
     }
 
     private function batchDeleteParticipants(): void
@@ -70,13 +70,13 @@ class DeleteParticipants extends Action
         }
     }
 
-    private function decrementParticipantCount(Conversation $conversation, int $count): void
+    private function decrementParticipantCount(int $count): void
     {
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
         $params = [
             'TableName' => Configuration::getTableName(),
-            'Key' => $conversation->getPrimaryKey(),
+            'Key' => $this->conversation->getPrimaryKey(),
             'ExpressionAttributeValues' => [
                 ':inc' => ['N' => $count],
             ],
