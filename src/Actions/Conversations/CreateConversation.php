@@ -32,7 +32,7 @@ class CreateConversation extends Action
 
         $this->saveConversation();
 
-        $this->addParticipants($this->participantIds);
+        $this->addParticipants();
 
         return $this->conversation;
     }
@@ -70,10 +70,10 @@ class CreateConversation extends Action
         );
     }
 
-    private function addParticipants(array $participantIds): void
+    private function addParticipants(): void
     {
-        if (! empty($participantIds)) {
-            Chat::addParticipants($this->conversation->getId(), $participantIds);
+        if (! empty($this->participantIds)) {
+            Chat::addParticipants($this->conversation->getId(), $this->participantIds);
         }
     }
 }
