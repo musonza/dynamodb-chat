@@ -27,6 +27,17 @@ class Conversation extends Entity
         return $this->getAttribute('Subject');
     }
 
+    public function toItem(): array
+    {
+        return [
+            ...$this->getPrimaryKey(),
+            'Type' => ['S' => $this->getEntityType()],
+            'Subject' => ['S' => $this->getAttribute('Subject')],
+            'ParticipantCount' => ['N' => 0],
+            'CreatedAt' => ['S' => $this->getAttribute('CreatedAt')],
+        ];
+    }
+
     public function getPrimaryKey(): array
     {
         return [
@@ -42,24 +53,13 @@ class Conversation extends Entity
         ];
     }
 
-    public function toItem(): array
+    public function getSK(): string
     {
-        return[
-            ...$this->getPrimaryKey(),
-            'Type' => ['S' => $this->getEntityType()],
-            'Subject' => ['S' => $this->getAttribute('Subject')],
-            'ParticipantCount' => ['N' => 0],
-            'CreatedAt' => ['S' => $this->getAttribute('CreatedAt')],
-        ];
+        return $this->getPK();
     }
 
     public function getPK(): string
     {
         return array_values($this->getPartitionKey())[0];
-    }
-
-    public function getSK(): string
-    {
-        return $this->getPK();
     }
 }

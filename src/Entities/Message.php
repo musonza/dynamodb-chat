@@ -40,12 +40,9 @@ class Message extends Entity
         ]);
     }
 
-    public function getPrimaryKey(): array
+    public function getPK(): string
     {
-        return [
-            'PK' => $this->getPartitionKey(),
-            'SK' => $this->getSortKey(),
-        ];
+        return array_values($this->getPartitionKey())[0];
     }
 
     public function getPartitionKey(): array
@@ -55,21 +52,16 @@ class Message extends Entity
         ];
     }
 
+    public function getSK(): string
+    {
+        return array_values($this->getSortKey())[0];
+    }
+
     public function getSortKey(): array
     {
         return [
             'S' => $this->getId(),
         ];
-    }
-
-    public function getPK(): string
-    {
-        return array_values($this->getPartitionKey())[0];
-    }
-
-    public function getSK(): string
-    {
-        return array_values($this->getSortKey())[0];
     }
 
     /**
@@ -99,5 +91,13 @@ class Message extends Entity
         }
 
         return $item;
+    }
+
+    public function getPrimaryKey(): array
+    {
+        return [
+            'PK' => $this->getPartitionKey(),
+            'SK' => $this->getSortKey(),
+        ];
     }
 }
