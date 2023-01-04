@@ -20,6 +20,11 @@ abstract class Action
      */
     abstract public function execute();
 
+    protected function saveItems(array $batchItems): void
+    {
+        $this->getTable()->putBatch($batchItems);
+    }
+
     protected function getTable(): Table
     {
         /** @var Database $db */
@@ -28,23 +33,18 @@ abstract class Action
         return $db->table(app(Conversation::class));
     }
 
-    protected function saveItems(array $batchItems): void
-    {
-        $this->getTable()->putBatch($batchItems);
-    }
-
-    protected function isDirectConversation(Item $item): bool
-    {
-        return Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
-    }
-
-    protected function restrictModifyingParticipantsInDirectChat(Item $item): void
+    protected function restrictModifyingParticipantsInDirectConversation(Item $item): void
     {
         if ($item->attribute('ParticipantCount') && $this->isDirectConversation($item)) {
             throw new InvalidConversationParticipants(
                 InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
             );
         }
+    }
+
+    private function isDirectConversation(Item $item): bool
+    {
+        return Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
     }
 
     protected function deleteItems(array $batchItems): void

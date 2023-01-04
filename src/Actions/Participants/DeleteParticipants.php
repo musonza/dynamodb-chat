@@ -35,7 +35,7 @@ class DeleteParticipants extends Action
     {
         $item = $this->conversationClient->conversationToItem($this->conversation->getId());
 
-        $this->restrictModifyingParticipantsInDirectChat($item);
+        $this->restrictModifyingParticipantsInDirectConversation($item);
 
         $this->batchDeleteParticipants();
 
