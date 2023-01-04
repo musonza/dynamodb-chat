@@ -17,8 +17,8 @@ class Message extends Entity
     public function setSender(Participation $participation, Participation $recipient, string $originalMsgId): self
     {
         $gsi2 = [
-            'GSI2PK' => ['S' => Helpers::gs1skFromParticipantIdentifier($participation->getParticipantExternalId())],
-            'GSI2SK' => ['S' => Helpers::gs1skFromParticipantIdentifier($recipient->getParticipantExternalId())],
+            'GSI2PK' => ['S' => Helpers::gs1skFromParticipantIdentifier($participation->getId())],
+            'GSI2SK' => ['S' => Helpers::gs1skFromParticipantIdentifier($recipient->getId())],
         ];
 
         $this->setGSI2($gsi2);

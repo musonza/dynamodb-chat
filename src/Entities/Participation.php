@@ -19,7 +19,7 @@ class Participation extends Entity
             ...$this->getPrimaryKey(),
             'Type' => ['S' => $this->getEntityType()],
             ...$this->getGSI1(),
-            'ParticipantId' => ['S' => $this->getParticipantExternalId()],
+            'ParticipantId' => ['S' => $this->getId()],
             'CreatedAt' => ['S' => now()->toISOString()],
         ];
     }
@@ -48,11 +48,11 @@ class Participation extends Entity
     public function getSortKey(): array
     {
         return [
-            'S' => sprintf(self::PARTICIPATION_PK_PREFIX, $this->getParticipantExternalId()),
+            'S' => sprintf(self::PARTICIPATION_PK_PREFIX, $this->getId()),
         ];
     }
 
-    public function getParticipantExternalId(): string
+    public function getId(): string
     {
         return $this->getAttribute('Id');
     }

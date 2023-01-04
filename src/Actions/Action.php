@@ -33,6 +33,11 @@ abstract class Action
         return $db->table(app(Conversation::class));
     }
 
+    protected function getDynamoDbClient(): DynamoDbClient
+    {
+        return app(DynamoDbClient::class);
+    }
+
     protected function restrictModifyingParticipantsInDirectConversation(Item $item): void
     {
         if ($item->attribute('ParticipantCount') && $this->isDirectConversation($item)) {

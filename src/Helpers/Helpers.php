@@ -37,11 +37,11 @@ class Helpers
 
     public static function gsi1SKForMessage(Participation $participation, string $recipientMsgId): string
     {
-        return "PARTICIPANT#{$participation->getParticipantExternalId()}{$recipientMsgId}";
+        return "PARTICIPANT#{$participation->getId()}{$recipientMsgId}";
     }
 
     public static function gsi2SKForMessage(Participation $participation): string
     {
-        return "PARTICIPANT#{$participation->getParticipantExternalId()}";
+        return "PARTICIPANT#{$participation->getId()}";
     }
 }

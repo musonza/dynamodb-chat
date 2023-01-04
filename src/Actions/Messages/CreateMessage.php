@@ -48,7 +48,7 @@ class CreateMessage extends Action
 
         $attributes = [
             'ConversationId' => $this->conversation->getId(),
-            'ParticipantId' => $this->participation->getParticipantExternalId(),
+            'ParticipantId' => $this->participation->getId(),
             'Message' => $this->text,
             'IsSender' => true,
             'ParentId' => null,
@@ -62,9 +62,7 @@ class CreateMessage extends Action
 
         $this->getTable()->put($senderMessage->toArray());
 
-        $participantsResult = $this->getConversationParticipants($senderMessage);
-
-        $this->batchSaveMessages($participantsResult, $attributes, $senderMessage);
+        $this->batchSaveMessagesForRecipients($attributes, $senderMessage);
 
         return $senderMessage;
     }
@@ -85,7 +83,7 @@ class CreateMessage extends Action
         $participant = $this->getTable()->query()
             ->key($this->conversation->getPK())
             ->condition(
-                Condition::attribute('SK')->eq(Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId()))
+                Condition::attribute('SK')->eq(Helpers::gs1skFromParticipantIdentifier($this->participation->getId()))
             )->fetch();
 
         if (! $participant->count()) {
@@ -104,8 +102,12 @@ class CreateMessage extends Action
             ->fetch();
     }
 
-    private function batchSaveMessages(Resultset $participants, array $attributes, Entity $message): void
+    /**
+     * @throws Exception
+     */
+    private function batchSaveMessagesForRecipients(array $attributes, Entity $message): void
     {
+        $participants = $this->getConversationParticipants($message);
         $table = $this->getTable();
         $index = 0;
         $batchItems = [];
@@ -125,8 +127,8 @@ class CreateMessage extends Action
             ]);
 
             // Sender already has an entry for the message
-            if (($this->participation->getParticipantExternalId() !== $recipient->getParticipantExternalId())) {
-                $attributes['ParticipantId'] = $recipient->getParticipantExternalId();
+            if (($this->participation->getId() !== $recipient->getId())) {
+                $attributes['ParticipantId'] = $recipient->getId();
                 $attributes['IsSender'] = false;
                 $attributes['Read'] = false;
                 $attributes['ParentId'] = $message->getId();

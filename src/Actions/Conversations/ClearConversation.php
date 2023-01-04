@@ -3,6 +3,7 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Conversations;
 
 use Bego\Condition;
+use Bego\Query\Statement;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 use Musonza\LaravelDynamodbChat\Entities\Entity;
@@ -21,14 +22,14 @@ class ClearConversation extends Action
         $this->participation = $participation;
     }
 
-    // TODO make this action queable
     public function execute(): void
     {
-        $sk = Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId());
-        $query = $this->getTable()
-            ->query(Entity::GSI1_NAME)
-            ->key($this->conversation->getPK())
-            ->condition(Condition::attribute(Entity::GSI1_SORT_KEY)->beginsWith($sk));
+        $this->clearConversation();
+    }
+
+    protected function clearConversation(): void
+    {
+        $query = $this->buildQuery();
 
         $offset = null;
 
@@ -37,5 +38,15 @@ class ClearConversation extends Action
             $this->getTable()->deleteBatch($results->toArrayOfObjects());
             $offset = $results->getLastEvaluatedKey();
         } while (! is_null($offset));
+    }
+
+    protected function buildQuery(): Statement
+    {
+        $sk = Helpers::gs1skFromParticipantIdentifier($this->participation->getId());
+
+        return $this->getTable()
+            ->query(Entity::GSI1_NAME)
+            ->key($this->conversation->getPK())
+            ->condition(Condition::attribute(Entity::GSI1_SORT_KEY)->beginsWith($sk));
     }
 }

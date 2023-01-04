@@ -24,7 +24,7 @@ class GetMessages extends Action
 
     public function execute(array $offset = null): Resultset
     {
-        $gsi1skStartsWith = "PARTICIPANT#{$this->participation->getParticipantExternalId()}";
+        $gsi1skStartsWith = "PARTICIPANT#{$this->participation->getId()}";
         $query = $this->getTable()
             ->query(Entity::GSI1_NAME)
             ->key($this->conversation->getPK())

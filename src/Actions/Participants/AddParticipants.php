@@ -2,7 +2,6 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions\Participants;
 
-use Aws\DynamoDb\DynamoDbClient;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Actions\ConversationClient;
 use Musonza\LaravelDynamodbChat\Configuration;
@@ -71,8 +70,6 @@ class AddParticipants extends Action
 
     private function incrementParticipantCount(): void
     {
-        /** @var DynamoDbClient $client */
-        $client = app(DynamoDbClient::class);
         $params = [
             'TableName' => Configuration::getTableName(),
             'Key' => $this->conversation->getPrimaryKey(),
@@ -83,6 +80,6 @@ class AddParticipants extends Action
             'ReturnValues' => 'UPDATED_NEW',
         ];
 
-        $client->updateItem($params);
+        $this->getDynamoDbClient()->updateItem($params);
     }
 }

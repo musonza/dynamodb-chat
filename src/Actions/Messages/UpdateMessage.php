@@ -2,7 +2,6 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
-use Aws\DynamoDb\DynamoDbClient;
 use Bego\Condition;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Configuration;
@@ -36,7 +35,7 @@ class UpdateMessage extends Action
     public function execute(): bool
     {
         // TODO resolve IDs cleanly
-        $gsi1sk = "PARTICIPANT#{$this->participation->getParticipantExternalId()}{$this->message->getId()}";
+        $gsi1sk = "PARTICIPANT#{$this->participation->getId()}{$this->message->getId()}";
 
         $item = $this->getTable()
             ->query('GSI1')
@@ -69,9 +68,6 @@ class UpdateMessage extends Action
 
     private function incrementReadCount(Conversation $conversation, string $messageId): void
     {
-        /** @var DynamoDbClient $client */
-        $client = app(DynamoDbClient::class);
-
         $key = $conversation->getPrimaryKey();
         $key['SK']['S'] = $messageId;
 
@@ -85,6 +81,6 @@ class UpdateMessage extends Action
             'ReturnValues' => 'UPDATED_NEW',
         ];
 
-        $client->updateItem($params);
+        $this->getDynamoDbClient()->updateItem($params);
     }
 }
