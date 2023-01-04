@@ -4,21 +4,19 @@ namespace Musonza\LaravelDynamodbChat;
 
 class Configuration
 {
-    public const TABLE_NAME = 'musonza_chat';
-
     public static function getTableName(): string
     {
-        return config('musonza_dynamodb_chat.table_name', self::TABLE_NAME);
+        return config('musonza_dynamodb_chat.table_name', 'musonza_chat');
     }
 
     public static function getDynamodbEndpoint(): string
     {
-        return config('musonza_dynamodb_chat.endpoint');
+        return config('musonza_dynamodb_chat.endpoint', 'http://localhost:8000');
     }
 
     public static function getBatchLimit(): int
     {
-        return config('musonza_dynamodb_chat.batch_limit');
+        return config('musonza_dynamodb_chat.batch_limit', 25);
     }
 
     public static function getRegion(): string
@@ -33,7 +31,7 @@ class Configuration
 
     public static function shouldIncrementParentMessageReadCount(): bool
     {
-        return config('musonza_dynamodb_chat.increment_parent_message_read_count');
+        return config('musonza_dynamodb_chat.increment_parent_message_read_count', false);
     }
 
     public static function getProvisionedThroughput(): array
@@ -58,7 +56,7 @@ class Configuration
 
     public static function getPaginatorPages(): int
     {
-        return config('musonza_dynamodb_chat.default_pagination_pages');
+        return config('musonza_dynamodb_chat.default_pagination_pages', 1);
     }
 
     public static function getMaxParticipants(): int

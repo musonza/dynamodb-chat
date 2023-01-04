@@ -158,6 +158,11 @@ abstract class Entity extends Model
         return $model;
     }
 
+    public function getInstance(array $attributes): static
+    {
+        return $this->newInstance($attributes, true);
+    }
+
     public function getId(): string
     {
         return $this->getAttribute('Id');

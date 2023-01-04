@@ -4,6 +4,7 @@ namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
 use Bego\Condition;
 use Bego\Exception;
+use Bego\Table;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
@@ -62,7 +63,7 @@ class CreateMessage extends Action
             ->setAttribute('Read', true);
 
         $table = $this->getTable();
-        // Check if user can send a message
+
         $participant = $table->query()
             ->key($this->conversation->getPK())
             ->condition(
@@ -75,7 +76,21 @@ class CreateMessage extends Action
 
         $table->put($message->toArray());
 
-        // get all participants
+        $this->createRecipientMessages($table, $message, $attributes);
+
+        return $message;
+    }
+
+    /**
+     * @param  Table  $table
+     * @param  Entity  $message
+     * @param  array  $attributes
+     * @return void
+     *
+     * @throws Exception
+     */
+    private function createRecipientMessages(Table $table, Entity $message, array $attributes): void
+    {
         $participantsQuery = $table->query()
             ->key($message->toArray()[Entity::PARTITION_KEY])
             ->condition(Condition::attribute(Entity::SORT_KEY)->beginsWith('PARTICIPANT#'))
@@ -102,6 +117,7 @@ class CreateMessage extends Action
             if (($this->participation->getParticipantExternalId() !== $recipient->getParticipantExternalId())) {
                 $attributes['ParticipantId'] = $recipient->getParticipantExternalId();
                 $attributes['IsSender'] = false;
+                $attributes['Read'] = 0;
                 $attributes['ParentId'] = $message->getId();
                 $recipientMsg = $this->message->newInstance($attributes);
                 $batchItems[] = $recipientMsg->setSender($this->participation, $recipient, $message->getId())
@@ -116,7 +132,5 @@ class CreateMessage extends Action
         if (! empty($batchItems)) {
             $table->putBatch($batchItems);
         }
-
-        return $message;
     }
 }

@@ -43,21 +43,21 @@ final class Chat
 
     public function addParticipants(string $conversationId, array $participantIds): void
     {
-        $conversation = $this->conversation->newInstance(['Id' => $conversationId], true);
+        $conversation = $this->conversation->getInstance(['Id' => $conversationId]);
         (new AddParticipants($this->conversationClient, $conversation, $this->participation, $participantIds))
             ->execute();
     }
 
     public function deleteParticipants(string $conversationId, array $participantIds): void
     {
-        $conversation = $this->conversation->newInstance(['Id' => $conversationId], true);
+        $conversation = $this->conversation->getInstance(['Id' => $conversationId]);
         (new DeleteParticipants($this->conversationClient, $conversation, $this->participation, $participantIds))
             ->execute();
     }
 
     public function messaging(string $conversationId, string $messageId = null): MessageClient
     {
-        $conversation = $this->conversation->newInstance(['Id' => $conversationId], true);
+        $conversation = $this->conversation->getInstance(['Id' => $conversationId]);
         $message = $this->message->newInstance([
             'Id' => $messageId,
             'ConversationId' => $conversationId,
