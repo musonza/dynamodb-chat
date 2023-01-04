@@ -124,17 +124,11 @@ abstract class Entity extends Model
         return $this->attributes;
     }
 
-    /**
-     * @param  false|null  $default
-     */
-    public function getAttribute(string $key, bool|string|array|null $default = null): mixed
+    public function getAttribute(string $key, string|bool|array|null $default = null): mixed
     {
         return $this->attributes[$key] ?? $default;
     }
 
-    /**
-     * @param  null|string|true  $value
-     */
     public function setAttribute(string $key, string|bool|array|null $value): self
     {
         $this->attributes[$key] = $value;
