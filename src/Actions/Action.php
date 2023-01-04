@@ -4,7 +4,9 @@ namespace Musonza\LaravelDynamodbChat\Actions;
 
 use Aws\DynamoDb\DynamoDbClient;
 use Bego\Database;
+use Bego\Item;
 use Bego\Table;
+use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
 
@@ -28,6 +30,11 @@ abstract class Action
     protected function saveItems(array $batchItems): void
     {
         $this->getTable()->putBatch($batchItems);
+    }
+
+    protected function isDirectConversation(Item $item): bool
+    {
+        return Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
     }
 
     protected function deleteItems(array $batchItems): void

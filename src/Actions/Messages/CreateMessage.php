@@ -2,6 +2,7 @@
 
 namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
+use Bego\Component\Resultset;
 use Bego\Condition;
 use Bego\Exception;
 use Musonza\LaravelDynamodbChat\Actions\Action;
@@ -43,6 +44,8 @@ class CreateMessage extends Action
      */
     public function execute(): Entity
     {
+        $this->validateParticipant();
+
         $attributes = [
             'ConversationId' => $this->conversation->getId(),
             'ParticipantId' => $this->participation->getParticipantExternalId(),
@@ -55,17 +58,23 @@ class CreateMessage extends Action
             $attributes['Data'] = $this->data;
         }
 
-        $message = $this->message->newInstance($attributes);
-        $message = $message->setSender($this->participation, $this->participation, $message->getId())
-            ->setAttribute('Read', true);
-
-        $this->validateParticipant();
+        $message = $this->createSenderMessage($attributes);
 
         $this->getTable()->put($message->toArray());
 
-        $this->createRecipientMessages($message, $attributes);
+        $participantsResult = $this->getConversationParticipants($message);
+
+        $this->batchSaveMessages($participantsResult, $attributes, $message);
 
         return $message;
+    }
+
+    private function createSenderMessage(array $attributes): Entity
+    {
+        $message = $this->message->newInstance($attributes);
+
+        return $message->setSender($this->participation, $this->participation, $message->getId())
+            ->setAttribute('Read', true);
     }
 
     /**
@@ -87,14 +96,17 @@ class CreateMessage extends Action
     /**
      * @throws Exception
      */
-    private function createRecipientMessages(Entity $message, array $attributes): void
+    private function getConversationParticipants(Entity $message): Resultset
     {
-        $table = $this->getTable();
-        $participantsQuery = $table->query()
+        return $this->getTable()->query()
             ->key($message->toArray()[Entity::PARTITION_KEY])
             ->condition(Condition::attribute(Entity::SORT_KEY)->beginsWith('PARTICIPANT#'))
             ->fetch();
+    }
 
+    private function batchSaveMessages(Resultset $participants, array $attributes, Entity $message): void
+    {
+        $table = $this->getTable();
         $index = 0;
         $batchItems = [];
         $batchCount = 0;
@@ -106,7 +118,7 @@ class CreateMessage extends Action
                 $batchCount = 0;
             }
 
-            $item = $participantsQuery->item($index);
+            $item = $participants->item($index);
             $recipient = $this->participation->newInstance([
                 'Id' => $item->attribute('ParticipantId'),
                 'ConversationId' => $this->conversation->getId(),
@@ -126,7 +138,7 @@ class CreateMessage extends Action
             }
 
             $index++;
-        } while ($index < $participantsQuery->count());
+        } while ($index < $participants->count());
 
         if (! empty($batchItems)) {
             $table->putBatch($batchItems);

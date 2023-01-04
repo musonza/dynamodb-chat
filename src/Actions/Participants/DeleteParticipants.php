@@ -3,8 +3,6 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Participants;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Aws\Result;
-use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Actions\ConversationClient;
 use Musonza\LaravelDynamodbChat\Configuration;
@@ -38,16 +36,20 @@ class DeleteParticipants extends Action
     {
         $item = $this->conversationClient->conversationToItem($this->conversation->getId());
 
-        if ($item->attribute('ParticipantCount')) {
-            $isDirect = Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
-            if ($isDirect) {
-                throw new InvalidConversationParticipants(
-                    $this->conversation,
-                    InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
-                );
-            }
+        if ($item->attribute('ParticipantCount') && $this->isDirectConversation($item)) {
+            throw new InvalidConversationParticipants(
+                $this->conversation,
+                InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
+            );
         }
 
+        $this->batchDeleteParticipants();
+
+        $this->decrementParticipantCount($this->conversation, count($this->participantIds));
+    }
+
+    private function batchDeleteParticipants(): void
+    {
         $batchItems = [];
         $batchItemsCount = 0;
 
@@ -72,11 +74,9 @@ class DeleteParticipants extends Action
         if (! empty($batchItems)) {
             $this->deleteItems($batchItems);
         }
-
-        $this->decrement($this->conversation, count($this->participantIds));
     }
 
-    protected function decrement(Conversation $conversation, int $count): Result
+    private function decrementParticipantCount(Conversation $conversation, int $count): void
     {
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
@@ -90,6 +90,6 @@ class DeleteParticipants extends Action
             'ReturnValues' => 'UPDATED_NEW',
         ];
 
-        return $client->updateItem($params);
+        $client->updateItem($params);
     }
 }

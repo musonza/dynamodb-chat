@@ -3,8 +3,6 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Participants;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Bego\Item;
-use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Actions\ConversationClient;
 use Musonza\LaravelDynamodbChat\Configuration;
@@ -38,26 +36,16 @@ class AddParticipants extends Action
     {
         $item = $this->conversationClient->conversationToItem($this->conversation->getId());
 
-        $this->checkForDirectConversation($item);
-
-        $this->batchSaveParticipants();
-
-        $this->increment($this->conversation, count($this->participantIds));
-    }
-
-    private function checkForDirectConversation(Item $item): void
-    {
         if ($item->attribute('ParticipantCount') && $this->isDirectConversation($item)) {
             throw new InvalidConversationParticipants(
                 $this->conversation,
                 InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
             );
         }
-    }
 
-    private function isDirectConversation(Item $item): bool
-    {
-        return Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
+        $this->batchSaveParticipants();
+
+        $this->incrementParticipantCount($this->conversation, count($this->participantIds));
     }
 
     private function batchSaveParticipants(): void
@@ -87,7 +75,7 @@ class AddParticipants extends Action
         }
     }
 
-    private function increment(Conversation $conversation, int $count): void
+    private function incrementParticipantCount(Conversation $conversation, int $count): void
     {
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
