@@ -51,7 +51,6 @@ class CreateMessage extends Action
             'Message' => $this->text,
             'IsSender' => true,
             'ParentId' => null,
-            'TTL' => 1672773018,
         ];
 
         if (! empty($this->data)) {
