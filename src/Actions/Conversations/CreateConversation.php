@@ -37,13 +37,6 @@ class CreateConversation extends Action
         return $this->conversation;
     }
 
-    private function saveConversation(): void
-    {
-        if (! $this->getTable()->put($this->conversation->toArray(), $this->conditions)) {
-            throw new ConversationExistsException($this->conversation);
-        }
-    }
-
     private function handleDirectConversation(): void
     {
         $this->validateParticipantsInDirectConversation();
@@ -68,6 +61,13 @@ class CreateConversation extends Action
             'Id',
             Helpers::directConversationKey($this->participantIds[0], $this->participantIds[1])
         );
+    }
+
+    private function saveConversation(): void
+    {
+        if (! $this->getTable()->put($this->conversation->toArray(), $this->conditions)) {
+            throw new ConversationExistsException($this->conversation);
+        }
     }
 
     private function addParticipants(): void
