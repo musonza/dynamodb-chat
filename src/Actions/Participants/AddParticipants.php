@@ -55,7 +55,7 @@ class AddParticipants extends Action
         }
     }
 
-    public function isDirectConversation(Item $item): bool
+    private function isDirectConversation(Item $item): bool
     {
         return Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
     }
