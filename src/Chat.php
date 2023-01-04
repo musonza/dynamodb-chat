@@ -58,10 +58,10 @@ final class Chat
     public function messaging(string $conversationId, string $messageId = null): MessageClient
     {
         $conversation = $this->conversation->getInstance(['Id' => $conversationId]);
-        $message = $this->message->newInstance([
+        $message = $this->message->getInstance([
             'Id' => $messageId,
             'ConversationId' => $conversationId,
-        ], true);
+        ]);
 
         return $this->messageClient
             ->setConversation($conversation)
