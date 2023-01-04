@@ -3,7 +3,7 @@
 namespace Musonza\LaravelDynamodbChat\Actions\Participants;
 
 use Aws\DynamoDb\DynamoDbClient;
-use Aws\Result;
+use Bego\Item;
 use Illuminate\Support\Str;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Actions\ConversationClient;
@@ -38,16 +38,30 @@ class AddParticipants extends Action
     {
         $item = $this->conversationClient->conversationToItem($this->conversation->getId());
 
-        if ($item->attribute('ParticipantCount')) {
-            $isDirect = Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
-            if ($isDirect) {
-                throw new InvalidConversationParticipants(
-                    $this->conversation,
-                    InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
-                );
-            }
-        }
+        $this->checkForDirectConversation($item);
 
+        $this->batchSaveParticipants();
+
+        $this->increment($this->conversation, count($this->participantIds));
+    }
+
+    private function checkForDirectConversation(Item $item): void
+    {
+        if ($item->attribute('ParticipantCount') && $this->isDirectConversation($item)) {
+            throw new InvalidConversationParticipants(
+                $this->conversation,
+                InvalidConversationParticipants::PARTICIPANTS_IMMUTABLE
+            );
+        }
+    }
+
+    public function isDirectConversation(Item $item): bool
+    {
+        return Str::startsWith($item->attribute('PK'), 'CONVERSATION#DIRECT');
+    }
+
+    private function batchSaveParticipants(): void
+    {
         $batchItems = [];
         $batchItemsCount = 0;
 
@@ -71,11 +85,9 @@ class AddParticipants extends Action
         if (! empty($batchItems)) {
             $this->saveItems($batchItems);
         }
-
-        $this->increment($this->conversation, count($this->participantIds));
     }
 
-    protected function increment(Conversation $conversation, int $count): Result
+    private function increment(Conversation $conversation, int $count): void
     {
         /** @var DynamoDbClient $client */
         $client = app(DynamoDbClient::class);
@@ -89,6 +101,6 @@ class AddParticipants extends Action
             'ReturnValues' => 'UPDATED_NEW',
         ];
 
-        return $client->updateItem($params);
+        $client->updateItem($params);
     }
 }

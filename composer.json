@@ -38,14 +38,14 @@
         }
     ],
     "scripts": {
-        "lint-fix": "./vendor/bin/pint",
+        "test:lint-fix": "./vendor/bin/pint",
         "test:psalm": "vendor/bin/psalm",
         "test:unit": "vendor/bin/phpunit",
         "test:analyse": "vendor/bin/phpstan analyse --memory-limit=2G --ansi",
         "test:lint": "./vendor/bin/pint --test",
         "test:refactor": "rector --dry-run",
         "test": [
-            "@test:lint",
+            "@test:lint-fix",
             "@test:refactor",
             "@test:analyse",
             "@test:psalm",

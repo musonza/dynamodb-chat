@@ -4,7 +4,6 @@ namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 
 use Bego\Condition;
 use Bego\Exception;
-use Bego\Table;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
@@ -41,7 +40,6 @@ class CreateMessage extends Action
 
     /**
      * @throws Exception
-     * @throws \Exception
      */
     public function execute(): Entity
     {
@@ -61,9 +59,21 @@ class CreateMessage extends Action
         $message = $message->setSender($this->participation, $this->participation, $message->getId())
             ->setAttribute('Read', true);
 
-        $table = $this->getTable();
+        $this->validateParticipant();
 
-        $participant = $table->query()
+        $this->getTable()->put($message->toArray());
+
+        $this->createRecipientMessages($message, $attributes);
+
+        return $message;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function validateParticipant(): void
+    {
+        $participant = $this->getTable()->query()
             ->key($this->conversation->getPK())
             ->condition(
                 Condition::attribute('SK')->eq(Helpers::gs1skFromParticipantIdentifier($this->participation->getParticipantExternalId()))
@@ -72,24 +82,14 @@ class CreateMessage extends Action
         if (! $participant->count()) {
             throw new \Exception('Participant is not part of the conversation');
         }
-
-        $table->put($message->toArray());
-
-        $this->createRecipientMessages($table, $message, $attributes);
-
-        return $message;
     }
 
     /**
-     * @param  Table  $table
-     * @param  Entity  $message
-     * @param  array  $attributes
-     * @return void
-     *
      * @throws Exception
      */
-    private function createRecipientMessages(Table $table, Entity $message, array $attributes): void
+    private function createRecipientMessages(Entity $message, array $attributes): void
     {
+        $table = $this->getTable();
         $participantsQuery = $table->query()
             ->key($message->toArray()[Entity::PARTITION_KEY])
             ->condition(Condition::attribute(Entity::SORT_KEY)->beginsWith('PARTICIPANT#'))
@@ -116,7 +116,7 @@ class CreateMessage extends Action
             if (($this->participation->getParticipantExternalId() !== $recipient->getParticipantExternalId())) {
                 $attributes['ParticipantId'] = $recipient->getParticipantExternalId();
                 $attributes['IsSender'] = false;
-                $attributes['Read'] = 0;
+                $attributes['Read'] = false;
                 $attributes['ParentId'] = $message->getId();
                 $recipientMsg = $this->message->newInstance($attributes);
                 $batchItems[] = $recipientMsg->setSender($this->participation, $recipient, $message->getId())

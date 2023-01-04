@@ -18,13 +18,12 @@ class UpdateConversation extends Action
     public function execute(): ?bool
     {
         $conversationPartitionKey = array_values($this->conversation->getPartitionKey())[0];
-        $response = $this->getTable()
+        $item = $this->getTable()
             ->query()
             ->key($conversationPartitionKey)
             ->condition(Condition::attribute('SK')->eq($conversationPartitionKey))
-            ->fetch();
-
-        $item = $response->first();
+            ->fetch()
+            ->first();
 
         foreach ($this->conversation->getAttributes() as $attribute => $value) {
             $item->set($attribute, $value);
