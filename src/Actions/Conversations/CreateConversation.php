@@ -30,15 +30,20 @@ class CreateConversation extends Action
             $this->handleDirectConversation();
         }
 
+        $this->saveConversation();
+
+        $this->addParticipants($this->participantIds);
+
+        return $this->conversation;
+    }
+
+    private function saveConversation(): void
+    {
         $created = $this->getTable()->put($this->conversation->toArray(), $this->conditions);
 
         if (! $created) {
             throw new ConversationExistsException($this->conversation);
         }
-
-        $this->addParticipants($this->participantIds);
-
-        return $this->conversation;
     }
 
     private function handleDirectConversation(): void
