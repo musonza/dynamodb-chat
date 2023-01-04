@@ -39,9 +39,7 @@ class CreateConversation extends Action
 
     private function saveConversation(): void
     {
-        $created = $this->getTable()->put($this->conversation->toArray(), $this->conditions);
-
-        if (! $created) {
+        if (! $this->getTable()->put($this->conversation->toArray(), $this->conditions)) {
             throw new ConversationExistsException($this->conversation);
         }
     }
