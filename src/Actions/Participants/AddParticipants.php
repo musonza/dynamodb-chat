@@ -43,12 +43,12 @@ class AddParticipants extends Action
 
     private function batchSaveParticipants(): void
     {
-        $participationData = array_map(fn ($id) => $this->participation->newInstance([
+        $batchItems = array_map(fn ($id) => $this->participation->newInstance([
             'ConversationId' => $this->conversation->getId(),
             'Id' => $id,
         ])->toArray(), $this->participantIds);
 
-        foreach (array_chunk($participationData, Configuration::getBatchLimit()) as $batch) {
+        foreach (array_chunk($batchItems, Configuration::getBatchLimit()) as $batch) {
             $this->saveItems($batch);
         }
     }
