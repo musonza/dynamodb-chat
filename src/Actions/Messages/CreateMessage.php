@@ -60,11 +60,13 @@ class CreateMessage extends Action
      */
     private function validateParticipant(): void
     {
-        $participant = $this->getTable()->query()
-            ->key($this->conversation->getPK())
-            ->condition(
-                Condition::attribute('SK')->eq(Helpers::gs1skFromParticipantIdentifier($this->participation->getId()))
-            )->fetch();
+        $partitionKey = $this->conversation->getPK();
+        $sortKey = Helpers::gs1skFromParticipantIdentifier($this->participation->getId());
+        $query = $this->getTable()->query()
+            ->key($partitionKey)
+            ->condition(Condition::attribute('SK')->eq($sortKey));
+
+        $participant = $query->fetch();
 
         if (! $participant->count()) {
             throw new Exception('Participant is not part of the conversation');
