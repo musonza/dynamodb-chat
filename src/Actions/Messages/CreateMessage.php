@@ -71,6 +71,17 @@ class CreateMessage extends Action
         }
     }
 
+    private function createAndSaveMessageFromSender(): Entity
+    {
+        $message = $this->message->newInstance($this->getMessageAttributes());
+        $message = $message->setSender($this->participation, $this->participation, $message->getId())
+            ->setAttribute('Read', true);
+
+        $this->getTable()->put($message->toArray());
+
+        return $message;
+    }
+
     protected function getMessageAttributes(): array
     {
         $attributes = [
@@ -86,17 +97,6 @@ class CreateMessage extends Action
         }
 
         return $attributes;
-    }
-
-    private function createAndSaveMessageFromSender(): Entity
-    {
-        $message = $this->message->newInstance($this->getMessageAttributes());
-        $message = $message->setSender($this->participation, $this->participation, $message->getId())
-            ->setAttribute('Read', true);
-
-        $this->getTable()->put($message->toArray());
-
-        return $message;
     }
 
     /**
