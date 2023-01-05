@@ -5,6 +5,8 @@ namespace Musonza\LaravelDynamodbChat\Actions\Messages;
 use Bego\Component\Resultset;
 use Bego\Condition;
 use Bego\Exception;
+use Bego\Item;
+use Illuminate\Support\Collection;
 use Musonza\LaravelDynamodbChat\Actions\Action;
 use Musonza\LaravelDynamodbChat\Configuration;
 use Musonza\LaravelDynamodbChat\Entities\Conversation;
@@ -46,11 +48,9 @@ class CreateMessage extends Action
     {
         $this->validateParticipant();
 
-        $attributes = $this->getMessageAttributes();
+        $message = $this->createAndSaveMessageFromSender();
 
-        $message = $this->createAndSaveMessageFromSender($attributes);
-
-        $this->batchSaveMessagesForRecipients($attributes, $message);
+        $this->batchSaveMessagesForRecipients($message);
 
         return $message;
     }
@@ -67,7 +67,7 @@ class CreateMessage extends Action
             )->fetch();
 
         if (! $participant->count()) {
-            throw new \Exception('Participant is not part of the conversation');
+            throw new Exception('Participant is not part of the conversation');
         }
     }
 
@@ -88,9 +88,9 @@ class CreateMessage extends Action
         return $attributes;
     }
 
-    private function createAndSaveMessageFromSender(array $attributes): Entity
+    private function createAndSaveMessageFromSender(): Entity
     {
-        $message = $this->message->newInstance($attributes);
+        $message = $this->message->newInstance($this->getMessageAttributes());
         $message = $message->setSender($this->participation, $this->participation, $message->getId())
             ->setAttribute('Read', true);
 
@@ -102,46 +102,17 @@ class CreateMessage extends Action
     /**
      * @throws Exception
      */
-    private function batchSaveMessagesForRecipients(array $attributes, Entity $message): void
+    private function batchSaveMessagesForRecipients(Entity $message): void
     {
         $participants = $this->getConversationParticipants($message);
-        $table = $this->getTable();
-        $index = 0;
-        $batchItems = [];
-        $batchCount = 0;
 
-        do {
-            if ($batchCount == Configuration::getBatchLimit()) {
-                $table->putBatch($batchItems);
-                $batchItems = [];
-                $batchCount = 0;
-            }
-
-            $item = $participants->item($index);
-            $recipient = $this->participation->newInstance([
-                'Id' => $item->attribute('ParticipantId'),
-                'ConversationId' => $this->conversation->getId(),
-            ]);
-
-            // Sender already has an entry for the message
-            if (($this->participation->getId() !== $recipient->getId())) {
-                $attributes['ParticipantId'] = $recipient->getId();
-                $attributes['IsSender'] = false;
-                $attributes['Read'] = false;
-                $attributes['ParentId'] = $message->getId();
-                $recipientMsg = $this->message->newInstance($attributes);
-                $batchItems[] = $recipientMsg->setSender($this->participation, $recipient, $message->getId())
-                    ->toArray();
-
-                $batchCount++;
-            }
-
-            $index++;
-        } while ($index < $participants->count());
-
-        if (! empty($batchItems)) {
-            $table->putBatch($batchItems);
-        }
+        (new Collection($participants))->filter(function (Item $item) {
+            return $item->attribute('ParticipantId') !== $this->participation->getId();
+        })->map(function ($item) use ($message) {
+            return $this->recipientMessageData($item, $message);
+        })->chunk(Configuration::getBatchLimit())->each(function ($chunk) {
+            $this->getTable()->putBatch($chunk->toArray());
+        });
     }
 
     /**
@@ -153,5 +124,24 @@ class CreateMessage extends Action
             ->key($message->toArray()[Entity::PARTITION_KEY])
             ->condition(Condition::attribute(Entity::SORT_KEY)->beginsWith('PARTICIPANT#'))
             ->fetch();
+    }
+
+    private function recipientMessageData(Item $item, Entity $message): array
+    {
+        $recipient = $this->participation->newInstance([
+            'Id' => $item->attribute('ParticipantId'),
+            'ConversationId' => $this->conversation->getId(),
+        ]);
+
+        $attributes = $this->getMessageAttributes();
+        $attributes['ParticipantId'] = $recipient->getId();
+        $attributes['IsSender'] = false;
+        $attributes['Read'] = false;
+        $attributes['ParentId'] = $message->getId();
+
+        $recipientMessage = $this->message->newInstance($attributes);
+
+        return $recipientMessage->setSender($this->participation, $recipient, $message->getId())
+            ->toArray();
     }
 }
