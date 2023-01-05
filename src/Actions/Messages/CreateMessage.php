@@ -106,13 +106,15 @@ class CreateMessage extends Action
     {
         $participants = $this->getConversationParticipants($message);
 
-        (new Collection($participants))->filter(function (Item $item) {
-            return $item->attribute('ParticipantId') !== $this->participation->getId();
-        })->map(function ($item) use ($message) {
-            return $this->recipientMessageData($item, $message);
-        })->chunk(Configuration::getBatchLimit())->each(function ($chunk) {
-            $this->getTable()->putBatch($chunk->toArray());
-        });
+        $recipientMessageData = (new Collection($participants))
+            ->filter(fn (Item $item) => $item->attribute('ParticipantId') !== $this->participation->getId())
+            ->map(fn ($item) => $this->recipientMessageData($item, $message));
+
+        $table = $this->getTable();
+
+        foreach ($recipientMessageData->chunk(Configuration::getBatchLimit()) as $chunk) {
+            $table->putBatch($chunk->toArray());
+        }
     }
 
     /**
