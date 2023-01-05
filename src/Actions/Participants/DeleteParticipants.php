@@ -43,29 +43,16 @@ class DeleteParticipants extends Action
 
     private function batchDeleteParticipants(): void
     {
-        $batchItems = [];
-        $batchItemsCount = 0;
-
-        foreach ($this->participantIds as $id) {
-            if ($batchItemsCount == Configuration::getBatchLimit()) {
-                $this->deleteItems($batchItems);
-                $batchItems = [];
-                $batchItemsCount = 0;
-            }
-
-            $participation = $this->participation->newInstance([
+        $batchLimit = Configuration::getBatchLimit();
+        $participationData = array_map(fn ($id) => [
+            'DeleteRequest' => ['Key' => $this->participation->newInstance([
                 'ConversationId' => $this->conversation->getId(),
                 'Id' => $id,
-            ]);
+            ])->getPrimaryKey()],
+        ], $this->participantIds);
 
-            $batchItems[] = [
-                'DeleteRequest' => ['Key' => $participation->getPrimaryKey()],
-            ];
-            $batchItemsCount++;
-        }
-
-        if (! empty($batchItems)) {
-            $this->deleteItems($batchItems);
+        foreach (array_chunk($participationData, $batchLimit) as $batch) {
+            $this->deleteItems($batch);
         }
     }
 
