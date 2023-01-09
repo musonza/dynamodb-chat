@@ -1,0 +1,35 @@
+# Folders #
+###########
+dist/
+vendor/
+build/
+.idea
+composer.lock
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.phpunit.result.cache
+phpunit.xml
