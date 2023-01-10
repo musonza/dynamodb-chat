@@ -21,6 +21,7 @@
     - [Send Message with additional details](#send-message-with-additional-details)
     - [Delete Message](#delete-message)
     - [Mark Message as read](#mark-message-as-read)
+  - [Reactions](#reactions)
 - [DynamoDB access patterns](#dynamodb-access-patterns)
 </details>
 
@@ -150,6 +151,22 @@ Marking a message as read will remove the unread indicator for the specified use
 ```php  
 Chat::messaging($conversationId, $messageId)
     ->markAsRead($recipientOrOwnerId);
+```
+
+### Reactions
+
+#### Add reaction to a message
+
+```php
+Chat::messaging($conversationId, $messageId)
+    ->react('THUMBS_UP', $participantId);
+```
+
+#### Remove reaction from a message
+
+```php
+Chat::messaging($conversationId, $messageId)
+    ->unreact('THUMBS_UP', $participantId);
 ```
 
 ## TODO

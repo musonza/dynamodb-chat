@@ -24,6 +24,7 @@ class UpdateMessage extends Action
 
     private array $allowedAttributes = [
         'Read',
+        'Status',
     ];
 
     public function __construct(Conversation $conversation, Participation $participation, Message $message, array $attributes)
