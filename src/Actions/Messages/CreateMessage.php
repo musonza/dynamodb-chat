@@ -48,11 +48,20 @@ class CreateMessage extends Action
     {
         $this->validateParticipant();
 
+        /** @var Message $message */
         $message = $this->createAndSaveMessageFromSender();
 
         $this->batchSaveMessagesForRecipients($message);
 
+        $this->markMessageAsSent($message);
+
         return $message;
+    }
+
+    private function markMessageAsSent(Message $message): void
+    {
+        (new UpdateMessage($this->conversation, $this->participation, $message, ['Status' => 'SENT']))
+            ->execute();
     }
 
     /**

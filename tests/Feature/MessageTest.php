@@ -39,11 +39,6 @@ class MessageTest extends TestCase
         $this->assertEquals('MSG', $response->item(0)->attribute('Type'));
     }
 
-//    public function testSendMessageWithExpiration()
-//    {
-//        $this->markTestSkipped();
-//    }
-
     public function testOnlyParticipantsCanSendMessages()
     {
         $this->expectExceptionMessage('Participant is not part of the conversation');
@@ -267,7 +262,6 @@ class MessageTest extends TestCase
 
         $offset = null;
         $messagesCount = 0;
-        $pages = 0;
         $resultsCollection = [];
 
         do {
@@ -276,7 +270,6 @@ class MessageTest extends TestCase
             $resultsCollection[] = $results;
             $offset = $results->getLastEvaluatedKey();
             $messagesCount += $results->count();
-            $pages++;
         } while (! is_null($offset));
 
         $this->assertEquals($totalMessages, $messagesCount, "{$totalMessages} messages");

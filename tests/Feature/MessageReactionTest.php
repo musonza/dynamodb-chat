@@ -87,34 +87,3 @@ class MessageReactionTest extends TestCase
         $this->assertEquals(0, $response->count());
     }
 }
-
-/**
- * MessageReaction
- * user_id
- * message_id
- * created_at
- * reaction_type
- *
- * Conversation
- *
- * bio_text / description / topic
- * profile_image_url
- *
- *
- * Participant
- *
- * bio_text / description
- * profile_image_url
- * real_name
- * last_login_timestamp
- *
- * Message
- * ---------------
- * status - sent, delivered, read
- * :sent - the server has received the message
- * :delivered - the message has been delivered to the recipient device
- * :read - the message has been read by the recipient / opened the app and clicked conversation after receiving the message
- * ---------------
- *
- * retrieve messages by sending last message timestamp / offset
- */
