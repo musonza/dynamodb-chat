@@ -1,4 +1,4 @@
-# Laravel DynamoDB Chat Library
+# Laravel DynamoDB Chat Library (WIP)
 
 [![PHP Composer](https://github.com/musonza/dynamodb-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/musonza/dynamodb-chat/actions/workflows/ci.yml)
 
